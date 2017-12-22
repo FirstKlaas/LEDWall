@@ -93,11 +93,7 @@ void setTestPixel(uint8_t idx) {
 }
 
 void loop() {
-  if (Serial.available()) {
-    //cmd.addByte(Serial.read());
-    int data = Serial.read();
-    setTestPixel(data & 0xff);
-  }
+  if (Serial.available()) cmd.addByte(Serial.read());
 }
 
 void animate() {
