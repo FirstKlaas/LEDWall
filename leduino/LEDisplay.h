@@ -24,9 +24,13 @@ class LEDisplay {
     void hLine(uint8_t row, CRGB color);
     void vLine(uint8_t col, CRGB color);
     void rshiftRow(const uint8_t row);
+    void rshift();    
     void lshiftRow(const uint8_t row);
+    void lshift();
     boolean oddRow(const uint8_t row) const;
     boolean oddColumn(const uint8_t column) const;
+    void setCursor(const uint16_t index);
+    void writeRaw(const uint8_t size, uint8_t* data) const;
     
     void clear();
     void show();
@@ -38,10 +42,10 @@ class LEDisplay {
     CRGB* leds;
     CRGB colorTable[256];
     LedOrientation ledOrientation;
+    uint16_t cursor;
 
     uint16_t calculatePosition(uint8_t x, uint8_t y);
     boolean validCoords(uint8_t x, uint8_t y);
-
 };
 
 #endif

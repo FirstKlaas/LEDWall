@@ -10,6 +10,15 @@
 
 #define CMD_HLINE             7
 #define CMD_VLINE             8
+#define CMD_CLEAR             9
+#define CMD_RSHIFT_ROW       10
+#define CMD_LSHIFT_ROW       11
+#define CMD_RSHIFT           12
+#define CMD_LSHIFT           13
+
+#define CMD_SET_CURSOR       20
+#define CMD_WRITE_RAW        21
+
 
 LEDisplay panel(7,7);
 uint8_t line;
@@ -32,80 +41,46 @@ void cmdHandler(PackagePtr pkg) {
     case CMD_SET_PIXEL_IDX:
       panel.setPixelIdx(pkg->data[0],pkg->data[1],pkg->data[2]);
       break;
+    case CMD_CLEAR:
+      panel.clear();
+      break;
+    case CMD_RSHIFT_ROW:
+      panel.rshiftRow(pkg->data[0]);
+      break;
+    case CMD_LSHIFT_ROW:
+      panel.lshiftRow(pkg->data[0]);
+      break;
+    case CMD_RSHIFT:
+      panel.rshift();
+      break;
+    case CMD_LSHIFT:
+      panel.lshift();
+      break;      
+    case CMD_SET_CURSOR:
+      panel.setCursor((pkg->data[0] << 8) | pkg->data[1]);
+      break;
+    case CMD_WRITE_RAW:
+      panel.writeRaw(pkg->cmdLength, pkg->data);
+      break;      
   }
 }
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(100);
-  for (uint8_t i=0; i<=100; i++) {
-    panel.setColor(i,CRGB( random(255), random(255), 0));
-  }
-  panel.setColor(0,CRGB::Blue);
-  panel.setColor(1,CRGB::Red);
-  panel.setColor(2,CRGB::Green);
-  
-  
+  panel.setColor(0,CRGB::AliceBlue);
+  panel.setColor(1,CRGB::Amethyst);
+  panel.setColor(2,CRGB::DarkOrange);
+ 
   panel.clear();
   panel.show();
   
   cmd.setPackageHandler(cmdHandler);
-  /**
-  cmd.addByte(CMD_FILL);
-  cmd.addByte(3);
-  cmd.addByte(200);
-  cmd.addByte(10);
-  cmd.addByte(10);
-  
-  cmd.addByte(CMD_SETPIXEL);
-  cmd.addByte(5);
-  cmd.addByte(1);
-  cmd.addByte(2);
-  cmd.addByte(128);
-  cmd.addByte(0);
-  cmd.addByte(128);
-
-  cmd.addByte(CMD_SETPIXEL);
-  cmd.addByte(5);
-  cmd.addByte(5);
-  cmd.addByte(5);
-  cmd.addByte(128);
-  cmd.addByte(0);
-  cmd.addByte(128);
-
-  cmd.addByte(CMD_SHOW);
-  cmd.addByte(0);
-  */  
-}
-
-void setTestPixel(uint8_t idx) {
-  cmd.addByte(CMD_SETPIXEL);
-  cmd.addByte(5);
-  cmd.addByte(idx);
-  cmd.addByte(0);
-  cmd.addByte(255);
-  cmd.addByte(0);
-  cmd.addByte(128);
-
-  cmd.addByte(CMD_SHOW);
-  cmd.addByte(0);
 }
 
 void loop() {
-  if (Serial.available()) cmd.addByte(Serial.read());
-}
-
-void animate() {
-  for (uint8_t i=0; i<7; i+=2) {
-    panel.rshiftRow(i);
-    panel.setPixelIdx(0,i,random(100));
+  if (Serial.available()) {
+    while(Serial.available()) cmd.addByte(Serial.read());
   }
-  for (uint8_t i=1; i<7; i+=2) {
-    panel.lshiftRow(i);
-    panel.setPixel(6,i,CRGB( random(255), random(255),random(255)));
-  }
-  
-  panel.show();
-  delay(500);
 }

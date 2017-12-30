@@ -1,9 +1,9 @@
 #include "LEDisplay.h"
 
 LEDisplay::LEDisplay(uint8_t ncols, uint8_t nrows):
-m_rows(nrows), m_cols(ncols), ledOrientation(LEFT_TO_RIGHT)
+m_rows(nrows), m_cols(ncols), ledOrientation(LEFT_TO_RIGHT), cursor(0)
 {
-  leds = malloc(sizeof(CRGB) * ncols * nrows);
+  leds = (CRGB*) malloc(sizeof(CRGB) * ncols * nrows);
   clear();
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, numberOfLeds());
 }
@@ -60,19 +60,33 @@ void LEDisplay::hLine(uint8_t row, CRGB color) {
 void LEDisplay::lshiftRow(const uint8_t row) {
   if (!validCoords(0,row)) return;
   uint16_t index = calculatePosition(0,row);  
+  const CRGB pixel = leds[index];
   memcpy(&leds[index],&leds[index+1],sizeof(CRGB) * (m_cols-1));  
+  leds[index+m_cols-1] = pixel;
 }
 
 void LEDisplay::rshiftRow(const uint8_t row) {
   if (!validCoords(0,row)) return;
   uint16_t index = calculatePosition(m_cols-1,row);
-  
+  const CRGB pixel = leds[index];
   for (uint8_t i = (m_cols-1); i>0; i--) {
     memcpy(&leds[index],&leds[index-1],sizeof(CRGB));
     index--;
   }
   
-  leds[index] = CRGB::Black;  
+  leds[index] = pixel;  
+}
+
+void LEDisplay::rshift() {
+  for (uint8_t row=0; row<m_rows;row++) {
+    rshiftRow(row);      
+  }
+}
+
+void LEDisplay::lshift() {
+  for (uint8_t row=0; row<m_rows;row++) {
+    lshiftRow(row);      
+  }
 }
 
 boolean LEDisplay::validCoords(uint8_t x, uint8_t y) {
@@ -106,5 +120,19 @@ boolean LEDisplay::oddColumn(const uint8_t column) const {
     
 void LEDisplay::clear() {
   fill(CRGB::Black);
+}
+
+void LEDisplay::setCursor(const uint16_t index) {
+  cursor = index;
+}
+
+void LEDisplay::writeRaw(const uint8_t size, uint8_t* data) const {
+  
+  //if ((cursor + size) > (numberOfLeds * 3)) {
+  if ((cursor + size) > 0) {
+    return;
+  }
+  
+  memcpy(leds+cursor, data, size);
 }
 

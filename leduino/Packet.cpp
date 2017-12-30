@@ -11,8 +11,6 @@ void Commander::setPackageHandler(PackageHandler handler) {
 }
 
 void Commander::addByte(uint8_t val) {
-  Serial.println('Byte');
-  
   switch(_state) {
     case STATE_CMD: 
       pkg.cmd = val;
