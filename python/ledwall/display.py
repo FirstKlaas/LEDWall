@@ -2,6 +2,7 @@ from __future__ import division
 import serial
 import time
 import datetime
+from PIL import Image
 
 class Color(object):
 
@@ -104,6 +105,53 @@ class Color(object):
                 
             return self.asArray()[key]
     
+class TimeDelta(object):
+
+    def __init__(self):
+        self._max    = None
+        self._min    = None
+        self._millis = None
+        self._begin  = None
+
+    @property
+    def hasStarted(self):
+        return self._begin is not None
+
+    def begin(self):
+        self._begin = datetime.datetime.now()
+
+    def measure(self):
+        if not self.hasStarted:
+            return None
+
+        diff = datetime.datetime.now() - self._begin
+        self._millis = diff.total_seconds() * 1000
+        self._min = min(self._min, self._millis) if self._min else self._millis            
+        self._max = max(self._max, self._millis) if self._max else self._millis
+        return (self._millis,self._min,self._max)
+
+    @property 
+    def millis(self):
+        return self._millis
+
+    @property 
+    def min(self):
+        return self._min
+
+    @property 
+    def max(self):
+        return self._max
+
+    def _NoneOrStr(self, val):
+        return "%.2f" % val if val else "-"
+
+    def asTuple(self):
+        return (self.millis, self.min, self.max)
+
+    def __str__(self):
+        return "(ms: %s, min: %s, max: %s)" % (self._NoneOrStr(self._millis),self._NoneOrStr(self._min),self._NoneOrStr(self._max))
+
+
 class ColorTable(object):
 
     AliceBlue      = Color.fromHexString('#F0F8FF')
@@ -174,14 +222,15 @@ class Display(object):
         self._s          = serial.Serial(portName,baudrate)
         self._cols       = int(cols)
         self._rows       = int(rows)
-        self._data       = bytearray([0]*(BYTES_PER_PIXEL*self.count))
+        self._data       = [0]*(BYTES_PER_PIXEL*self.count)
         self._baudrate   = baudrate
         self._port       = portName
         self._mode       = mode
         self._lastupdate = None
-        self._framerate  = framerate 
-
-        self._millis_per_frame = 1000 / framerate
+        self.framerate   = framerate 
+        self._transmissionTime = TimeDelta()
+        self._framenr          = 0
+        self._frameDuration    = TimeDelta()
         
         if self._cols < 1:
             raise ValueException('Argument cols must be a value greater than 1.', cols) 
@@ -190,25 +239,65 @@ class Display(object):
             raise ValueException('Argument rows must be a value greater than 1.', cols)
 
     def __getitem__(self, key):
-        return self._pixels[key]
+        if isinstance(key, (tuple, list)) and len(key) == 2:
+            index = self._coordsToIndex(key[0], key[1]) * 3
+            return tuple(self._data[index:index+3])
+
+        if isinstance(key, int):
+            index = key*3    
+            return tuple(self._data[index:index+3])
+
+        #TODO support slices
+
+        return NotImplemented
+
+    def _setColorAt(self, index, color):
+        if index >= self.count:
+            raise ValueError('Index out of range. Maximum is %d but was %d' % (self.count - 1, index))
+
+        index *= BYTES_PER_PIXEL
+
+        if isinstance(color,Color):
+            self._data[index]   = color.red
+            self._data[index+1] = color.green
+            self._data[index+2] = color.blue                        
+            return
+
+        if isinstance(color, (list,tuple)) and len(color) > 2:
+            self._data[index]   = color[0]
+            self._data[index+1] = color[1]
+            self._data[index+2] = color[2]
+            return
+
+        return NotImplemented
 
     def __setitem__(self, key, item):
         if not item:
             raise ValueError('None is not allowed for item. Item must be a color instance')
 
-        index = int(key)
-        if index < 0:
-            raise ValueError('Index may not below zero.', key, item)
+        if isinstance(key, int):
+            if key < 0:
+                raise ValueError('Index may not below zero.', key, item)
 
-        if index >= self.count:
-            raise ValueError('Index must below count.', key, item)
+            if key >= self.count:
+                raise ValueError('Index must below count.', key, item)
 
-        if not isinstance(item, Color):
-            raise ValueError('item to set must be an Color instance', key, item)
-        
-        
-        self._data[key] = item
-            
+            self._setColorAt(self._adjustIndex(key),item)
+            return
+
+        if isinstance(key, (tuple,list)) and len(key) == 2:
+            self._setColorAt(self._coordsToIndex(key[0],key[1]), item)   
+
+        if isinstance(key, slice):
+            i = key.start
+            while i<key.stop:
+                if self._setColorAt(i,item) == NotImplemented:
+                    return
+                i += (key.step or 1)
+            return
+
+        return NotImplemented
+
     @property
     def columns(self):
         return self._cols
@@ -229,6 +318,23 @@ class Display(object):
     def port(self):
         return self._port
 
+    @property
+    def frame(self):
+        return self._framenr
+
+    @property
+    def framerate(self):
+        return self._framerate
+
+    @framerate.setter
+    def framerate(self, value):
+        self._framerate = value
+        self._millis_per_frame = 1000 / value
+
+    @property
+    def transmissionInfo(self):
+        return self._transmissionTime.asTuple()
+
     def _testCoords(self, x, y):
         if x < 0 or x >= self.columns:
             return False
@@ -236,42 +342,128 @@ class Display(object):
             return False
         return True
 
-    def _coordsToIndex(self, x, y):
-        return (y*self.columns*3) + (x*3)
+    def _adjustColumn(self, x, y):
+        if self._mode == Display.MODE_ZIGZACK and self.oddRow(y):
+            return self.columns-x-1
 
-    def setPixel(self, x, y, color):
+        return x
+
+    def _adjustIndex(self, index):
+        return self._coordsToIndex(self._indexToCoords(index,False));
+
+    def _coordsToIndex(self, x, y, adjust=True):        
+        if adjust:
+            return (y*self.columns) + self._adjustColumn(x,y)
+        return (y*self.columns) + x
+
+    def _indexToCoords(self, index, adjust=True):
+        x = index % self.columns
+        y = index // self.columns
+        if adjust:
+            return (self._adjustColumn(x,y) ,y)
+        return (x ,y)
+
+    def setPixel(self, x, y, color, update=False):
         if not self._testCoords(x,y):
             raise ValueError('Coordinates out fo Range', x, y)
 
-        index = self._coordsToIndex(x,y)
-        self._data[index:index+BYTES_PER_PIXEL] = color.asArray()
+        self._setColorAt(self._coordsToIndex(x,y), color)
+        self.update(update)
 
-    def fill(self, color):
+    def getPixel(self,x,y):
+        index = self._coordsToIndex(x,y) * 3
+        return tuple(self._data[index:index+3])
+
+    def hLine(self,row, color, update=False):
+        if (row < 0) or (row >= self.rows):
+            raise ValueError('Rowindex out of bounds.', row)
+        self[row*self.columns:((row+1)*self.columns)] = color    
+        self.update(update)
+
+    def vLine(self, column, color, update=False):
+        if (column < 0) or (column >= self.columns):
+            raise ValueError('Columnindex out of bounds.', column)
+
+        for i in range(self.rows):
+            self._setColorAt(self._coordsToIndex(column,i), color)
+
+        self.update(update)
+
+    def oddRow(self,row):
+        return (row & 1) == 1
+
+    def shiftRowRight(self, row, update=False):
+        if self.oddRow(row) and self._mode == Display.MODE_ZIGZACK:
+            savedPixel = self.getPixel(self.columns-1,row)
+            index = self._coordsToIndex(0,row, False) * 3
+            self._data[index:index + (self.columns-1) * 3] = self._data[index+3: index + (self.columns) * 3]
+            self.setPixel(0,row,savedPixel)
+
+        else:
+            savedPixel = self.getPixel(self.columns-1,row) 
+            index = self._coordsToIndex(0,row) * 3
+            self._data[index+3: index+self.columns * 3] = self._data[index:index + (self.columns-1) * 3]
+            self.setPixel(0,row,savedPixel)
+
+        self.update(update)
+
+    def shiftRight(self, update=False):
+        for row in range(self.rows):
+            self.shiftRowRight(row)
+
+        self.update(update)
+
+    def fill(self, color, update=False):
         if isinstance(color, Color):
             self._data[::3]  = [color.red] * self.count
             self._data[1::3] = [color.green] * self.count
             self._data[2::3] = [color.blue] * self.count
+            self.update(update)
             return
 
         if isinstance(color, (list,tuple)) and len(color) > 2:
             self._data[::3]  = [color[0]] * self.count
             self._data[1::3] = [color[1]] * self.count
             self._data[2::3] = [color[2]] * self.count
+            self.update(update)
             return
 
         return NotImplemented
 
-    def clear(self):
+    def clear(self, update=False):
         self._data[:] = [0] * (BYTES_PER_PIXEL*self.count)
-         
-    def update(self):
-        if self._lastupdate:
-            diff = datetime.datetime.now() - self._lastupdate
-            millis = diff.total_seconds() * 1000
+        self.update(update)
+
+    def update(self, update=True):
+        self._framenr += 1
+        if not update:
+            return
+
+        if self._frameDuration.hasStarted:
+            # if self._lastupdate:
+            # diff = datetime.datetime.now() - self._lastupdate
+            # millis = diff.total_seconds() * 1000
+            self._frameDuration.measure()
+            millis = self._frameDuration.millis
             if millis < self._millis_per_frame:
-                time.sleep(diff.total_seconds())
-        self._s.write(self._data)
-        self._lastupdate = datetime.datetime.now()
+                time.sleep((self._millis_per_frame-millis)/1000)
+
+        self._frameDuration.begin()
+
+        # self._lastupdate = datetime.datetime.now()
+        self._transmissionTime.begin()
+        self._s.write(bytearray(self._data))
+        self._transmissionTime.measure()
+
+
+    def showImage(self, path, update=False):
+        img = Image.open(path)
+        rgbimg = img.convert('RGB')
+        data = bytearray()
+        for y in range(7):
+          for x in range(7):
+            self.setPixel(x,y,rgbimg.getpixel((x,y)))
+        self.update(update)
 
 class Palette(object):
     def __init__(self, size):
