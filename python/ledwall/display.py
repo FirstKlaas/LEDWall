@@ -2,7 +2,13 @@ from __future__ import division
 import serial
 import time
 import datetime
-from PIL import Image
+
+PIL_AVAILABLE = True
+
+try:
+    from PIL import Image
+except ImportError:
+    print "Python Image library (PIL) not availabe. Image functions will be disabled"
 
 class Color(object):
 
@@ -374,6 +380,14 @@ class Display(object):
         index = self._coordsToIndex(x,y) * 3
         return tuple(self._data[index:index+3])
 
+    def writeBitmask(self, row, value, color1=(266,165.0), color0=(0,0,0)):
+        x = 0
+        index = self._coordsToIndex(6,row);
+        for b in range(self.columns):
+            self._setColorAt(index, color1 if value & 1 else color0)
+            value >>= 1
+            index -= 1
+
     def hLine(self,row, color, update=False):
         if (row < 0) or (row >= self.rows):
             raise ValueError('Rowindex out of bounds.', row)
@@ -457,6 +471,8 @@ class Display(object):
 
 
     def showImage(self, path, update=False):
+        if 'PIL' not in sys.modules:
+            raise ValueError('Module PIL not available. Consider to install PIL to use this function.')
         img = Image.open(path)
         rgbimg = img.convert('RGB')
         data = bytearray()
