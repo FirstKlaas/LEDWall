@@ -1,3 +1,6 @@
+from __future__ import division
+import datetime
+
 class TimeDelta(object):
 
     def __init__(self):
@@ -5,6 +8,7 @@ class TimeDelta(object):
         self._min    = None
         self._millis = None
         self._begin  = None
+        self._diff   = None
 
     @property
     def hasStarted(self):
@@ -17,8 +21,8 @@ class TimeDelta(object):
         if not self.hasStarted:
             return None
 
-        diff = datetime.datetime.now() - self._begin
-        self._millis = diff.total_seconds() * 1000
+        self._diff = datetime.datetime.now() - self._begin
+        self._millis = self._diff.total_seconds() * 1000
         self._min = min(self._min, self._millis) if self._min else self._millis            
         self._max = max(self._max, self._millis) if self._max else self._millis
         return (self._millis,self._min,self._max)
@@ -26,6 +30,17 @@ class TimeDelta(object):
     @property 
     def millis(self):
         return self._millis
+    @property
+    def micros(self):
+        return self._diff.microseconds if self._diff else None
+
+    @property
+    def seconds(self):
+        return self._diff.seconds if self._diff else None
+
+    @property
+    def days(self):
+        return self._diff.days if self._diff else None
 
     @property 
     def min(self):

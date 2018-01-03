@@ -1,9 +1,8 @@
 from __future__ import division
 import serial
 import time
-import datetime
 
-from util import TimeDelta
+from ..util import TimeDelta
 
 PIL_AVAILABLE = True
 
@@ -409,9 +408,6 @@ class Display(object):
             return
 
         if self._frameDuration.hasStarted:
-            # if self._lastupdate:
-            # diff = datetime.datetime.now() - self._lastupdate
-            # millis = diff.total_seconds() * 1000
             self._frameDuration.measure()
             millis = self._frameDuration.millis
             if millis < self._millis_per_frame:
@@ -419,7 +415,6 @@ class Display(object):
 
         self._frameDuration.begin()
 
-        # self._lastupdate = datetime.datetime.now()
         self._transmissionTime.begin()
         self._s.write(bytearray(self._data))
         self._transmissionTime.measure()
