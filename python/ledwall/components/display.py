@@ -2,7 +2,7 @@ from __future__ import division
 import serial
 import time
 
-from ..util import TimeDelta
+from ..util import TimeDelta, intersectRect
 
 PIL_AVAILABLE = True
 
@@ -381,6 +381,21 @@ class Display(object):
 
         self.update(update)
 
+    def asRect(self):
+        return (0,0,self.columns, self.rows)
+
+    def fillrect(self, x, y, w, h, color, update=False):
+        rect = intersectRect((x,y,w,h),self.asRect())
+        if rect:
+            print rect
+            for px in range(w):
+                for py in range(h):
+                    self.setPixel(px,py,color)
+        else:
+            print "No intersection found"
+
+        self.update(update)
+
     def fill(self, color, update=False):
         if isinstance(color, Color):
             self._data[::3]  = [color.red] * self.count
@@ -425,11 +440,28 @@ class Display(object):
             raise ValueError('Module PIL not available. Consider to install PIL to use this function.')
         img = Image.open(path)
         rgbimg = img.convert('RGB')
-        data = bytearray()
-        for y in range(7):
-          for x in range(7):
+        for y in range(self.rows):
+          for x in range(self.columns):
             self.setPixel(x,y,rgbimg.getpixel((x,y)))
         self.update(update)
+
+    def showImageAt(self, image, src_coords=None, dest_coords=None, transparentColor=None, update=False):
+        if 'PIL' not in sys.modules:
+            raise ValueError('Module PIL not available. Consider to install PIL to use this function.')
+        if not src_coords:
+            src_coords = (0,0,self.columns, self.rows)
+        '''
+        TODO: Den Bereich ermitteln, der gezeichnet werden muss. Das ist eigentlich der Schnittpunkt aus 
+        src und dest, sowie dem Panel
+        '''
+        region = intersectRect(src_coords, dest_coords)
+        if not region:
+            return None
+        region = intersectRect(region, (0,0,self.columns, self.rows))
+        if not region:
+            return None
+        print "Now painting image ... TODO"
+
 
 class Palette(object):
     def __init__(self, size):
