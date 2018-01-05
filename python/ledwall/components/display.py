@@ -3,6 +3,7 @@ import serial
 import time
 
 from ..util import TimeDelta, intersectRect
+from ..geometry import *
 
 PIL_AVAILABLE = True
 
@@ -179,7 +180,10 @@ class Display(object):
     MODE_ZIGZACK = 1
     
     def __init__(self, cols, rows, mode=MODE_LTR, portName='/dev/ttyACM0', baudrate=1000000, framerate=25): 
-        self._s          = serial.Serial(portName,baudrate)
+        try:
+            self._s          = serial.Serial(portName,baudrate)
+        except serial.SerialException:
+            self._s = None    
         self._cols       = int(cols)
         self._rows       = int(rows)
         self._data       = [0]*(BYTES_PER_PIXEL*self.count)
@@ -198,6 +202,12 @@ class Display(object):
         if self._rows < 1:
             raise ValueException('Argument rows must be a value greater than 1.', cols)
 
+    def __iter__(self):
+        index  = 0
+        while index < self.count:
+            yield tuple(self._data[index*BYTES_PER_PIXEL:(index+1)*BYTES_PER_PIXEL])
+            index += 1
+
     def __getitem__(self, key):
         if isinstance(key, (tuple, list)) and len(key) == 2:
             index = self._coordsToIndex(key[0], key[1]) * 3
@@ -210,6 +220,7 @@ class Display(object):
         #TODO support slices
 
         return NotImplemented
+
 
     def _setColorAt(self, index, color):
         if index >= self.count:
@@ -384,12 +395,12 @@ class Display(object):
     def asRect(self):
         return (0,0,self.columns, self.rows)
 
-    def fillrect(self, x, y, w, h, color, update=False):
+    def fillRect(self, x, y, w, h, color, update=False):
         rect = intersectRect((x,y,w,h),self.asRect())
         if rect:
-            print rect
-            for px in range(w):
-                for py in range(h):
+            rect = Rectangle.fromTuple(rect)
+            for px in range(rect.x,rect.right):
+                for py in range(rect.y, rect.bottom):
                     self.setPixel(px,py,color)
         else:
             print "No intersection found"
@@ -418,10 +429,11 @@ class Display(object):
         self.update(update)
 
     def update(self, update=True):
-        self._framenr += 1
         if not update:
             return
 
+        self._framenr += 1
+        
         if self._frameDuration.hasStarted:
             self._frameDuration.measure()
             millis = self._frameDuration.millis
@@ -431,7 +443,11 @@ class Display(object):
         self._frameDuration.begin()
 
         self._transmissionTime.begin()
-        self._s.write(bytearray(self._data))
+        if self._s:
+            self._s.write(bytearray(self._data))
+        else:
+            print "No serial line"
+
         self._transmissionTime.measure()
 
 
