@@ -176,6 +176,11 @@ class ColorTable(object):
 BYTES_PER_PIXEL = 3
 
 class Display(object):
+    """Main class for manipulation the LEDs
+
+    More explanation to come
+    """
+
     MODE_LTR     = 0
     MODE_ZIGZACK = 1
     

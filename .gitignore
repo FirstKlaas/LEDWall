@@ -34,3 +34,4 @@
 *.hex
 *.pyc
 settings.json
+build
