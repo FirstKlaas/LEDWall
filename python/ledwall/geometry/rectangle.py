@@ -32,12 +32,38 @@ class Rectangle(Point):
 
 	@property
 	def right(self):
-		return self.x + self.width	
+		return self.x + self.width - 1
 
 	@property
 	def bottom(self):
-		return self.y + self.height
+		return self.y + self.height - 1
 
+	@property
+	def p1(self):
+		return Point(self.x,self.y)
+
+	@property
+	def p2(self):
+		return Point(self.right,self.y)
+		
+	@property
+	def p3(self):
+		return Point(self.right,self.bottom)
+
+	@property
+	def p4(self):
+		return Point(self.x,self.bottom)
+
+	@property
+	def points(self):
+		return (self.p1,self.p2,self.p3,self.p4)
+
+	def __str__(self):
+		return "({:d},{:d},{:d},{:d})".format(self.x,self.y,self.width,self.height)
+
+	def __repr__(self):
+		return "Rectangle(x={:d},y={:d},width={:d},height={:d})".format(self.x,self.y,self.width,self.height)
+		
 	def __len__(self):
 		return 4
 

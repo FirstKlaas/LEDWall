@@ -336,10 +336,11 @@ class Display(object):
 
     def setPixel(self, x, y, color, update=False):
         if not self._testCoords(x,y):
-            raise ValueError('Coordinates out fo Range', x, y)
+            return False
 
         self._setColorAt(self._coordsToIndex(x,y), color)
         self.update(update)
+        return True
 
     def getPixel(self,x,y):
         index = self._coordsToIndex(x,y) * 3
