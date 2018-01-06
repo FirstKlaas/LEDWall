@@ -531,11 +531,23 @@ class Display(object):
 
         self.update(update)
 
-    def asRect(self):
-        return (0,0,self.columns, self.rows)
+    def asRectangle(self):
+        return Rectangle(0,0,self.columns, self.rows)
 
     def fillRect(self, x, y, w, h, color, update=False):
-        rect = intersectRect((x,y,w,h),self.asRect())
+        """ Fills a rectangle in the specified color
+
+        :param color: The color for the rectangle. If you want to deactivate or clear a rectangle, just use black (0,0,0) as color value.
+        :type color: Color, tuple, list
+        
+        :param update: If True, the display will be updated.
+        :type update: boolean
+
+        :rtype: None
+        """
+        rect = Rectangle(x,y,w,h)
+        rect -= self.asRectangle()
+
         if rect:
             rect = Rectangle.fromTuple(rect)
             for px in range(rect.x,rect.right):
@@ -556,7 +568,6 @@ class Display(object):
         :type update: boolean
 
         :rtype: None
-
         """
         if isinstance(color, Color):
             self._data[::3]  = [color.red] * self.count
