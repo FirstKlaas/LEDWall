@@ -1,0 +1,525 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Display &mdash; LED Wall 0.9.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="LED Wall 0.9.1 documentation" href="index.html"/>
+        <link rel="up" title="Python Library" href="python.html"/>
+        <link rel="next" title="Geometry" href="geometry.html"/>
+        <link rel="prev" title="Python Library" href="python.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> LED Wall
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.9
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="python.html">Python Library</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="python.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python.html#components">Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python.html#geometry">Geometry</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="python.html#dependencies">Dependencies</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Display</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geometry.html">Geometry</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">LED Wall</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="python.html">Python Library</a> &raquo;</li>
+        
+      <li>Display</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/display.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="display">
+<span id="display-class-doc"></span><h1>Display<a class="headerlink" href="#display" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ledwall.components.Display">
+<em class="property">class </em><code class="descclassname">ledwall.components.</code><code class="descname">Display</code><span class="sig-paren">(</span><em>cols</em>, <em>rows</em>, <em>mode=0</em>, <em>portName='/dev/ttyACM0'</em>, <em>baudrate=1000000</em>, <em>framerate=25</em><span class="sig-paren">)</span><a class="headerlink" href="#ledwall.components.Display" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construktor.</p>
+<p>Create a new instance of an led display. The baudrate has to match the baudrate of the arduino sketch.
+Also the portName has to match the name of the port, the arduino is connected to. On windows os based
+systems the name is something like ‘COM3’.</p>
+<p>The max value for the baudrate depends on the quality of the USB Cable as well as the length of the cable.
+I tested successfully a baudrate of 1000000.</p>
+<p>A very basic program could look like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ledwall.components</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">d</span> <span class="o">=</span> <span class="n">Display</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span>
+
+<span class="n">red</span>   <span class="o">=</span> <span class="n">Color</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">green</span> <span class="o">=</span> <span class="n">Color</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>    
+
+<span class="n">d</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">green</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setPixel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">red</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setPixel</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">23</span><span class="p">,</span><span class="n">red</span><span class="p">)</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cols</strong> (<a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The number of columns of the display</li>
+<li><strong>rows</strong> (<a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The number of rows of the display.</li>
+<li><strong>mode</strong> (<a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The mode that the LEDs ar organized. Left-to-Right or Zig-Zag. Defaults to Display.MODE_LTR.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/constants.html#None" title="(in Python v2.7)">None</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="ledwall.components.Display.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><em>update=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ledwall.components.Display.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears the display (sets all pixel to black)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>update</strong> (<em>boolean</em>) – If True, the display will be updated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/constants.html#None" title="(in Python v2.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ledwall.components.Display.fill">
+<code class="descname">fill</code><span class="sig-paren">(</span><em>color</em>, <em>update=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ledwall.components.Display.fill" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fills the LED display in the specified color.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>color</strong> (<em>Color</em><em>, </em><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em>, </em><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) – The color for the display. If you want to deactivate or clear the panel, just use black (0,0,0) as color value.</li>
+<li><strong>update</strong> (<em>boolean</em>) – If True, the display will be updated.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/constants.html#None" title="(in Python v2.7)">None</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ledwall.components.Display.fillRect">
+<code class="descname">fillRect</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>w</em>, <em>h</em>, <em>color</em>, <em>update=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ledwall.components.Display.fillRect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fills a rectangle in the specified color</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>color</strong> (<em>Color</em><em>, </em><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em>, </em><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) – The color for the rectangle. If you want to deactivate or clear a rectangle, just use black (0,0,0) as color value.</li>
+<li><strong>update</strong> (<em>boolean</em>) – If True, the display will be updated.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/constants.html#None" title="(in Python v2.7)">None</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ledwall.components.Display.getPixel">
+<code class="descname">getPixel</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#ledwall.components.Display.getPixel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getting the color for a single pixel.</p>
+<p>Returns the color for the pixel located at (x,y). The x value must be within the the range: <code class="docutils literal"><span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">x</span> <span class="pre">&lt;</span> <span class="pre">width</span></code>. 
+The y value must be with the range: <code class="docutils literal"><span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">y</span> <span class="pre">&lt;</span> <span class="pre">height</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The x position of the pixel. Must be a value with the following constraint: <code class="docutils literal"><span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">x</span> <span class="pre">&lt;</span> <span class="pre">width</span></code></li>
+<li><strong>y</strong> (<a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The number of rows of the display.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Color</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ledwall.components.Display.hLine">
+<code class="descname">hLine</code><span class="sig-paren">(</span><em>row</em>, <em>color</em>, <em>update=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ledwall.components.Display.hLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Drawing a horizontal line in the specified color.</p>
+<p>The row value must be with the range: <code class="docutils literal"><span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">row</span> <span class="pre">&lt;</span> <span class="pre">height</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>row</strong> (<a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The row to be filled.</li>
+<li><strong>color</strong> (<em>Color</em><em>, </em><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em>, </em><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) – The color for the row. If you want to deactivate or clear a row, just use black (0,0,0) as color value.</li>
+<li><strong>update</strong> (<em>boolean</em>) – If True, the display will be updated.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/constants.html#None" title="(in Python v2.7)">None</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ledwall.components.Display.setPixel">
+<code class="descname">setPixel</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>color</em>, <em>update=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ledwall.components.Display.setPixel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setting the color for a single pixel.</p>
+<p>Returns True, if setting the pixel was successful, Fales else. The color is specified by a color instance. The method
+also accepts tuples or arrays as colors. The length has to be at least 3 and must contain the value for red, green, and
+blue.</p>
+<p>The following lines have the same effect.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">setPixel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">red</span><span class="p">,</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setPixel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setPixel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,[</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The x position of the pixel. Must be a value with the following constraint: <code class="docutils literal"><span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">x</span> <span class="pre">&lt;</span> <span class="pre">width</span></code></li>
+<li><strong>y</strong> (<a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The number of rows of the display.</li>
+<li><strong>color</strong> (<em>Color</em><em>, </em><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em>, </em><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) – The color for the pixel. If you want to deactivate or clear a pixel, just use black (0,0,0) as color value.</li>
+<li><strong>update</strong> (<em>boolean</em>) – If True, the display will be updated.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">boolean</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ledwall.components.Display.shiftRight">
+<code class="descname">shiftRight</code><span class="sig-paren">(</span><em>update=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ledwall.components.Display.shiftRight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shifts all pixels to the right.</p>
+<p>The method shift pixels to the right visually, because the method takes the mode into account. This means, if
+the mode is <code class="docutils literal"><span class="pre">Display.MODE_ZIGZAG</span></code> and the row number is odd, then the pixela are shifted physically to the left.
+But because this row reads left to right, the pixels are shifted visually to the right.</p>
+<p>The pixel to the outermost right will be placed at the first column. So this method implements a rotation of the pixels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>update</strong> (<em>boolean</em>) – If True, the display will be updated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/constants.html#None" title="(in Python v2.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ledwall.components.Display.shiftRowRight">
+<code class="descname">shiftRowRight</code><span class="sig-paren">(</span><em>row</em>, <em>update=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ledwall.components.Display.shiftRowRight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shifts all pixels in the specified row to the right.</p>
+<p>The method shift pixels to the right visually, because the method takes the mode into account. This means, if
+the mode is <code class="docutils literal"><span class="pre">Display.MODE_ZIGZAG</span></code> and the row number is odd, then the pixela are shifted physically to the left.
+But because this row reads left to right, the pixels are shifted visually to the right.</p>
+<p>The pixel to the outermost right will be placed at the first column. So this method implements a rotation of the pixels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>row</strong> – The number of the row to be shifted. The row value must be with the range: <code class="docutils literal"><span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">row</span> <span class="pre">&lt;</span> <span class="pre">height</span></code></li>
+<li><strong>update</strong> (<em>boolean</em>) – If True, the display will be updated.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/constants.html#None" title="(in Python v2.7)">None</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ledwall.components.Display.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>update=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ledwall.components.Display.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the LED display</p>
+<p>The internal framebuffer is send to the arduino board and the LED stripe gets updated.</p>
+<p>The method takes framerate into account. If the time between this update and the last update
+is less then the milliseconds per frame, the method will sleep ‘til the end of the frame and 
+update the data at the end of the frame.</p>
+<p>Every time the LED display is updated, the framenumber will be increased by one.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you are interested to see the time consumed by transferring the date to the arduino,
+you can read the ransmissionInfo property after updating. The following code snippet shows
+the basic usage:</p>
+</div>
+<p>Read out the timings for transmission:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">Color</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+<span class="k">print</span> <span class="n">d</span><span class="o">.</span><span class="n">transmissionInfo</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>update</strong> (<em>boolean</em>) – If True, the display will be updated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/constants.html#None" title="(in Python v2.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ledwall.components.Display.vLine">
+<code class="descname">vLine</code><span class="sig-paren">(</span><em>column</em>, <em>color</em>, <em>update=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ledwall.components.Display.vLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Drawing a vertical line in the specified color.</p>
+<p>The column value must be with the range: <code class="docutils literal"><span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">column</span> <span class="pre">&lt;</span> <span class="pre">width</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>column</strong> (<a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The column to be filled.</li>
+<li><strong>color</strong> (<em>Color</em><em>, </em><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em>, </em><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) – The color for the column. If you want to deactivate or clear a row, just use black (0,0,0) as color value.</li>
+<li><strong>update</strong> (<em>boolean</em>) – If True, the display will be updated.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/constants.html#None" title="(in Python v2.7)">None</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="geometry.html" class="btn btn-neutral float-right" title="Geometry" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="python.html" class="btn btn-neutral" title="Python Library" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, FirstKlaas (find me on GitHub).
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.9.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
