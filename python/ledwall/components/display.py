@@ -411,7 +411,7 @@ class Display(object):
     def getPixel(self,x,y):
         """Getting the color for a single pixel. 
 
-        Returns the color for the pixel located at (x,y). The x value must be within the the range: ``0 <= x < width''. 
+        Returns the color for the pixel located at (x,y). The x value must be within the the range: ``0 <= x < width``. 
         The y value must be with the range: ``0 <= y < height``
 
         :param x: The x position of the pixel. Must be a value with the following constraint: ``0 <= x < width``
