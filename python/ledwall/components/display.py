@@ -1,5 +1,10 @@
 from __future__ import division
-import serial
+
+try:
+    import serial
+except ImportError:
+    print "Serial not availabe. Use: pip install serial"
+    
 import time
 
 from ..util import TimeDelta, intersectRect
