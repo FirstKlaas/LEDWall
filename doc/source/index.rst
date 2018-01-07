@@ -14,7 +14,7 @@ Raspberry PI (Version 2), Arduino Uno und LW2812b Streifen
 Python
 ------
 
-Es gibt eine Umfangreiche Python Bibliothek. Die zentrale Komponente ist das :ref:'disply_doc' Display.
+Es gibt eine Umfangreiche Python Bibliothek. Die zentrale Komponente ist das :ref:`display-class-doc`.
 
 
 Contents
@@ -23,7 +23,7 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   display
+   python
 
 Indices and tables
 ------------------
