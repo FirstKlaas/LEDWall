@@ -1,5 +1,5 @@
 
-gamma8 = [  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+gamma8_table = [  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
             0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,
             1,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,
             2,  3,  3,  3,  3,  3,  3,  3,  4,  4,  4,  4,  4,  5,  5,  5,
@@ -16,7 +16,13 @@ gamma8 = [  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
           177,180,182,184,186,189,191,193,196,198,200,203,205,208,210,213,
           215,218,220,223,225,228,231,233,236,239,241,244,247,249,252,255 ]
 
+
+
 class Color(object):
+
+    @staticmethod
+    def gamma8(val):
+        return gamma8_table[val]
 
     @staticmethod
     def fromRGB(r=0, g=0, b=0):
@@ -101,7 +107,7 @@ class Color(object):
 
     @property
     def gammaCorrected(self):
-    	return (gamma8[self.red],gamma8[self.green],gamma8[self.blue])
+        return (Color.gamma8(self.red),Color.gamma8(self.green),Color.gamma8(self.blue))
 
     def __getitem__(self, key):
         if isinstance(key,str):

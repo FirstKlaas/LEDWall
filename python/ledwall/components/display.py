@@ -7,6 +7,8 @@ except ImportError:
     
 import time
 
+from color import Color
+
 from ..util import TimeDelta, intersectRect
 from ..geometry import *
 
@@ -17,107 +19,6 @@ try:
 except ImportError:
     print "Python Image library (PIL) not availabe. Image functions will be disabled"
 
-class Color(object):
-
-    @staticmethod
-    def fromRGB(r=0, g=0, b=0):
-        return Color(r,g,b)
-
-    @staticmethod
-    def fromHexString(color):
-        s = color.lstrip('#')
-        return Color.fromRGB(int(s[0:2],16),int(s[2:4],16), int(s[4:6],16))
-
-    def __init__(self, r=0, g=0, b=0):
-        self.red   = r
-        self.green = g
-        self.blue  = b
-
-    def __iter__(self):
-        yield self._r
-        yield self._g
-        yield self._b
-
-    def asArray(self):
-        return [self.red,self.green,self.blue]
-    
-    def __repr__(self):
-        return 'Color(%d,%d,%d)' % (self.red,self.green,self.blue)
-    
-    def __str__(self):
-        return self.hexStr
-
-    def __eq__(self, other):
-        if isinstance(other, Color):
-            return (other.red == self.red 
-                and other.green == self.green 
-                and other.blue == self.blue)
-        if ((isinstance(other, tuple) or isinstance(other, list))
-            and len(other) == 3):
-            return (self.red == other[0] 
-                and self.green == other[1]
-                and self.blue == other[2] )   
-        return NotImplemented
-
-    @property
-    def red(self):
-        return self._r
-
-    @red.setter
-    def red(self,value):
-        self._r = int(value)
-        if self._r < 0 or self._r > 255:
-            raise ValueError('Only values between 0 and 255 are accepted for the red channel',value)
-
-    @property
-    def green(self):
-        return self._g
-
-    @green.setter
-    def green(self,value):
-        self._g = int(value)
-        if self._g < 0 or self._g > 255:
-            raise ValueError('Only values between 0 and 255 are accepted for the green channel',value)
-
-    @property
-    def blue(self):
-        return self._b
-
-    @blue.setter
-    def blue(self,value):
-        self._b = int(value)
-        if self._b < 0 or self._b > 255:
-            raise ValueError('Only values between 0 and 255 are accepted for the blue channel',value)
-
-    @property
-    def hexStr(self):
-        return "#%0.2X%0.2X%0.2X" % (self._r, self._g, self._b)
-
-    @hexStr.setter
-    def hexStr(self, value):
-        c = Color.fromHexString(value)
-        self._r = int(c.red)
-        self._g = int(c.green)
-        self._b = int(c.blue)
-
-    def __getitem__(self, key):
-        if isinstance(key,str):
-            if key == 'red' or key == 'r': return self.red
-            if key == 'green' or key == 'g': return self.green
-            if key == 'reblue' or key == 'b': return self.blue
-            raise ValueError('Uknown string identifier to lookup item',key)                
-            
-        else:
-            if isinstance(key,int):
-                if key < 0 or key > 2:
-                    raise ValueError('Index out ouf bounds [0,2]', key)
-
-            elif isinstance(key, slice):
-                if abs(key.start) > 2:
-                    raise ValueError('Slice start ouf bounds [-2,2]', key)
-                
-            return self.asArray()[key]
-    
 class ColorTable(object):
 
     AliceBlue      = Color.fromHexString('#F0F8FF')
@@ -230,6 +131,7 @@ class Display(object):
         self._cols       = int(cols)
         self._rows       = int(rows)
         self._data       = [0]*(BYTES_PER_PIXEL*self.count)
+        self._sendbuffer = bytearray(BYTES_PER_PIXEL*self.count)
         self._baudrate   = baudrate
         self._port       = portName
         self._mode       = mode
@@ -642,9 +544,12 @@ class Display(object):
 
         self._frameDuration.begin()
 
+        for i in range(len(self._data)):
+            self._sendbuffer[i] = Color.gamma8(self._data[i])
+
         self._transmissionTime.begin()
         if self._s:
-            self._s.write(bytearray(self._data))
+            self._s.write(bytearray(self._sendbuffer))
         else:
             print "No serial line"
 
