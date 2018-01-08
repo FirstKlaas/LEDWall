@@ -6,6 +6,7 @@ except ImportError:
     print "Serial not availabe. Use: pip install serial"
     
 import time
+import sys
 
 from color import Color
 
