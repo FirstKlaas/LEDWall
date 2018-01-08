@@ -106,8 +106,7 @@ class Color(object):
     @property
     def hsv(self):
         hsvf = colorsys.rgb_to_hsv(self.red / 255.0, self.green / 255.0,self.blue / 255.0)
-        arr = [int(round(x*255)) for x in hsvf]
-        return tuple(arr)
+        return (int(round(hsvf[0]*360)),int(round(hsvf[1]*100)),int(round(hsvf[2]*100)))
 
 
     @hexStr.setter
