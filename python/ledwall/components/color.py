@@ -1,3 +1,4 @@
+import colorsys
 
 gamma8_table = [  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
                   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,
@@ -101,6 +102,13 @@ class Color(object):
     @property
     def hexStr(self):
         return "#%0.2X%0.2X%0.2X" % (self._r, self._g, self._b)
+
+    @property
+    def hsv(self):
+        hsvf = colorsys.rgb_to_hsv(self.red / 255.0, self.green / 255.0,self.blue / 255.0)
+        arr = [int(round(x*255)) for x in hsvf]
+        return tuple(arr)
+
 
     @hexStr.setter
     def hexStr(self, value):
