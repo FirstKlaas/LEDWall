@@ -1,7 +1,9 @@
 import colorsys
 
+from color import Color
 
 class HSVColor(object):
+
 	@staticmethod
 	def fromTuple(val):
 		return HSVColor(val[0],val[1],val[2])
@@ -44,6 +46,11 @@ class HSVColor(object):
 		yield self.s
 		yield self.v
 
-	def toRGB(self):
-		rgbf = colorsys.hsv_to_rgb(self.h / 360., self.s / 100.,self.v / 100.)
+	@property
+	def rgb(self):
+		rgbf = colorsys.hsv_to_rgb(self.h / 360.0, self.s / 100.0,self.v / 100.0)
 		return (HSVColor._convert(rgbf[0]),HSVColor._convert(rgbf[1]),HSVColor._convert(rgbf[2]))
+
+	@property
+	def color(self):
+		return Color.fromTuple(self.rgb)

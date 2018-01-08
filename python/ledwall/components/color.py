@@ -21,12 +21,16 @@ gamma8_table = [  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 class Color(object):
 
     @staticmethod
-    def gamma8(val):
+    def gammaCorrection(val):
         return gamma8_table[val]
 
     @staticmethod
     def fromRGB(r=0, g=0, b=0):
         return Color(r,g,b)
+
+    @staticmethod
+    def fromTuple(t):
+        return Color.fromRGB(t[0], t[1], t[2])
 
     @staticmethod
     def fromHexString(color):
@@ -106,8 +110,8 @@ class Color(object):
         self._b = int(c.blue)
 
     @property
-    def gammaCorrected(self):
-        return (Color.gamma8(self.red),Color.gamma8(self.green),Color.gamma8(self.blue))
+    def gamma8(self):
+        return (Color.gammaCorrection(self.red),Color.gammaCorrection(self.green),Color.gammaCorrection(self.blue))
 
     def __getitem__(self, key):
         if isinstance(key,str):

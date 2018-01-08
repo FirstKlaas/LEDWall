@@ -80,6 +80,7 @@ class Display(object):
         self._transmissionTime = TimeDelta()
         self._framenr          = 0
         self._frameDuration    = TimeDelta()
+        self._gamma_correction = True
         
         if self._cols < 1:
             raise ValueException('Argument cols must be a value greater than 1.', cols) 
@@ -191,6 +192,14 @@ class Display(object):
     def transmissionInfo(self):
         return self._transmissionTime.asTuple()
 
+    @property
+    def gammaCorrection(self):
+        return self._gamma_correction
+
+    @gammaCorrection.setter
+    def gammaCorrection(selef, value):
+        self._gamma_correction = value
+            
     def _testCoords(self, x, y):
         if x < 0 or x >= self.columns:
             return False
@@ -485,7 +494,7 @@ class Display(object):
         self._frameDuration.begin()
 
         for i in range(len(self._data)):
-            self._sendbuffer[i] = Color.gamma8(self._data[i])
+            self._sendbuffer[i] = if self.gammaCorrection Color.gammaCorrection(self._data[i]) else self._data[i]
 
         self._transmissionTime.begin()
         if self._s:
