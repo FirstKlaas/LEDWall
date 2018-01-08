@@ -1,12 +1,14 @@
 import colorsys
 
-def __int(fval):
-	return int(round(fval))
 
 class HSVColor(object):
 	@staticmethod
 	def fromTuple(val):
 		return HSVColor(val[0],val[1],val[2])
+
+	@staticmethod
+	def _convert(fval):
+		return int(round(255. * fval))
 
 	def __init__(self, h, s, v):
 		self._h = h
@@ -43,5 +45,5 @@ class HSVColor(object):
 		yield self.v
 
 	def toRGB(self):
-		rgbf = colorsys.hsv_to_rgb(self.h,self.s,self.v)
-		return (__int(rgb[0]),__int(rgb[1]),__int(rgb[2]))
+		rgbf = colorsys.hsv_to_rgb(self.h / 360., self.s / 100.,self.v / 100.)
+		return (HSVColor._convert(rgbf[0]),HSVColor._convert(rgbf[1]),HSVColor._convert(rgbf[2]))
