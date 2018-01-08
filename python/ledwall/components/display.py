@@ -494,7 +494,7 @@ class Display(object):
         self._frameDuration.begin()
 
         for i in range(len(self._data)):
-            self._sendbuffer[i] = if self.gammaCorrection Color.gammaCorrection(self._data[i]) else self._data[i]
+            self._sendbuffer[i] = Color.gammaCorrection(self._data[i]) if self.gammaCorrection else self._data[i]
 
         self._transmissionTime.begin()
         if self._s:
