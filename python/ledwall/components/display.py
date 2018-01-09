@@ -62,13 +62,10 @@ class Display(object):
     """    
 
     MODE_LTR     = 0
-    MODE_ZIGZACK = 1
+    MODE_ZIGZAG  = 1
     
     def __init__(self, cols, rows, mode=MODE_LTR, portName='/dev/ttyACM0', baudrate=1000000, framerate=25): 
-        try:
-            self._s          = serial.Serial(portName,baudrate)
-        except serial.SerialException:
-            self._s = None    
+        self._s          = serial.Serial(portName,baudrate) if 'serial' in sys.modules else None    
         self._cols       = int(cols)
         self._rows       = int(rows)
         self._data       = [0]*(BYTES_PER_PIXEL*self.count)
@@ -115,19 +112,11 @@ class Display(object):
 
         index *= BYTES_PER_PIXEL
 
-        if isinstance(color,Color):
-            self._data[index]   = color.red
-            self._data[index+1] = color.green
-            self._data[index+2] = color.blue                        
-            return
-
-        if isinstance(color, (list,tuple)) and len(color) > 2:
-            self._data[index]   = color[0]
-            self._data[index+1] = color[1]
-            self._data[index+2] = color[2]
-            return
-
-        return NotImplemented
+        color = Color.convert(color)
+        self._data[index]   = color.red
+        self._data[index+1] = color.green
+        self._data[index+2] = color.blue                        
+        return
 
     def __setitem__(self, key, item):
         if not item:
@@ -198,7 +187,7 @@ class Display(object):
         return self._gamma_correction
 
     @gammaCorrection.setter
-    def gammaCorrection(selef, value):
+    def gammaCorrection(self, value):
         self._gamma_correction = value
             
     def _testCoords(self, x, y):
@@ -209,7 +198,7 @@ class Display(object):
         return True
 
     def _adjustColumn(self, x, y):
-        if self._mode == Display.MODE_ZIGZACK and self.oddRow(y):
+        if self._mode == Display.MODE_ZIGZAG and self.oddRow(y):
             return self.columns-x-1
 
         return x
@@ -280,7 +269,7 @@ class Display(object):
         :rtype: Color
         """
         index = self._coordsToIndex(x,y) * 3
-        return tuple(self._data[index:index+3])
+        return Color.fromTuple(tuple(self._data[index:index+3]))
 
     def writeBitmask(self, row, value, color1=(266,165.0), color0=(0,0,0)):
         x = 0
@@ -308,7 +297,7 @@ class Display(object):
         """
         if (row < 0) or (row >= self.rows):
             raise ValueError('Rowindex out of bounds.', row)
-        self[row*self.columns:((row+1)*self.columns)] = color    
+        self[row*self.columns:((row+1)*self.columns)] = Color.convert(color)    
         self.update(update)
 
     def vLine(self, column, color, update=False):
@@ -320,7 +309,7 @@ class Display(object):
         :type column: int
 
         :param color: The color for the column. If you want to deactivate or clear a row, just use black (0,0,0) as color value.
-        :type color: Color, tuple, list
+        :type color: Color, RGBColor, HSVColor, tuple, list
         
         :param update: If True, the display will be updated.
         :type update: boolean
@@ -329,6 +318,8 @@ class Display(object):
         """
         if (column < 0) or (column >= self.columns):
             raise ValueError('Columnindex out of bounds.', column)
+        
+        color = Color.convert(color)
 
         for i in range(self.rows):
             self._setColorAt(self._coordsToIndex(column,i), color)
@@ -355,7 +346,7 @@ class Display(object):
 
         :rtype: None
         """
-        if self.oddRow(row) and self._mode == Display.MODE_ZIGZACK:
+        if self.oddRow(row) and self._mode == Display.MODE_ZIGZAG:
             savedPixel = self.getPixel(self.columns-1,row)
             index = self._coordsToIndex(0,row, False) * 3
             self._data[index:index + (self.columns-1) * 3] = self._data[index+3: index + (self.columns) * 3]
@@ -426,21 +417,11 @@ class Display(object):
 
         :rtype: None
         """
-        if isinstance(color, Color):
-            self._data[::3]  = [color.red] * self.count
-            self._data[1::3] = [color.green] * self.count
-            self._data[2::3] = [color.blue] * self.count
-            self.update(update)
-            return
-
-        if isinstance(color, (list,tuple)) and len(color) > 2:
-            self._data[::3]  = [color[0]] * self.count
-            self._data[1::3] = [color[1]] * self.count
-            self._data[2::3] = [color[2]] * self.count
-            self.update(update)
-            return
-
-        return NotImplemented
+        color = Color.convert(color)
+        self._data[::3]  = [color.red] * self.count
+        self._data[1::3] = [color.green] * self.count
+        self._data[2::3] = [color.blue] * self.count
+        self.update(update)
 
     def clear(self, update=False):
         """Clears the display (sets all pixel to black)

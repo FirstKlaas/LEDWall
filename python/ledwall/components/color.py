@@ -25,6 +25,20 @@ gamma8_table = [  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 class Color(object):
 
     @staticmethod
+    def convert(val):
+        if isinstance(val,Color):
+            return val
+        if isinstance(val,str):
+            return Color.fromHexString(val)
+        if isinstance(val, RGBColor):
+            return Color.fromRGBColor(val)
+        if isinstance(val,HSVColor):
+            return Color.fromHSVColor(val)
+        if len(val) == 3:
+            return Color.fromTuple(val)
+        raise ValueError("Cannot convert value in color object")
+               
+    @staticmethod
     def gammaCorrection(val):
         if len(val) == 1:
             return gamma8_table[val]

@@ -4,7 +4,7 @@ class RGBColor(object):
 
     @staticmethod
     def fromIntValues(r,g,b):
-        return RGBColor(r / 255., g / 255., b / 255)
+        return RGBColor(r / 255., g / 255., b / 255.)
 
     def __init__(self, r, g, b):
         self._r = float(r)
@@ -32,7 +32,7 @@ class RGBColor(object):
     
     @property
     def intValues(self):
-        return (self.red * 255., self.blue * 255., self.green * 255.)
+        return (self.red * 255., self.green * 255., self.blue * 255.)
 
     @property
     def red(self):

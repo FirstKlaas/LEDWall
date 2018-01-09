@@ -37,7 +37,7 @@ class HSVColor(object):
 
     @property
     def intValues(self):
-        return (self.hue * 360., self.value * 100., self.saturation * 100.)
+        return (int(round(self.hue * 360.)), int(round(self.saturation * 100.)), int(round(self.value * 100.)))
 
     def __iter__(self):
         yield self.h
@@ -70,4 +70,4 @@ class HSVColor(object):
  
     @property
     def rgb(self):
-        return colorsys.hsv_to_rgb(self.hue, self.value, self.saturation)
+        return colorsys.hsv_to_rgb(self.hue, self.saturation, self.value)
