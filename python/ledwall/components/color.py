@@ -1,5 +1,8 @@
 import colorsys
 
+from hsvcolor import HSVColor
+from rgbcolor import RGBColor
+
 gamma8_table = [  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
                   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,
                   1,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,
@@ -23,7 +26,9 @@ class Color(object):
 
     @staticmethod
     def gammaCorrection(val):
-        return gamma8_table[val]
+        if len(val) == 1:
+            return gamma8_table[val]
+        return [gamma8_table[v] for v in val]
 
     @staticmethod
     def fromRGB(r=0, g=0, b=0):
@@ -48,9 +53,6 @@ class Color(object):
         yield self._g
         yield self._b
 
-    def asArray(self):
-        return [self.red,self.green,self.blue]
-    
     def __repr__(self):
         return 'Color(%d,%d,%d)' % (self.red,self.green,self.blue)
     
@@ -103,12 +105,6 @@ class Color(object):
     def hexStr(self):
         return "#%0.2X%0.2X%0.2X" % (self._r, self._g, self._b)
 
-    @property
-    def hsv(self):
-        hsvf = colorsys.rgb_to_hsv(self.red / 255.0, self.green / 255.0,self.blue / 255.0)
-        return (int(round(hsvf[0]*360)),int(round(hsvf[1]*100)),int(round(hsvf[2]*100)))
-
-
     @hexStr.setter
     def hexStr(self, value):
         c = Color.fromHexString(value)
@@ -117,6 +113,19 @@ class Color(object):
         self._b = int(c.blue)
 
     @property
+    def floatValues(self):
+        return (self.red / 255.0, self.green / 255.0,self.blue / 255.0) 
+
+    @property
+    def hsvColor(self):
+        hsv = self.rgbColor.hsv
+        return HSVColor(hsv[0], hsv[1], hsv[2])
+
+    @property
+    def rgbColor(self):
+        return RGBColor.fromIntValues(self.red, self.green,self.blue)
+    
+    @property
     def gamma8(self):
         return (Color.gammaCorrection(self.red),Color.gammaCorrection(self.green),Color.gammaCorrection(self.blue))
 
@@ -124,7 +133,7 @@ class Color(object):
         if isinstance(key,str):
             if key == 'red' or key == 'r': return self.red
             if key == 'green' or key == 'g': return self.green
-            if key == 'reblue' or key == 'b': return self.blue
+            if key == 'blue' or key == 'b': return self.blue
             raise ValueError('Uknown string identifier to lookup item',key)                
             
         else:

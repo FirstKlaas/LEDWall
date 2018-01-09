@@ -1,16 +1,10 @@
 import colorsys
 
-from color import Color
-
 class HSVColor(object):
 
     @staticmethod
-    def fromTuple(val):
-        return HSVColor(val[0],val[1],val[2])
-
-    @staticmethod
-    def _convert(fval):
-        return int(round(255. * fval))
+    def fromIntValues(h, s, v):
+        return HSVColor(h / 360., s / 100. , v / 100.)
 
     def __init__(self, h, s, v):
         self._h = h
@@ -41,27 +35,39 @@ class HSVColor(object):
     def v(self):
         return self._v
 
+    @property
+    def intValues(self):
+        return (self.hue * 360., self.value * 100., self.saturation * 100.)
+
     def __iter__(self):
         yield self.h
         yield self.s
         yield self.v
-
+        
     def __repr__(self):
-        return 'HSVColor(%d,%d,%d)' % (self.h,self.s,self.v)
+        return 'HSVColor({:.2f},{:.2f},{:.2f})'.format(self.h,self.s,self.v)
     
     def __str__(self):
-        return 'H(%d,%d,%d)' % (self.h,self.s,self.v)
+        return '({:.2f},{:.2f},{:.2f})'.format(self.h,self.s,self.v)
 
-    @property
-    def floatValues(self):
-        return (self.h / 360.0, self.s / 100.0,self.v / 100.0)
+    def __getitem__(self, key):
+        if isinstance(key,str):
+            if key == 'hue' or key == 'h': return self.h
+            if key == 'saturation' or key == 's': return self.s
+            if key == 'value' or key == 'v': return self.v
+            raise ValueError('Uknown string identifier to lookup item',key)                
+            
+        else:
+            if isinstance(key,int):
+                if key < 0 or key > 2:
+                    raise ValueError('Index out ouf bounds [0,2]', key)
 
+            elif isinstance(key, slice):
+                if abs(key.start) > 2:
+                    raise ValueError('Slice start ouf bounds [-2,2]', key)
+                
+            return self.asArray()[key]
+ 
     @property
     def rgb(self):
-        values = self.floatValues
-        rgbf = colorsys.hsv_to_rgb(values[0], values[1], values[2])
-        return (HSVColor._convert(rgbf[0]),HSVColor._convert(rgbf[1]),HSVColor._convert(rgbf[2]))
-
-    @property
-    def color(self):
-        return Color.fromTuple(self.rgb)
+        return colorsys.hsv_to_rgb(self.hue, self.value, self.saturation)
