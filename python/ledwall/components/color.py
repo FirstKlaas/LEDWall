@@ -31,17 +31,22 @@ class Color(object):
         return [gamma8_table[v] for v in val]
 
     @staticmethod
-    def fromRGB(r=0, g=0, b=0):
-        return Color(r,g,b)
+    def fromHSVColor(color):
+        rgb = color.rgb
+        return Color.fromRGBColor(RGBColor(rgb[0],rgb[1],rgb[2]))    
+
+    @staticmethod
+    def fromRGBColor(color):
+        return Color.fromTuple(color.intValues)    
 
     @staticmethod
     def fromTuple(t):
-        return Color.fromRGB(t[0], t[1], t[2])
+        return Color(t[0], t[1], t[2])
 
     @staticmethod
     def fromHexString(color):
         s = color.lstrip('#')
-        return Color.fromRGB(int(s[0:2],16),int(s[2:4],16), int(s[4:6],16))
+        return Color(int(s[0:2],16),int(s[2:4],16), int(s[4:6],16))
 
     def __init__(self, r=0, g=0, b=0):
         self.red   = r
