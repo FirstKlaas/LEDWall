@@ -40,7 +40,7 @@ class Color(object):
                
     @staticmethod
     def gammaCorrection(val):
-        if len(val) == 1:
+        if isinstance(val,int) or len(val) == 1:
             return gamma8_table[val]
         return [gamma8_table[v] for v in val]
 

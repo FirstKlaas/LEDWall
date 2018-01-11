@@ -3,7 +3,7 @@
 
 #define DATA_PIN           5
 #define BYTES_PER_PIXEL    3
-#define NUMBER_OF_LEDS    144
+#define NUMBER_OF_LEDS    49
 #define MAX_SERIAL_DELAY  100
 
 uint8_t leds[NUMBER_OF_LEDS*BYTES_PER_PIXEL];
