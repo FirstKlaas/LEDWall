@@ -14,8 +14,9 @@ def init_led_wall(settings):
 
 def update_temperature(weather, display, row=0):
 	temp = weather.get_temperature('celsius')
-	tempColor = (255,165,0) if temp > 0 else (0,0,80)	
-	itemp = abs(int(temp['temp']))
+	tempVal = int(temp['temp'])
+	tempColor = (255,165,0) if tempVal > 0 else (0,0,80)	
+	itemp = abs(tempVal)
 	display.writeBitmask(row,itemp,tempColor,(5,5,5))
 
 settings    = Settings()

@@ -20,14 +20,15 @@ uint8_t width, height;
 void setup() {
   //
   Serial.begin(1000000);
+  Serial.setTimeout(60000);
   delay(100);
   time = millis();  
   leds = NULL;
 }
 
 void initPanel() {
-  if (leds != NULL) return; 
   if (cmdbuffer[0] != CMD_INIT_PANEL) return;
+  if (leds != NULL) free(leds); 
   
   //0 = WIDTH
   //1 = HEIGHT
