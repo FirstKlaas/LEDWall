@@ -94,6 +94,10 @@ class Display(object):
         self._s.write(bytearray([Display.CMD_INIT_PANEL, self._cols, self._rows]))
         self.clear()
 
+    def changeSaturation(self, val):
+        for rgb in self:
+            print i
+
     def __iter__(self):
         index  = 0
         while index < self.count:
@@ -429,10 +433,7 @@ class Display(object):
         self._data[::3]  = [color.red] * self.count
         self._data[1::3] = [color.green] * self.count
         self._data[2::3] = [color.blue] * self.count
-        if update:
-            self._s.write(bytearray([CMD_FILL_PANEL, color.red, color.green, color.blue]))
-        else:    
-            self.update(update)
+        self.update(update)
 
     def clear(self, update=False):
         """Clears the display (sets all pixel to black)

@@ -1,6 +1,6 @@
-from ledwall.components import *
+from ..ledwall.components import *
 
-d = Display(7,7, framerate=10)
+d = Display(7,7, framerate=20)
 
 color = HSVColor(0.,1.,1.)
 
