@@ -84,11 +84,17 @@ class Display(object):
 
     @property
     def id(self):
+        """Returns the ID of this panel.
+
+        :rtype: str
+        """
         return self._id
 
     def changeSaturation(self, val):
         for rgb in self:
-            print i
+            hsv = RGBColor.fromIntValues(rgb[0],rgb[1],rgb[2]).hsv
+            hsv = HSVColor(hsv[0],hsv[1],hsv[2])
+            print hsv
 
     def __iter__(self):
         index  = 0
