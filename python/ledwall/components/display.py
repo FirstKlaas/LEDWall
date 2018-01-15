@@ -1,10 +1,5 @@
 from __future__ import division
 
-try:
-    import serial
-except ImportError:
-    print "Serial not availabe. Use: pip install serial"
-    
 import time
 import sys
 
@@ -64,19 +59,10 @@ class Display(object):
     MODE_LTR          = 0
     MODE_ZIGZAG       = 1
 
-    CMD_INIT_PANEL    = 1
-    CMD_CLEAR_PANEL   = 2
-    CMD_FILL_PANEL    = 3
-    CMD_PAINT_PANEL   = 4
-    
-    def __init__(self, cols, rows, mode=MODE_LTR, portName='/dev/ttyACM0', baudrate=1000000, framerate=25): 
-        self._s          = serial.Serial(portName,baudrate) if 'serial' in sys.modules else None    
+    def __init__(self, cols, rows, sender=None, mode=MODE_LTR, framerate=25, id='LEDPANEL0001'): 
         self._cols       = int(cols)
         self._rows       = int(rows)
         self._data       = [0]*(BYTES_PER_PIXEL*self.count)
-        self._sendbuffer = bytearray(BYTES_PER_PIXEL*self.count+1)
-        self._baudrate   = baudrate
-        self._port       = portName
         self._mode       = mode
         self._lastupdate = None
         self.framerate   = framerate 
@@ -84,6 +70,8 @@ class Display(object):
         self._framenr          = 0
         self._frameDuration    = TimeDelta()
         self._gamma_correction = True
+        self._id               = id
+        self._sender           = sender
         
         if self._cols < 1:
             raise ValueException('Argument cols must be a value greater than 1.', cols) 
@@ -91,8 +79,12 @@ class Display(object):
         if self._rows < 1:
             raise ValueException('Argument rows must be a value greater than 1.', cols)
 
-        self._s.write(bytearray([Display.CMD_INIT_PANEL, self._cols, self._rows]))
-        self.clear()
+        if self._sender:
+            self._sender.init(self)
+
+    @property
+    def id(self):
+        return self._id
 
     def changeSaturation(self, val):
         for rgb in self:
@@ -170,14 +162,6 @@ class Display(object):
         return self.columns * self.rows
 
     @property
-    def baudrate(self):
-        return self._baudrate
-
-    @property
-    def port(self):
-        return self._port
-
-    @property
     def frame(self):
         return self._framenr
 
@@ -189,6 +173,10 @@ class Display(object):
     def framerate(self, value):
         self._framerate = value
         self._millis_per_frame = 1000 / value
+
+    @property
+    def byteCount(self):
+        return len(self._data)
 
     @property
     def transmissionInfo(self):
@@ -444,10 +432,7 @@ class Display(object):
         :rtype: None
         """        
         self._data[:] = [0] * (BYTES_PER_PIXEL*self.count)
-        if update:
-            self._s.write(bytearray([CMD_CLEAR_PANEL]))
-        else:    
-            self.update(update)
+        self.update(update)
 
     def update(self, update=True):
         """Updates the LED display
@@ -489,15 +474,9 @@ class Display(object):
                 time.sleep((self._millis_per_frame-millis)/1000)
 
         self._frameDuration.begin()
-        self._sendbuffer[0] = Display.CMD_PAINT_PANEL
-        for i in range(len(self._data)):
-            self._sendbuffer[i+1] = Color.gammaCorrection(self._data[i]) if self.gammaCorrection else self._data[i]
-
         self._transmissionTime.begin()
-        if self._s:
-            self._s.write(self._sendbuffer)
-        else:
-            print "No serial line"
+        if self._sender:
+            self._sender.update()
 
         self._transmissionTime.measure()
 

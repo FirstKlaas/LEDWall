@@ -10,7 +10,7 @@ from ledwall.widgets.clocks import BinaryCodedSexagesimalClock as BCD
 
 def init_led_wall(settings):
 	cfg = settings['led_wall']
-	return Display(cfg["number_of_columns"],cfg["number_of_rows"], framerate=cfg["framerate"] or 15,baudrate=cfg["baudrate"] or 1000000)
+	return Display(cfg["number_of_columns"],cfg["number_of_rows"], MqttSender(), framerate=cfg["framerate"])
 
 def update_temperature(weather, display, row=0):
 	temp = weather.get_temperature('celsius')
