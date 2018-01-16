@@ -103,6 +103,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="arduino-mqtt.html">Arduino Mqtt</a></li>
 </ul>
 
             
@@ -172,17 +173,19 @@
 <span id="display-class-doc"></span><h1>Display<a class="headerlink" href="#display" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="ledwall.components.Display">
-<em class="property">class </em><code class="descclassname">ledwall.components.</code><code class="descname">Display</code><span class="sig-paren">(</span><em>cols</em>, <em>rows</em>, <em>mode=0</em>, <em>portName='/dev/ttyACM0'</em>, <em>baudrate=1000000</em>, <em>framerate=25</em><span class="sig-paren">)</span><a class="headerlink" href="#ledwall.components.Display" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ledwall.components.</code><code class="descname">Display</code><span class="sig-paren">(</span><em>cols</em>, <em>rows</em>, <em>sender=None</em>, <em>mode=0</em>, <em>framerate=25</em>, <em>id='LEDPANEL0001'</em><span class="sig-paren">)</span><a class="headerlink" href="#ledwall.components.Display" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construktor.</p>
-<p>Create a new instance of an led display. The baudrate has to match the baudrate of the arduino sketch.
-Also the portName has to match the name of the port, the arduino is connected to. On windows os based
-systems the name is something like ‘COM3’.</p>
-<p>The max value for the baudrate depends on the quality of the USB Cable as well as the length of the cable.
-I tested successfully a baudrate of 1000000.</p>
+<p>Create a new instance of an led display. The Display class manages the colorstate of the LEDs on the physical panel. The class offers
+a lot of methods to set and change the colors. The physical LEDs are updated via the update() method. Because there are different ways
+to connect the arduino to your computer, the transmission of the data is managed by an instance of a <code class="docutils literal"><span class="pre">Sender</span></code>. THis library offers
+several Implementations (SerialSender, MqttSender, TkSender).</p>
+<p>The methods to manipulate the color state of the pixels pay respect to the wiring mode you used.</p>
 <p>A very basic program could look like this:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ledwall.components</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">d</span> <span class="o">=</span> <span class="n">Display</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">MqttSender</span><span class="p">()</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">Display</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="n">s</span><span class="p">)</span>
 
 <span class="n">red</span>   <span class="o">=</span> <span class="n">Color</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">green</span> <span class="o">=</span> <span class="n">Color</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>    
@@ -201,6 +204,7 @@ I tested successfully a baudrate of 1000000.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>cols</strong> (<a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The number of columns of the display</li>
 <li><strong>rows</strong> (<a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The number of rows of the display.</li>
+<li><strong>sender</strong> (<em>ledwall.components.Sender</em>) – Instance of the sender (One of the subclasses, to be more precise)</li>
 <li><strong>mode</strong> (<a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The mode that the LEDs ar organized. Left-to-Right or Zig-Zag. Defaults to Display.MODE_LTR.</li>
 </ul>
 </td>
@@ -309,6 +313,20 @@ The y value must be with the range: <code class="docutils literal"><span class="
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/constants.html#None" title="(in Python v2.7)">None</a></p>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ledwall.components.Display.id">
+<code class="descname">id</code><a class="headerlink" href="#ledwall.components.Display.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the ID of this panel.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#str" title="(in Python v2.7)">str</a></td>
 </tr>
 </tbody>
 </table>
@@ -434,7 +452,7 @@ the basic usage:</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>column</strong> (<a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The column to be filled.</li>
-<li><strong>color</strong> (<em>Color</em><em>, </em><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em>, </em><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) – The color for the column. If you want to deactivate or clear a row, just use black (0,0,0) as color value.</li>
+<li><strong>color</strong> (<em>Color</em><em>, </em><em>RGBColor</em><em>, </em><em>HSVColor</em><em>, </em><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em>, </em><a class="reference external" href="http://python.readthedocs.io/en/v2.7.2/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) – The color for the column. If you want to deactivate or clear a row, just use black (0,0,0) as color value.</li>
 <li><strong>update</strong> (<em>boolean</em>) – If True, the display will be updated.</li>
 </ul>
 </td>
