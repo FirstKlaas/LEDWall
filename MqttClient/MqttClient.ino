@@ -12,6 +12,8 @@
 #define CMD_PAINT_PANEL     4
 #define CMD_SET_PIXEL       5
 #define CMD_WRITE_RAW       6
+
+#define CMD_SET_FRAME_NR  254
 #define CMD_SHOW          255
 
 uint16_t numberOfLeds; 
@@ -22,7 +24,7 @@ char ssid[]        = "***"; // ssid of your accesspoint
 char password[]    = "***"; // password for your accesspoint 
 char mqtt_server[] = "***"; // IP or hostname of your mqtt server
 byte mac[6];                                  // Buffer for storing the MAC Address.
-uint16_t currentframeNr;
+uint16_t currentFrameNr;
 
 WiFiClient* espClient;
 PubSubClient* client;
@@ -62,6 +64,16 @@ uint16_t bytesToWord(uint8_t high,uint8_t low) {
   return result;
 }
 
+boolean checkFrameConsistency(uint16_t frameNr) {
+  if (frameNr == currentFrameNr) return true;
+  if (frameNr > currentFrameNr) {
+    FastLED.clear();
+    currentFrameNr = frameNr;
+    return true;
+  }
+  return false;
+}
+
 void callback(char* topic, byte* payload, unsigned int length) {
   #ifdef DEBUG
   Serial.print("Message arrived [");
@@ -73,20 +85,24 @@ void callback(char* topic, byte* payload, unsigned int length) {
   
   switch (payload[0]) {
     case CMD_INIT_PANEL:
-      initPanel(payload);
+      initPanel(payload, length);
       break;
 
     case CMD_SET_PIXEL:
-      setPixel(payload);
+      setPixel(payload, length);
       break;
 
     case CMD_SHOW:
-      showPanel(payload);
+      showPanel(payload, length);
       break;
 
     case CMD_WRITE_RAW:
-      cmdWriteRaw(payload);
-      break;  
+      cmdWriteRaw(payload, length);
+      break;
+
+    case CMD_SET_FRAME_NR:
+      cmdSetFrameNr(payload,length);
+      break;
   }
 }
 
@@ -119,6 +135,12 @@ void reconnect() {
   }
 }
 
+void cmdSetFrameNr(byte* cmdbuffer, uint16_t length) {
+  if (cmdbuffer[0] != CMD_SET_FRAME_NR) return;
+  if (length != 3) return;
+  currentFrameNr = bytesToWord(cmdbuffer[1], cmdbuffer[2]);
+}
+
 /**
  * Write some bytes directly to the led buffer. 
  * Currently no check for 'Index out of Bounds'
@@ -145,7 +167,7 @@ void reconnect() {
  *     
  *     @since: 15.01.2018
  */
-void cmdWriteRaw(byte* cmdbuffer) {
+void cmdWriteRaw(byte* cmdbuffer, uint16_t length) {
   if (cmdbuffer[0] != CMD_WRITE_RAW) return;
   if (leds == NULL) return; 
 
@@ -155,16 +177,32 @@ void cmdWriteRaw(byte* cmdbuffer) {
   memcpy(leds+startIndex,cmdbuffer+5,numBytes);
 }
 
-void initPanel(byte* cmdbuffer) {
+/**
+ * Initializes the "panel"
+ * If the provided frame number is smaller than the curent frame number,
+ * the operation will be canceled.
+ * 
+ * If the memory for the leds already has been allocated, the operation 
+ * will be canceled.
+ * 
+ * If the first byte ist not CMD_SHOW, the operation will be canceled.
+ * 
+ * Byte Position
+ * =============
+ * 0 : Command Byte. must be CMD_SHOW
+ * 1 : width of the panel. The number of leds per row.
+ * 2 : height of the panel. The number of rows.
+ * 3 : HIGH byte of the initial frame nr. .
+ * 4 : LOW byte of the initial frame nr. 
+ */
+void initPanel(byte* cmdbuffer, uint16_t length) {
   if (cmdbuffer[0] != CMD_INIT_PANEL) return;
   if (leds != NULL) free(leds); 
   
-  //0 = WIDTH
-  //1 = HEIGHT
-  
   const byte width  = cmdbuffer[1];
   const byte height = cmdbuffer[2];
-  currentframeNr = bytesToWord(cmdbuffer[3],cmdbuffer[4]);
+  
+  currentFrameNr = bytesToWord(cmdbuffer[3],cmdbuffer[4]);
   
   numberOfLeds = width * height;
   
@@ -175,15 +213,35 @@ void initPanel(byte* cmdbuffer) {
   FastLED.showColor(CRGB::Green);
 }
 
-void showPanel(byte* cmdBuffer) {
-  if (cmdBuffer[0] != CMD_SHOW) return;
+/**
+ * Updates the LEDs,
+ * If the provided frame number is smaller than the curent frame number,
+ * the operation will be canceled.
+ * 
+ * Byte Position
+ * =============
+ * 0 : Command Byte. must be CMD_SHOW
+ * 1 : HIGH byte frame nr to be updated.
+ * 2 : LOW byte frame nr to be updated. 
+ */
+void showPanel(byte* cmdbuffer, uint16_t length) {
+  if (cmdbuffer[0] != CMD_SHOW) return;
   if (leds == NULL) return; 
-  
-  //memcpy(leds,cmdBuffer+1,numberOfLeds * 3);
-  FastLED.show(); 
+  const uint16_t fnr = bytesToWord(cmdbuffer[1],cmdbuffer[2]);
+  #ifdef DEBUG
+  Serial.print("Updating panel frame nr. ");
+  Serial.print(fnr);
+  Serial.print(". Current frame number is ");
+  Serial.print(currentFrameNr);
+  #endif
+  // Are we updating the current frame?
+  if (checkFrameConsistency(fnr)) {
+    FastLED.show();
+    currentFrameNr++;
+  } 
 }
 
-void setPixel(byte* cmdBuffer) {
+void setPixel(byte* cmdBuffer, uint16_t length) {
   if (cmdBuffer[0] != CMD_SET_PIXEL) return;
   if (leds == NULL) return; 
   uint16_t index = (cmdBuffer[1] << 8) | cmdBuffer[2];
