@@ -20,12 +20,12 @@ BYTES_PER_PIXEL = 3
 class Display(object):
     """Construktor. 
 
-    Create a new instance of an led display. The baudrate has to match the baudrate of the arduino sketch.
-    Also the portName has to match the name of the port, the arduino is connected to. On windows os based
-    systems the name is something like 'COM3'.
+    Create a new instance of an led display. The Display class manages the colorstate of the LEDs on the physical panel. The class offers
+    a lot of methods to set and change the colors. The physical LEDs are updated via the update() method. Because there are different ways
+    to connect the arduino to your computer, the transmission of the data is managed by an instance of a ``Sender``. THis library offers
+    several Implementations (SerialSender, MqttSender, TkSender).
 
-    The max value for the baudrate depends on the quality of the USB Cable as well as the length of the cable.
-    I tested successfully a baudrate of 1000000.
+    The methods to manipulate the color state of the pixels pay respect to the wiring mode you used.
 
     A very basic program could look like this:
 
@@ -33,7 +33,9 @@ class Display(object):
     
         from ledwall.components import *
 
-        d = Display(16,32)
+
+        s = MqttSender()
+        d = Display(16,32,s)
         
         red   = Color(255,0,0)
         green = Color(0,255,0)    
@@ -49,6 +51,9 @@ class Display(object):
 
     :param rows: The number of rows of the display.
     :type rows: int
+
+    :param sender: Instance of the sender (One of the subclasses, to be more precise)
+    :type sender: ledwall.components.Sender 
 
     :param mode: The mode that the LEDs ar organized. Left-to-Right or Zig-Zag. Defaults to Display.MODE_LTR.
     :type mode: int

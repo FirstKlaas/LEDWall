@@ -135,6 +135,20 @@ void reconnect() {
   }
 }
 
+/**
+ * Sets the current frame number.
+ * 
+ * If the command byte is other than CMD_SET_FRAME_NR
+ * the operation will be canceled.
+ * If the length is not 3, the operation will be canceled.
+ * 
+ * Byte Position
+ * =============
+ * 0 : Command Byte. must be CMD_SET_FRAME_NR
+ * 1 : HIGH byte of the frame number
+ * 2 : LOW byte of the frame number
+ * 
+ */
 void cmdSetFrameNr(byte* cmdbuffer, uint16_t length) {
   if (cmdbuffer[0] != CMD_SET_FRAME_NR) return;
   if (length != 3) return;
@@ -164,6 +178,7 @@ void cmdSetFrameNr(byte* cmdbuffer, uint16_t length) {
  *       - Starting index and the number 
  *         of bytes to write is higher
  *         than leds buffer
+ *       - Add support for frame numbers
  *     
  *     @since: 15.01.2018
  */
@@ -218,6 +233,8 @@ void initPanel(byte* cmdbuffer, uint16_t length) {
  * If the provided frame number is smaller than the curent frame number,
  * the operation will be canceled.
  * 
+ * If length is not 3, operation will be canceled.
+ * 
  * Byte Position
  * =============
  * 0 : Command Byte. must be CMD_SHOW
@@ -227,6 +244,8 @@ void initPanel(byte* cmdbuffer, uint16_t length) {
 void showPanel(byte* cmdbuffer, uint16_t length) {
   if (cmdbuffer[0] != CMD_SHOW) return;
   if (leds == NULL) return; 
+  if (length != 3) return;
+  
   const uint16_t fnr = bytesToWord(cmdbuffer[1],cmdbuffer[2]);
   #ifdef DEBUG
   Serial.print("Updating panel frame nr. ");
@@ -241,10 +260,39 @@ void showPanel(byte* cmdbuffer, uint16_t length) {
   } 
 }
 
+/**
+ * Set the r,g,b values at the given index.
+ * 
+ * There is no check if the index is to high. If no memory for
+ * the leds has been allocated, the operation will be not be
+ * performed.
+ * If length is not 8, the operation will nor be performed.
+ * 
+ * The function does not check if the index is "well-aligned". 
+ * Because every leds consumes three bytes, an align index is
+ * dividable bei three. If, for example, the index is 2, then 
+ * the blue value for led[0] and the red and green value for
+ * led[1] will be set.
+ * 
+ * Byte Position
+ * =============
+ * 0 : Command Byte. must be CMD_SET_PIXEL
+ * 1 : HIGH byte of the index.
+ * 2 : LOW byte of the index. 
+ * 3 : HIGH byte of target frame.
+ * 4 : LOW byte of the target frame. 
+ * 5 : red value for the pixel (if index is well aligned) 
+ * 6 : green value for the pixel (if index is well aligned) 
+ * 7 : blued value for the pixel (if index is well aligned) 
+ */
 void setPixel(byte* cmdBuffer, uint16_t length) {
   if (cmdBuffer[0] != CMD_SET_PIXEL) return;
   if (leds == NULL) return; 
-  uint16_t index = (cmdBuffer[1] << 8) | cmdBuffer[2];
+  if (length != 8) return;
+  
+  uint16_t index = bytesToWord(cmdBuffer[1], cmdBuffer[2]);
+  uint16_t fnr = bytesToWord(cmdBuffer[3],cmdBuffer[4]);
+  
   #ifdef DEBUG
   Serial.print("Index: ");
   Serial.println(index);
@@ -255,10 +303,19 @@ void setPixel(byte* cmdBuffer, uint16_t length) {
   Serial.print("B: ");
   Serial.println(cmdBuffer[5]);
   #endif
-  
-  leds[index]   = cmdBuffer[3];
-  leds[index+1] = cmdBuffer[4];
-  leds[index+2] = cmdBuffer[5];
+
+  if (checkFrameConsistency(fnr)) {
+    leds[index]   = cmdBuffer[3];
+    leds[index+1] = cmdBuffer[4];
+    leds[index+2] = cmdBuffer[5];
+  } else {
+    #ifdef DEBUG
+    Serial.print(F("Wrong frame number. Got "));
+    Serial.print(fnr);
+    Serial.print(F(". Expected at least "));
+    Serial.print(currentFrameNr);
+    #endif     
+  }
 }
 
 void setup() {
