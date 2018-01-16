@@ -492,14 +492,16 @@ class Display(object):
         self._transmissionTime.measure()
 
 
-    def showImage(self, path, update=False):
+    def showImage(self, path, update=False, transparentColor=None):
         if 'PIL' not in sys.modules:
             raise ValueError('Module PIL not available. Consider to install PIL to use this function.')
         img = Image.open(path)
         rgbimg = img.convert('RGB')
         for y in range(self.rows):
           for x in range(self.columns):
-            self.setPixel(x,y,rgbimg.getpixel((x,y)))
+            color = rgbimg.getpixel((x,y))
+            if transparentColor != color:
+                self.setPixel(x,y,color)
         self.update(update)
 
     def showImageAt(self, image, src_coords=None, dest_coords=None, transparentColor=None, update=False):

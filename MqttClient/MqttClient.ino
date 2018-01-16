@@ -163,33 +163,34 @@ void cmdSetFrameNr(byte* cmdbuffer, uint16_t length) {
  * Byte Position
  * =============
  * 0 : Command Byte. must be CMD_WRITE_RAW
- * 1 : HIGH Byte of starting index
- * 2 : LOW Byte of starting index
+ * 1 : HIGH Byte of frame number
+ * 2 : LOW Byte of frame number
  * 3 : HIGH Byte of number of bytes to write 
- * 4 : LOW Byte of number of bytes to write
- * 5 : First byte to write. All following bytes
+ * 4 : LOW Byte of starting index
+ * 5 : HIGH Byte of number of bytes to write 
+ * 6 : LOW Byte of number of bytes to write
+ * 7 : First byte to write. All following bytes
  *     will be copied directly to the ledbuffer.
- *     
- *     TODO: Check for violations 
- *       - payload has fewer bytes than 
- *         indicated by Byte 3 and 4
- *       - Starting index is higher than 
- *         leds buffer
- *       - Starting index and the number 
- *         of bytes to write is higher
- *         than leds buffer
- *       - Add support for frame numbers
  *     
  *     @since: 15.01.2018
  */
 void cmdWriteRaw(byte* cmdbuffer, uint16_t length) {
-  if (cmdbuffer[0] != CMD_WRITE_RAW) return;
   if (leds == NULL) return; 
+  if (cmdbuffer[0] != CMD_WRITE_RAW) return;
+  
+  // Check if enough bytes are availabel to read the 
+  // Parameters.
+  //
+  if (length < 7) return;
 
-  uint16_t startIndex = bytesToWord(cmdbuffer[1], cmdbuffer[2]);
-  uint16_t numBytes = bytesToWord(cmdbuffer[3], cmdbuffer[4]);
- 
-  memcpy(leds+startIndex,cmdbuffer+5,numBytes);
+  uint16_t frameNumber = bytesToWord(cmdbuffer[1], cmdbuffer[2]);
+  if (checkFrameConsistency(frameNumber)) {
+    uint16_t startIndex = bytesToWord(cmdbuffer[3], cmdbuffer[4]);
+    if (startIndex >= (numberOfLeds * 3)) return;
+    uint16_t numBytes = bytesToWord(cmdbuffer[5], cmdbuffer[6]);
+    if (startIndex+numBytes > (numberOfLeds * 3)) return; 
+    memcpy(leds+startIndex,cmdbuffer+7,numBytes);
+  }
 }
 
 /**
