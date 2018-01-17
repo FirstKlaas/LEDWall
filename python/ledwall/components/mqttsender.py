@@ -1,6 +1,7 @@
 from sender import Sender
 from color import Color
 import paho.mqtt.client as mqtt
+from socket import error as SocketError
 
 def on_connect(client, userdata, flags, rc):
     print "Connected with result code " + str(rc)
@@ -17,12 +18,6 @@ class MqttSender(Sender):
         self._client.on_connect = on_connect
         self._client.on_message = self._on_message
         self._client.connect(server, port, 60)
-
-    # The callback for when the client receives a CONNACK response from the server.
-    def _on_connect(self, client, userdata, flags, rc):
-        print "Connected with result code " + str(rc)
-        client.subscribe("$SYS/#")
-        client.loop_start()
 
     # The callback for when a PUBLISH message is received from the server.
     def _on_message(self, client, userdata, msg):
@@ -77,3 +72,9 @@ class MqttSender(Sender):
         data = bytearray([1,self.panel.columns,self.panel.rows])
         self._client.publish(self.panel.id,data)
         #client.loop_forever()
+
+    def _publish(self, data):
+        try:
+            self._client.publish(self.panel.id,bytearray(buf))
+        except SocketError:
+            print "Could not send data."
