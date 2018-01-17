@@ -8,6 +8,9 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("$SYS/#")
     client.loop_start()
 
+def on_message(self, client, userdata, msg):
+    print(msg.topic)
+
 class MqttSender(Sender):
     def __init__(self, server='nebuhr', port=1883):
         Sender.__init__(self)
@@ -16,12 +19,11 @@ class MqttSender(Sender):
         self._client = mqtt.Client()
 
         self._client.on_connect = on_connect
-        self._client.on_message = self._on_message
-        self._client.connect(server, port, 60)
+        self._client.on_message = on_message
+
+        #self._client.connect(server, port, 60)
 
     # The callback for when a PUBLISH message is received from the server.
-    def _on_message(self, client, userdata, msg):
-        print(msg.topic)
 
     def update(self):
         if not self._sendbuffer: 
@@ -38,13 +40,10 @@ class MqttSender(Sender):
         for c in self.panel:
             self._setPixel(offset,Color.gammaCorrection(c[0]),Color.gammaCorrection(c[1]),Color.gammaCorrection(c[2]))
             offset += 3
-        self._client.publish(self.panel.id,bytearray([Sender.CMD_SHOW]))        
+        self._publish([Sender.CMD_SHOW] + self._frame_number)        
         
     def _setPixel(self,offset,r,g,b):
-        high = (offset >> 8) & 0xff
-        low  = offset & 0xff 
-
-        self._client.publish(self.panel.id,bytearray([Sender.CMD_SET_PIXEL,high,low,r,g,b]))
+        self._publish([Sender.CMD_SET_PIXEL] + self.itob(offset) + self._frame_number + [r,g,b])
         
     def raw_write(self, offset, data):
         size = len(data)
@@ -56,25 +55,26 @@ class MqttSender(Sender):
         if (offset + size) > self.panel.byteCount:
             raise ValueError("Data exeeds buffer size")
 
-        #TODO Max Payload Size testen        
-        buf = [Sender.CMD_WRITE_RAW, offset >> 8, offset & 0xff, size >> 8, size & 0xff ] + [x for x in data]
-        print buf
-        self._client.publish(self.panel.id,bytearray(buf))
+        self._publish([Sender.CMD_WRITE_RAW] + self.itob(offset) + self.itob(size) + [x for x in data])
 
     def raw_show(self):
-        self._client.publish(self.panel.id,bytearray([Sender.CMD_SHOW]))  
+        self._publish([Sender.CMD_SHOW] + self._frame_number)  
 
     def init(self,panel):
         print ('Init')
         Sender.init(self,panel)
         self._sendbuffer = bytearray(3*self.panel.count+1)
-        print "sendbuffer with length  {:d} erzeugt.".format(len(self._sendbuffer))
-        data = bytearray([1,self.panel.columns,self.panel.rows])
-        self._client.publish(self.panel.id,data)
-        #client.loop_forever()
+        self._publish([1,self.panel.columns,self.panel.rows]+self._frame_number)
 
     def _publish(self, data):
         try:
             self._client.publish(self.panel.id,bytearray(buf))
         except SocketError:
             print "Could not send data."
+
+    def itob(self, value):
+        return [(value >> 8) & 0xFF, value & 0xFF]
+
+    @property
+    def _frame_number(self):
+        return self.itob(self.panel.frame)
