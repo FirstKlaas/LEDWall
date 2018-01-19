@@ -135,6 +135,16 @@ class Display(object):
         self._data[index+2] = color.blue                        
         return
 
+    def setColors(self, colors, transparentColor = None):
+        index = 0
+        for c in colors:
+            if c and c != transparentColor:
+                self._setColorAt(index,c)
+            index += 1
+    
+    def getColors(self):
+        return self[:]
+                    
     def __setitem__(self, key, item):
         if not item:
             raise ValueError('None is not allowed for item. Item must be a color instance')
