@@ -2,6 +2,7 @@ from __future__ import division
 
 import time
 import sys
+import itertools
 
 from color import Color
 
@@ -116,7 +117,8 @@ class Display(object):
             index = key*3    
             return tuple(self._data[index:index+3])
 
-        #TODO support slices
+        if isinstance(key, slice):
+            return [color for color in itertools.islice(self, key.start, key.stop, key.step)]
 
         return NotImplemented
 
@@ -151,11 +153,15 @@ class Display(object):
             self._setColorAt(self._coordsToIndex(key[0],key[1]), item)   
 
         if isinstance(key, slice):
-            i = key.start
-            while i<key.stop:
-                if self._setColorAt(i,item) == NotImplemented:
+            i    = key.start or 0
+            n    = 0
+            stop = key.stop or self.count
+            step = key.step or 1
+            while i<stop:
+                if self._setColorAt(i,item[n]) == NotImplemented:
                     return
-                i += (key.step or 1)
+                i += step
+                n += 1
             return
 
         return NotImplemented
