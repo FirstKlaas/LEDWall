@@ -2,7 +2,7 @@
 #include <PubSubClient.h>
 #include <FastLED.h>
 
-#define DEBUG
+//#define DEBUG
 
 #define DATA_PIN     3
 
@@ -20,9 +20,16 @@ uint16_t numberOfLeds;
 
 byte* leds;
 
+char ssid[] = "FRITZ!Box 6360 Cable";
+char password[] = "4249789363748310";
+char mqtt_server[] = "nebuhr";
+
+/**
 char ssid[]        = "***"; // ssid of your accesspoint     
 char password[]    = "***"; // password for your accesspoint 
 char mqtt_server[] = "***"; // IP or hostname of your mqtt server
+**/
+
 byte mac[6];                                  // Buffer for storing the MAC Address.
 uint16_t currentFrameNr;
 
@@ -71,6 +78,13 @@ boolean checkFrameConsistency(uint16_t frameNr) {
     currentFrameNr = frameNr;
     return true;
   }
+  #ifdef DEBUG
+  Serial.print("Wrong frame. Got ");
+  Serial.print(frameNr);
+  Serial.print(" expected at least ");
+  Serial.println(currentFrameNr);
+  #endif
+  
   return false;
 }
 
@@ -80,7 +94,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print(topic);
   Serial.print("] ");
   Serial.print("Length ");
-  Serial.println(length);
+  Serial.print(length);
+  Serial.print(" Command ");
+  Serial.println(payload[0]);
   #endif
   
   switch (payload[0]) {
@@ -165,7 +181,7 @@ void cmdSetFrameNr(byte* cmdbuffer, uint16_t length) {
  * 0 : Command Byte. must be CMD_WRITE_RAW
  * 1 : HIGH Byte of frame number
  * 2 : LOW Byte of frame number
- * 3 : HIGH Byte of number of bytes to write 
+ * 3 : HIGH Byte of starting index
  * 4 : LOW Byte of starting index
  * 5 : HIGH Byte of number of bytes to write 
  * 6 : LOW Byte of number of bytes to write
@@ -252,7 +268,7 @@ void showPanel(byte* cmdbuffer, uint16_t length) {
   Serial.print("Updating panel frame nr. ");
   Serial.print(fnr);
   Serial.print(". Current frame number is ");
-  Serial.print(currentFrameNr);
+  Serial.println(currentFrameNr);
   #endif
   // Are we updating the current frame?
   if (checkFrameConsistency(fnr)) {
@@ -298,17 +314,17 @@ void setPixel(byte* cmdBuffer, uint16_t length) {
   Serial.print("Index: ");
   Serial.println(index);
   Serial.print("R: ");
-  Serial.println(cmdBuffer[3]);
-  Serial.print("G: ");
-  Serial.println(cmdBuffer[4]);
-  Serial.print("B: ");
   Serial.println(cmdBuffer[5]);
+  Serial.print("G: ");
+  Serial.println(cmdBuffer[6]);
+  Serial.print("B: ");
+  Serial.println(cmdBuffer[7]);
   #endif
 
   if (checkFrameConsistency(fnr)) {
-    leds[index]   = cmdBuffer[3];
-    leds[index+1] = cmdBuffer[4];
-    leds[index+2] = cmdBuffer[5];
+    leds[index]   = cmdBuffer[5];
+    leds[index+1] = cmdBuffer[6];
+    leds[index+2] = cmdBuffer[7];
   } else {
     #ifdef DEBUG
     Serial.print(F("Wrong frame number. Got "));
@@ -331,6 +347,7 @@ void setup() {
   client = new PubSubClient(*espClient);
   client -> setServer(mqtt_server, 1883);
   client -> setCallback(callback);
+  client -> subscribe("LEDPANEL0001");
 }
 
 void loop() {
