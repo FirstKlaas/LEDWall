@@ -356,6 +356,28 @@ class Display(object):
     def oddRow(self,row):
         return (row & 1) == 1
 
+    def shiftRowLeft(self, row, update=False):
+        if self.oddRow(row) and self._mode == Display.MODE_ZIGZAG:
+            savedPixel = self.getPixel(0,row)
+            index = self._coordsToIndex(0,row) * 3
+            self._data[index+3: index+self.columns * 3] = self._data[index:index + (self.columns-1) * 3]
+            self.setPixel(self.columns-1,row,savedPixel)
+
+        else:
+            savedPixel = self.getPixel(0,row) 
+            index = self._coordsToIndex(0,row, False) * 3
+            self._data[index:index + (self.columns-1) * 3] = self._data[index+3: index + (self.columns) * 3]
+            self.setPixel(self.columns-1,row,savedPixel)
+
+        self.update(update)
+
+
+    def shiftLeft(self, update=False):
+        for row in range(self.rows):
+            self.shiftRowLeft(row)
+
+        self.update(update)
+            
     def shiftRowRight(self, row, update=False):
         """Shifts all pixels in the specified row to the right.
 
@@ -520,23 +542,12 @@ class Display(object):
                 self.setPixel(x,y,color)
         self.update(update)
 
-    def showImageAt(self, image, src_coords=None, dest_coords=None, transparentColor=None, update=False):
-        if 'PIL' not in sys.modules:
-            raise ValueError('Module PIL not available. Consider to install PIL to use this function.')
-        if not src_coords:
-            src_coords = (0,0,self.columns, self.rows)
-        '''
-        TODO: Den Bereich ermitteln, der gezeichnet werden muss. Das ist eigentlich der Schnittpunkt aus 
-        src und dest, sowie dem Panel
-        '''
-        region = intersectRect(src_coords, dest_coords)
-        if not region:
-            return None
-        region = intersectRect(region, (0,0,self.columns, self.rows))
-        if not region:
-            return None
-        print "Now painting image ... TODO"
-
+    def copyRegionFrom(self, src, sx, sy, dx, dy, width, height, transparentColor=None, update=False):
+        for x in range(width):
+            for y in range(height):
+                color = src.getPixel(sx+x, sy+y)
+                if color and color != transparentColor:
+                    self.setPixel(dx+x, dy+y, color)
 
 class Palette(object):
     def __init__(self, size):
