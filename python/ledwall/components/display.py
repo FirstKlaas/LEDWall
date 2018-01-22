@@ -357,20 +357,22 @@ class Display(object):
         return (row & 1) == 1
 
     def shiftRowLeft(self, row, update=False):
+        startIndex = row * self.columns * 3
+
         if self.oddRow(row) and self._mode == Display.MODE_ZIGZAG:
-            savedPixel = self.getPixel(0,row)
-            index = self._coordsToIndex(0,row) * 3
-            self._data[index+3: index+self.columns * 3] = self._data[index:index + (self.columns-1) * 3]
-            self.setPixel(self.columns-1,row,savedPixel)
+            width = self.columns * 3
+            rightPixel = self._data[startIndex+width-3:startIndex+width]
+            tmp = self._data[startIndex:startIndex+width-3]
+            self._data[startIndex + 3:startIndex+width] = tmp
+            self._data[startIndex:startIndex+3] = rightPixel[:]
 
         else:
-            savedPixel = self.getPixel(0,row) 
-            index = self._coordsToIndex(0,row, False) * 3
-            self._data[index:index + (self.columns-1) * 3] = self._data[index+3: index + (self.columns) * 3]
-            self.setPixel(self.columns-1,row,savedPixel)
-
+            width = self.columns * 3
+            leftPixel = self._data[startIndex:startIndex+3]
+            self._data[startIndex:startIndex+width-3] = self._data[startIndex+3:startIndex+width]
+            self._data[startIndex+width-3:startIndex+width] = leftPixel[:]
+            
         self.update(update)
-
 
     def shiftLeft(self, update=False):
         for row in range(self.rows):
@@ -395,18 +397,21 @@ class Display(object):
 
         :rtype: None
         """
+        startIndex = row * self.columns * 3
+
         if self.oddRow(row) and self._mode == Display.MODE_ZIGZAG:
-            savedPixel = self.getPixel(self.columns-1,row)
-            index = self._coordsToIndex(0,row, False) * 3
-            self._data[index:index + (self.columns-1) * 3] = self._data[index+3: index + (self.columns) * 3]
-            self.setPixel(0,row,savedPixel)
+            width = self.columns * 3
+            leftPixel = self._data[startIndex:startIndex+3]
+            self._data[startIndex:startIndex+width-3] = self._data[startIndex+3:startIndex+width]
+            self._data[startIndex+width-3:startIndex+width] = leftPixel[:]
 
         else:
-            savedPixel = self.getPixel(self.columns-1,row) 
-            index = self._coordsToIndex(0,row) * 3
-            self._data[index+3: index+self.columns * 3] = self._data[index:index + (self.columns-1) * 3]
-            self.setPixel(0,row,savedPixel)
-
+            width = self.columns * 3
+            rightPixel = self._data[startIndex+width-3:startIndex+width]
+            tmp = self._data[startIndex:startIndex+width-3]
+            self._data[startIndex + 3:startIndex+width] = tmp
+            self._data[startIndex:startIndex+3] = rightPixel[:]
+            
         self.update(update)
 
     def shiftRight(self, update=False):
@@ -431,6 +436,10 @@ class Display(object):
     def asRectangle(self):
         return Rectangle(0,0,self.columns, self.rows)
 
+    @property
+    def bounds(self):
+        return Rectangle(0,0,self.columns, self.rows)
+        
     def fillRect(self, x, y, w, h, color, update=False):
         """ Fills a rectangle in the specified color
 
@@ -542,12 +551,15 @@ class Display(object):
                 self.setPixel(x,y,color)
         self.update(update)
 
-    def copyRegionFrom(self, src, sx, sy, dx, dy, width, height, transparentColor=None, update=False):
-        for x in range(width):
-            for y in range(height):
-                color = src.getPixel(sx+x, sy+y)
+    def copyRegionFrom(self, src, rectSrc=None, poindDst=Point(0,0), transparentColor=None, update=False):
+        if not rectSrc:
+            rectSrc = Rectangle(0,0, self.columns, self.rows)
+
+        for x in range(rectSrc.width):
+            for y in range(rectSrc.height):
+                color = src.getPixel(rectSrc.x + y, rectSrc.y + y)
                 if color and color != transparentColor:
-                    self.setPixel(dx+x, dy+y, color)
+                    self.setPixel(pointDst.x+x, pointDst.y+y, color)
 
 class Palette(object):
     def __init__(self, size):
