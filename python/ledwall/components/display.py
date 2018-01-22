@@ -538,8 +538,26 @@ class Display(object):
 
         self._transmissionTime.measure()
 
-
     def showImage(self, path, update=False, transparentColor=None):
+        self.loadImage(path, update, transparentColor)
+
+    def loadImage(self, path, update=False, transparentColor=None):
+        """Loads an image into the LED buffer.
+
+        The method loads an image located at *path* into the LED buffer. If a transparent
+        color is provided, all *trasparent* colors are ignored. If *update = True* the panel
+        data will be updated immediately.
+
+        :param path: The relative or absolute path to the image. The method uses the PIL library
+            for reading the file. So any filetype supported by PIL is supported by this method.
+        :type path: str
+
+        :param update: If True, the panel gets updated via the sender component. Defaults to False
+        :type update: boolean
+        
+        :param transparentColor: The color which defines transparency. Defaults to None.
+        :type transparentColor: tuple
+        """    
         if 'PIL' not in sys.modules:
             raise ValueError('Module PIL not available. Consider to install PIL to use this function.')
         img = Image.open(path)

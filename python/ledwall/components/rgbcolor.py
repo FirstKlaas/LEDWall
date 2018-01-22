@@ -68,3 +68,13 @@ class RGBColor(object):
     def hsv(self):
         return colorsys.rgb_to_hsv(self.red, self.green,self.blue)
 
+    def mixin(self, color, factor=0.5):
+        if factor < 0 or factor > 1:
+            raise ValueError("Factor out of range.", factor)
+        if isinstance(color, RGBColor):
+            mefac = (1.0 - factor)
+            self._r = self._r * mefac + color._r * factor;
+            self._g = self._g * mefac + color._g * factor;
+            self._b = self._b * mefac + color._b * factor;
+        else:
+            raise ValueError("Unsupported data type for color. Expected instance of RGBColor", color)
