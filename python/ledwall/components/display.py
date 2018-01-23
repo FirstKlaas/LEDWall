@@ -438,6 +438,13 @@ class Display(object):
 
     @property
     def bounds(self):
+        """Returns a Rectangle instance where width is equal
+        to the number of columns and height ist equal to the 
+        number of rows.
+
+        :return: Rectangle with a size equal to the size of this display.
+        :rtype: ledwall.geometry.Rectangle
+        """
         return Rectangle(0,0,self.columns, self.rows)
         
     def fillRect(self, x, y, w, h, color, update=False):
