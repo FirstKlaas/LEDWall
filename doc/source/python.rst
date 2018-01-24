@@ -5,21 +5,22 @@ Getting Started
 ---------------
 
 The python library provides modules and classes to manipulate the pixel colors
-on the LED Panel. I tried to design a pythonic API, which makes it very intuitive to paint to the LED panel.
+on the LED Display. I tried to design a pythonic API, which makes it very intuitive to paint to the LED Display.
 
-A very simple python script woul look like this:
+A very simple python script would look like this:
 
 .. code-block:: python
     
-    from ledwall.components import Display
+    from ledwall.components import *
 
-    # Create a new display instance. Using the deafults for
-    # baudrate and port. The desired framerate is 15
-    d = Display(16,32,framerate=15)
+    # Create a new display instance. Using a SerialSender to
+    # send the color data to the arduino.
+    # Setting the desired framerate is 15
+    d = Display(16,32, SerialSender(portName='/dev/ttyACM0', baudrate=1000000), framerate=15)
         
     # Defining a few basic colors    
-    red   = Color(255,0,0)
-    green = Color(0,255,0)    
+    red   = RGBColor.fromIntValues(255,0,0)
+    green = RGBColor.fromIntValues(0,255,0)    
 
     d.fill(green)
     d.setPixel(0,3,red)
