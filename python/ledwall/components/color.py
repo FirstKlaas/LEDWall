@@ -23,6 +23,16 @@ gamma8_table = [  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 
 
 class Color(object):
+    """Represents a color on the display. Because of the nature of the WS2812b
+    LED, colors are represented in the RGB color space. Each component is represented
+    as a byte value [0;255].
+
+    Color instances can be created directly or can be converted from RGBColor instances
+    or HSVColor instances.
+
+    This class provides a class method for gamacorrection. The gamma correction table
+    is especially made for the WS2812b LEDs.
+    """
 
     @staticmethod
     def convert(val):
@@ -46,6 +56,13 @@ class Color(object):
 
     @staticmethod
     def fromHSVColor(color):
+        """Class method to create a new color instance from an 
+        existing HSVColor instance.
+
+        :param color: The HSVColor instance
+        :type color: HSVColor
+        :rtype: Color
+        """
         rgb = color.rgb
         return Color.fromRGBColor(RGBColor(rgb[0],rgb[1],rgb[2]))    
 
@@ -63,6 +80,10 @@ class Color(object):
         return Color(int(s[0:2],16),int(s[2:4],16), int(s[4:6],16))
 
     def __init__(self, r=0, g=0, b=0):
+        """Creates a new color instance. If you don't provide a value
+        for the r, g or b component, it defaults to zero. All values
+        have to be int values and within the range of [0;255]
+        """ 
         self.red   = r
         self.green = g
         self.blue  = b
@@ -92,40 +113,93 @@ class Color(object):
 
     @property
     def red(self):
+        """Returns the red component of this color.
+
+        :rtype: int
+        """ 
         return self._r
 
     @red.setter
     def red(self,value):
+        """Sets the red value of this color.
+
+        The provided value must be within the range [0;255]
+        
+        :param int value: The red channel value.
+        """
         self._r = int(value)
         if self._r < 0 or self._r > 255:
             raise ValueError('Only values between 0 and 255 are accepted for the red channel',value)
 
     @property
     def green(self):
+        """Returns the green component of this color.
+        
+        :rtype: int
+        """ 
         return self._g
 
     @green.setter
     def green(self,value):
+        """Sets the green value of this color.
+
+        The provided value must be within the range [0;255]
+        
+        :param int value: The green channel value.
+        """
         self._g = int(value)
         if self._g < 0 or self._g > 255:
             raise ValueError('Only values between 0 and 255 are accepted for the green channel',value)
 
     @property
     def blue(self):
+        """Returns the blue component of this color.
+
+        :rtype: int
+        """ 
         return self._b
 
     @blue.setter
     def blue(self,value):
+        """Sets the blue value of this color.
+
+        The provided value must be within the range [0;255]
+        
+        :param int value: The blue channel value.
+        """
         self._b = int(value)
         if self._b < 0 or self._b > 255:
             raise ValueError('Only values between 0 and 255 are accepted for the blue channel',value)
 
     @property
     def hexStr(self):
+        """Property for hexadecimal string representation of this color with a leading #. 
+        This is an R/W property
+
+        For Example:
+
+        .. code-block:: python
+    
+            Color c = Color(255,0,16)
+            print c.hexStr
+
+            # This will print '#FF0010' to the console
+
+            # Example for setting a color value
+            c.hexStr = '#ffcc23'
+
+        """
         return "#%0.2X%0.2X%0.2X" % (self._r, self._g, self._b)
 
     @hexStr.setter
     def hexStr(self, value):
+        """
+        Sets the RGB channel values via a hexstring. The hex string has
+        to be well formatted. An exmple for a well formed hex string is
+        '#fa345c'.
+
+        :param str value: The hexstring
+        """ 
         c = Color.fromHexString(value)
         self._r = int(c.red)
         self._g = int(c.green)
@@ -133,19 +207,37 @@ class Color(object):
 
     @property
     def floatValues(self):
+        """Tuple of float values for the RGB channel.
+        """
         return (self.red / 255.0, self.green / 255.0,self.blue / 255.0) 
 
     @property
     def hsvColor(self):
+        """Property for getting a converted HSVColor instance
+        or updating the RGB channels by a HSVColor instance.
+        """
         hsv = self.rgbColor.hsv
         return HSVColor(hsv[0], hsv[1], hsv[2])
 
+    @hsvColor.setter
+    def hsvColor(self, color):
+        if not isinstance(color, HSVColor):
+            raise ValueError('Needs a HSVColor instance as parameter', color)
+        c = Color.fromHSVColor(color)
+        self.red   = c.red
+        self.green = c.green
+        self.blue  = c.blue
+
     @property
     def rgbColor(self):
+        """Converted RGBColor instance
+        """
         return RGBColor.fromIntValues(self.red, self.green,self.blue)
     
     @property
     def gamma8(self):
+        """Tuple of gamma8 corrected RGB values.
+        """
         return (Color.gammaCorrection(self.red),Color.gammaCorrection(self.green),Color.gammaCorrection(self.blue))
 
     def __getitem__(self, key):

@@ -21,7 +21,6 @@ Contents
 --------
 
 .. toctree::
-   :maxdepth: 2
 
    python
    arduino-mqtt

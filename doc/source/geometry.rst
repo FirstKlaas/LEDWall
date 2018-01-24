@@ -1,7 +1,7 @@
 .. display_doc:
 
-Geometry
-========
+ledwall.geometry
+================
 
 The geometry module includes some basic shapes that can be drawn to the display. The basic shapes are *Point*, *Line*, *Rectangle*.
 

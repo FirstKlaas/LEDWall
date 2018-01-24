@@ -28,19 +28,12 @@ A very simple python script would look like this:
 
     d.update()
 
-Components
-----------
 
-The components module contains the :ref:`display-class-doc` class.
-
-Geometry
---------
-
-Dependencies
-------------
+The Modules
+------------------
 
 .. toctree::
-   :maxdepth: 2
 
-   display
+   components
    geometry
+

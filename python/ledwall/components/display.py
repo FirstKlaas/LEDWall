@@ -54,7 +54,7 @@ class Display(object):
     :type rows: int
 
     :param sender: Instance of the sender (One of the subclasses, to be more precise)
-    :type sender: ledwall.components.Sender 
+    :type sender: Sender 
 
     :param mode: The mode that the LEDs ar organized. Left-to-Right or Zig-Zag. Defaults to Display.MODE_LTR.
     :type mode: int
@@ -443,7 +443,7 @@ class Display(object):
         number of rows.
 
         :return: Rectangle with a size equal to the size of this display.
-        :rtype: ledwall.geometry.Rectangle
+        :rtype: Rectangle
         """
         return Rectangle(0,0,self.columns, self.rows)
         
@@ -576,7 +576,16 @@ class Display(object):
                 self.setPixel(x,y,color)
         self.update(update)
 
-    def copyRegionFrom(self, src, rectSrc=None, poindDst=Point(0,0), transparentColor=None, update=False):
+    def copyRegionFrom(self, src, rectSrc=None, pointDst=Point(0,0), transparentColor=None, update=False):
+        """Copy a region from another display. If a transpararent color is provided, all pixels in the
+        source panel with the corresponding color will be ignored. 
+
+        The region will be copied to position specified by *pointDst*. The parameter *pointDst*
+        defaults to the upper left corner (0,0).
+
+        :param Display src: The source display to copy the color values from.
+        :param Rectangle rectSrc: The position and the size of the region to copy. If no value is provided, it defaults to the size of self and position 0,0
+        """
         if not rectSrc:
             rectSrc = Rectangle(0,0, self.columns, self.rows)
 
