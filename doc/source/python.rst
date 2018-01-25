@@ -29,11 +29,9 @@ A very simple python script would look like this:
     d.update()
 
 
-The Modules
-------------------
-
 .. toctree::
+    :hidden:
 
-   components
-   geometry
+    components
+    geometry
 
