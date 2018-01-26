@@ -28,21 +28,6 @@ class MqttSender(Sender):
     # The callback for when a PUBLISH message is received from the server.
 
     def update(self):
-        ''' 
-        if not self._sendbuffer: 
-            raise ValueError('Not initialized')
-
-        self._sendbuffer[0] = Sender.CMD_SHOW
-        for i in range(len(self.panel._data)):
-            self._sendbuffer[i+1] = Color.gammaCorrection(self.panel._data[i]) if self.panel.gammaCorrection else self.panel._data[i]
-  
-        self._client.publish(self.panel.id,self._sendbuffer)
-
-        offset = 0
-        for c in self.panel:
-            self._setPixel(offset,Color.gammaCorrection(c[0]),Color.gammaCorrection(c[1]),Color.gammaCorrection(c[2]))
-            offset += 3
-        '''
         max_payload_size = MqttSender.MAX_PAYLOAD_SIZE-7
         panel_data_size  = len(self.panel._data)
         data             = self.panel._data
