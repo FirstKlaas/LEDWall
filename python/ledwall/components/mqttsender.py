@@ -21,6 +21,9 @@ class MqttSender(Sender):
     """
 
     def __init__(self, server='nebuhr', port=1883):
+        """Server is ther servername or the ip of the mqtt server.
+        This class was successfully tested with the mosquitto 
+        """
         Sender.__init__(self)
         self._server = server
         self._port   = port

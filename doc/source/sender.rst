@@ -26,3 +26,16 @@ SerialSender
 
 .. autoclass:: ledwall.components.SerialSender
 	:members:
+
+
+AsyncSender
+-----------
+
+.. autoclass:: ledwall.components.AsyncSender
+	:members:	
+
+ConsoleSender
+-------------
+
+.. autoclass:: ledwall.components.ConsoleSender
+	:members:		
