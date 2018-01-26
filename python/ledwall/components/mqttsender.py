@@ -12,7 +12,13 @@ def on_message(self, client, userdata, msg):
     print(msg.topic)
 
 class MqttSender(Sender):
+    """
+    """
     MAX_PAYLOAD_SIZE = 80
+    """The maximum length for the payload part of mqtt 
+    message in bytes. This includes the command part as well
+    as the data patr of every command.
+    """
 
     def __init__(self, server='nebuhr', port=1883):
         Sender.__init__(self)

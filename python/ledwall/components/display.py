@@ -22,9 +22,9 @@ class Display(object):
     """Construktor. 
 
     Create a new instance of an led display. The Display class manages the colorstate of the LEDs on the physical panel. The class offers
-    a lot of methods to set and change the colors. The physical LEDs are updated via the update() method. Because there are different ways
-    to connect the arduino to your computer, the transmission of the data is managed by an instance of a ``Sender``. THis library offers
-    several Implementations (SerialSender, MqttSender, TkSender).
+    a lot of methods to set and change the colors. The physical LEDs are updated via the :meth:`~ledwall.components.Display.update` method. Because there are different ways
+    to connect the arduino to your computer, the transmission of the data is managed by an instance of a :class:`~ledwall.components.Sender`. THis library offers
+    several Implementations (:class:`~ledwall.components.SerialSender`, :class:`~ledwall.components.MqttSender`).
 
     The methods to manipulate the color state of the pixels pay respect to the wiring mode you used.
 

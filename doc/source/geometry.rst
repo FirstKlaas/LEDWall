@@ -3,7 +3,7 @@
 ledwall.geometry
 ================
 
-The geometry module includes some basic shapes that can be drawn to the display. The basic shapes are *Point*, *Line*, *Rectangle*.
+The geometry module includes some basic shapes that can be drawn to the display. The basic shapes are :class:`~ledwall.geometry.Point`, :class:`~ledwall.geometry.Line`, :class:`~ledwall.geometry.Rectangle`.
 
 Some sample code:
 

@@ -1,24 +1,35 @@
 
 
-LED Wall
+LED Wall 
 ========
 
-Die Idee
---------
-Ein LED Panel, auf dem man Spiele spielen oder das verschiedene Inhalte, wie zum Beispiel das Wetter oder die Uhrzeit anzeigen kann. Als LEDs kommen LW2812b Streifen, auch bekannt als Neopixel zum Einsatz. 
+An interactive LED matrix based on WS2812b LEDs
+-----------------------------------------------
 
-Architektur
------------
-Raspberry PI (Version 2), Arduino Uno und LW2812b Streifen
+The Idea
+^^^^^^^^
+A LED Matrix which can be used as a display to play games 
+or to show different information (like the current weather 
+conditions)
+
+The Architecture
+^^^^^^^^^^^^^^^^
+
+The main ingredients are:
+
+* Raspberry PI (Version 2)
+* Arduino Uno
+* Many LW2812b LEDs
 
 Python
-------
+^^^^^^
 
-Es gibt eine Umfangreiche Python Bibliothek. Die zentrale Komponente ist das :ref:`display-class-doc`.
+For easy color manipulation as well as different hardware setups I wrote a python library. To get started, 
+read the documentation of the :class:`~ledwall.component.Display` class.
 
 
 Contents
---------
+^^^^^^^^
 
 .. toctree::
 
@@ -26,7 +37,7 @@ Contents
    arduino-mqtt
 
 Indices and tables
-------------------
+^^^^^^^^^^^^^^^^^^
 
 * :ref:`genindex`
 * :ref:`modindex`
