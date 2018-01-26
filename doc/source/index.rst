@@ -25,7 +25,7 @@ Python
 ^^^^^^
 
 For easy color manipulation as well as different hardware setups I wrote a python library. To get started, 
-read the documentation of the :class:`~ledwall.component.Display` class.
+read the documentation of the :class:`~ledwall.components.Display` class.
 
 
 Contents
