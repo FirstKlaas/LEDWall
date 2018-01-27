@@ -27,8 +27,8 @@ class Color(object):
     LED, colors are represented in the RGB color space. Each component is represented
     as a byte value [0;255].
 
-    Color instances can be created directly or can be converted from RGBColor instances
-    or HSVColor instances.
+    Color instances can be created directly or can be converted from :class:`RGBColor` instances
+    or :class:`HSVColor` instances.
 
     This class provides a class method for gamacorrection. The gamma correction table
     is especially made for the WS2812b LEDs.
@@ -50,6 +50,23 @@ class Color(object):
                
     @staticmethod
     def gammaCorrection(val):
+        """Maps the provided values to the corresponding gamma corrected
+        values. See also the property :meth:`~ledwall.components.Color.gamma8`.
+
+        .. code-block:: python
+
+            from ledwall.components import *
+
+            gamma8_table = [ Color.gammaCorrection(c) for c in range(256) ]
+
+            color  = Color(244,5,54)
+            gcolor = [ Color.gammaCorrection(c) for c in color ]
+
+            garr = Color.gammaCorrection([245,23,16,47,3,89,167,213])
+
+        :param val: The value or the values to be corrected.
+        :type val: (int or iterable(int))
+        """
         if isinstance(val,int) or len(val) == 1:
             return gamma8_table[val]
         return [gamma8_table[v] for v in val]
@@ -72,10 +89,39 @@ class Color(object):
 
     @staticmethod
     def fromTuple(t):
+        """Creates an instance from the first three values of the provided tuple.
+        The tree values must be ints and within the range [0;255]. Color order is
+        RGB.
+
+        Example:
+
+        .. code-block:: python
+    
+            from ledwall.components import *
+
+            c = Color.fromTuple((255,12,234))
+
+        :param tuple(int) t: A zubple with the RGB channel values.
+        :rtype: Color
+        """
         return Color(t[0], t[1], t[2])
 
     @staticmethod
     def fromHexString(color):
+        """Creates a color instance from an css color string in hexadicimal
+        notation. 
+
+        Example:
+        
+        .. code-block:: python
+    
+            from ledwall.components import *
+
+            c = Color.fromHexString('#3F234A')
+
+        :param str color: The hex string notation of the collor.
+        :rtype: Color
+        """
         s = color.lstrip('#')
         return Color(int(s[0:2],16),int(s[2:4],16), int(s[4:6],16))
 
