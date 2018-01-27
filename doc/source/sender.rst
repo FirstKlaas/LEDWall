@@ -45,3 +45,9 @@ ProgMemSender
 
 .. autoclass:: ledwall.components.ProgMemSender
 	:members:		
+
+ListSender
+----------
+
+.. autoclass:: ledwall.components.ListSender
+	:members:		
