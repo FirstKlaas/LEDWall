@@ -18,6 +18,10 @@ class ProgMemSender(Sender):
     def size(self):
         return len(self.panel._data)
 
+    @property
+    def name(self):
+        return "{}_{:d}".format(self.panel.id, self.panel.frame)
+
     def update(self):
         if not os.path.exists(self.path):
             os.makedirs(self.path)
@@ -26,7 +30,7 @@ class ProgMemSender(Sender):
         try:
             width  = self.panel.columns
             height = self.panel.rows
-            os.write(fd, "const uint8_t {}[] PROGMEM = {} 0x{:02x}, 0x{:02x},\n".format('name', "{", width, height))
+            os.write(fd, "const uint8_t {}[] PROGMEM = {} 0x{:02x}, 0x{:02x},\n".format(self.name, "{", width, height))
             for i in range(0,self.size,8):
                 bytes = ['0x{:02x}, '.format(b) for b in self.panel._data[i:i+8]]
                 os.write(fd, "    {}\n".format(''.join(bytes)))

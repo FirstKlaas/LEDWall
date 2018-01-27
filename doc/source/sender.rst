@@ -39,3 +39,9 @@ ConsoleSender
 
 .. autoclass:: ledwall.components.ConsoleSender
 	:members:		
+
+ProgMemSender
+-------------
+
+.. autoclass:: ledwall.components.ProgMemSender
+	:members:		
