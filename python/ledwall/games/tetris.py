@@ -1,0 +1,166 @@
+import random
+
+TEMPLATEWIDTH = 5
+TEMPLATEHEIGHT = 5
+
+
+S_SHAPE_TEMPLATE = [['.....',
+                     '.....',
+                     '..OO.',
+                     '.OO..',
+                     '.....'],
+                    ['.....',
+                     '..O..',
+                     '..OO.',
+                     '...O.',
+                     '.....']]
+
+Z_SHAPE_TEMPLATE = [['.....',
+                     '.....',
+                     '.OO..',
+                     '..OO.',
+                     '.....'],
+                    ['.....',
+                     '..O..',
+                     '.OO..',
+                     '.O...',
+                     '.....']]
+
+I_SHAPE_TEMPLATE = [['..O..',
+                     '..O..',
+                     '..O..',
+                     '..O..',
+                     '.....'],
+                    ['.....',
+                     '.....',
+                     'OOOO.',
+                     '.....',
+                     '.....']]
+
+O_SHAPE_TEMPLATE = [['.....',
+                     '.....',
+                     '.OO..',
+                     '.OO..',
+                     '.....']]
+
+J_SHAPE_TEMPLATE = [['.....',
+                     '.O...',
+                     '.OOO.',
+                     '.....',
+                     '.....'],
+                    ['.....',
+                     '..OO.',
+                     '..O..',
+                     '..O..',
+                     '.....'],
+                    ['.....',
+                     '.....',
+                     '.OOO.',
+                     '...O.',
+                     '.....'],
+                    ['.....',
+                     '..O..',
+                     '..O..',
+                     '.OO..',
+                     '.....']]
+
+L_SHAPE_TEMPLATE = [['.....',
+                     '...O.',
+                     '.OOO.',
+                     '.....',
+                     '.....'],
+                    ['.....',
+                     '..O..',
+                     '..O..',
+                     '..OO.',
+                     '.....'],
+                    ['.....',
+                     '.....',
+                     '.OOO.',
+                     '.O...',
+                     '.....'],
+                    ['.....',
+                     '.OO..',
+                     '..O..',
+                     '..O..',
+                     '.....']]
+
+T_SHAPE_TEMPLATE = [['.....',
+                     '..O..',
+                     '.OOO.',
+                     '.....',
+                     '.....'],
+                    ['.....',
+                     '..O..',
+                     '..OO.',
+                     '..O..',
+                     '.....'],
+                    ['.....',
+                     '.....',
+                     '.OOO.',
+                     '..O..',
+                     '.....'],
+                    ['.....',
+                     '..O..',
+                     '.OO..',
+                     '..O..',
+                     '.....']]
+
+PIECES = {'S': S_SHAPE_TEMPLATE,
+          'Z': Z_SHAPE_TEMPLATE,
+          'I': I_SHAPE_TEMPLATE,
+          'J': J_SHAPE_TEMPLATE,
+          'L': L_SHAPE_TEMPLATE,
+          'O': O_SHAPE_TEMPLATE,
+          'T': T_SHAPE_TEMPLATE}
+
+PIECES_COLOR = {'S': (255,  0,  0),
+                'Z': (255,255,  0),
+                'I': (  0,255,  0),
+                'J': (  0,255,255),
+                'L': (255,  0,255),
+                'O': (  0,  0,255),
+                'T': (255,255,255)}
+
+PIECES_ORDER = {'S': 0,'Z': 1,'I': 2,'J': 3,'L': 4,'O': 5,'T': 6}
+
+
+BLANK = '.'
+
+class Tetris(object):
+
+    def __init__(self, display):
+        self._display = display
+        self._currentPiece = self.getNewPiece()
+        self._matrix = [BLANK*display.columns] * display.rows
+
+    @property
+    def width(self):
+        return self._display.columns
+
+    @property
+    def height(self):
+        return self._display.rows
+    
+    def getNewPiece(self):
+        # return a random new piece in a random rotation and color
+        shape = random.choice(list(PIECES.keys()))
+        newPiece = {'shape': shape,
+                    'rotation': random.randint(0, len(PIECES[shape]) - 1),
+                    'x': int(self.width / 2) - int(TEMPLATEWIDTH / 2),
+                    'y': 1, # start it above the board (i.e. less than 0)
+                    'color': PIECES_COLOR.get(shape)}
+        return newPiece
+
+    def drawPiece(self,piece, pixelx=None, pixely=None):
+        shapeToDraw = PIECES[piece['shape']][piece['rotation']]
+        if pixelx == None and pixely == None:
+            # if pixelx & pixely hasn't been specified, use the location stored in the piece data structure
+            pixelx=piece['x']
+            pixely=piece['y']
+
+        # draw each of the boxes that make up the piece
+        for x in range(TEMPLATEWIDTH):
+            for y in range(TEMPLATEHEIGHT):
+                if shapeToDraw[y][x] != BLANK:
+                    self._display.setPixel( pixelx+ x , pixely+y,piece['color'])
