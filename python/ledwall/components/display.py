@@ -8,6 +8,7 @@ from color import Color
 
 from ..util import TimeDelta, intersectRect
 from ..geometry import *
+from asyncsender import AsyncSender
 
 PIL_AVAILABLE = True
 
@@ -65,7 +66,7 @@ class Display(object):
     MODE_LTR          = 0
     MODE_ZIGZAG       = 1
 
-    def __init__(self, cols, rows, sender=None, mode=MODE_LTR, framerate=25, id='LEDPANEL0001'): 
+    def __init__(self, cols, rows, sender=None, mode=MODE_LTR, framerate=25, id='LEDPANEL0001', async=False): 
         self._cols       = int(cols)
         self._rows       = int(rows)
         self._data       = [0]*(BYTES_PER_PIXEL*self.count)
@@ -78,6 +79,8 @@ class Display(object):
         self._gamma_correction = True
         self._id               = id
         self._sender           = sender
+        if sender and async:
+            self._sender = AsyncSender(sender)
         
         if self._cols < 1:
             raise ValueException('Argument cols must be a value greater than 1.', cols) 
@@ -90,17 +93,9 @@ class Display(object):
 
     @property
     def id(self):
-        """Returns the ID of this panel.
-
-        :rtype: str
+        """The panel id as set in the constructor. (read-only)
         """
         return self._id
-
-    def changeSaturation(self, val):
-        for rgb in self:
-            hsv = RGBColor.fromIntValues(rgb[0],rgb[1],rgb[2]).hsv
-            hsv = HSVColor(hsv[0],hsv[1],hsv[2])
-            print hsv
 
     def __iter__(self):
         index  = 0
@@ -580,10 +575,12 @@ class Display(object):
         """Copy a region from another display. If a transpararent color is provided, all pixels in the
         source panel with the corresponding color will be ignored. 
 
-        The region will be copied to position specified by *pointDst*. The parameter *pointDst*
-        defaults to the upper left corner (0,0).
+        The region specified by the :class:`~ledwall.geometry.Rectangle`*rectSrc* will be copied to 
+        position specified by *pointDst*. The parameter *pointDst* defaults to the upper left corner 
+        :class:`~ledwall.geometry.Point`(0,0).
 
         :param Display src: The source display to copy the color values from.
+
         :param Rectangle rectSrc: The position and the size of the region to copy. If no value is provided, it defaults to the size of self and position 0,0
         """
         if not rectSrc:
@@ -591,7 +588,7 @@ class Display(object):
 
         for x in range(rectSrc.width):
             for y in range(rectSrc.height):
-                color = src.getPixel(rectSrc.x + y, rectSrc.y + y)
+                color = src.getPixel(rectSrc.x + x, rectSrc.y + y)
                 if color and color != transparentColor:
                     self.setPixel(pointDst.x+x, pointDst.y+y, color)
 

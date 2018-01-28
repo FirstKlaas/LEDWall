@@ -37,6 +37,10 @@ class HSVColor(object):
         """ 
         return self._h
 
+    @hue.setter
+    def hue(self, value):
+        self.h = val
+
     @property
     def h(self):
         """Same as the property hue. Just for the lazy people.
@@ -44,6 +48,10 @@ class HSVColor(object):
         :rtype: float
         """
         return self._h
+
+    @h.setter
+    def h(self, value):
+        self._h = (self._h + val) % 1.0
 
     @property
     def saturation(self):
@@ -53,6 +61,10 @@ class HSVColor(object):
         """         
         return self._s
 
+    @saturation.setter
+    def saturation(self, val):
+        self.s = val
+    
     @property
     def s(self):
         """Same as the property saturation. Just for the lazy people.
@@ -60,6 +72,11 @@ class HSVColor(object):
         :rtype: float
         """
         return self._s
+
+    @s.setter
+    def s(self, val):
+        self._s += val
+        self._s %= 1.0
 
     @property
     def value(self):
@@ -69,6 +86,10 @@ class HSVColor(object):
         """         
         return self._v
 
+    @value.setter
+    def value(self, val):
+        self.v = val
+
     @property
     def v(self):
         """Same as the property value. Just for the lazy people.
@@ -76,6 +97,11 @@ class HSVColor(object):
         :rtype: float
         """
         return self._v
+
+    @v.setter
+    def v(self, val):
+        self._v += val
+        self._v %= 1.0
 
     @property
     def intValues(self):
