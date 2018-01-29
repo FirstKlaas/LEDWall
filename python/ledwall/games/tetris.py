@@ -106,6 +106,8 @@ T_SHAPE_TEMPLATE = [['.....',
                      '..O..',
                      '.....']]
 
+BLANK = '.'
+
 PIECES = {'S': S_SHAPE_TEMPLATE,
           'Z': Z_SHAPE_TEMPLATE,
           'I': I_SHAPE_TEMPLATE,
@@ -120,19 +122,22 @@ PIECES_COLOR = {'S': (255,  0,  0),
                 'J': (  0,255,255),
                 'L': (255,  0,255),
                 'O': (  0,  0,255),
-                'T': (255,255,255)}
+                'T': (255,255,255),
+                BLANK : (0,0,0),
+                }
 
 PIECES_ORDER = {'S': 0,'Z': 1,'I': 2,'J': 3,'L': 4,'O': 5,'T': 6}
-
-
-BLANK = '.'
 
 class Tetris(object):
 
     def __init__(self, display):
         self._display = display
         self._currentPiece = self.getNewPiece()
-        self._matrix = [BLANK*display.columns] * display.rows
+        self._matrix = [[BLANK for x in range(display.columns)] for y in range(display.rows)]
+
+    @property
+    def matrix(self):
+        return self._matrix
 
     @property
     def width(self):
@@ -142,6 +147,36 @@ class Tetris(object):
     def height(self):
         return self._display.rows
     
+    def checkForCollision(self, piece):
+        shapeToTest = self.getShape(piece)
+        for x in range(TEMPLATEWIDTH):
+            for y in range(TEMPLATEHEIGHT):
+                if shapeToTest[y][x] != BLANK and self.matrix[x][y] != BLANK:
+                    return True
+        return False
+    
+    def isRowComplete(self, row):
+        for x in range(TEMPLATEWIDTH):
+            if self.matrix[x][row] == BLANK:
+                return False
+        return True
+
+    def getShape(self, piece):
+        return PIECES[piece['shape']][piece['rotation']]
+
+    def writePieceToMatrix(self, piece):
+        shape = self.getShape(piece)
+        for x in range(TEMPLATEWIDTH):
+            for y in range(TEMPLATEHEIGHT):
+                if shape[y][x] != BLANK:
+                    self.matrix[x][y] = piece['shape']
+                
+    def writeMatrixToDisplay(self):
+        for x in range(self.width):
+            for y in range(self.height):
+                shape = self.matrix[x][y]
+                self._display.setPixel(x,y, PIECES_COLOR[shape])
+
     def getNewPiece(self):
         # return a random new piece in a random rotation and color
         shape = random.choice(list(PIECES.keys()))
@@ -153,7 +188,7 @@ class Tetris(object):
         return newPiece
 
     def drawPiece(self,piece, pixelx=None, pixely=None):
-        shapeToDraw = PIECES[piece['shape']][piece['rotation']]
+        shapeToDraw = self.getShape(piece)
         if pixelx == None and pixely == None:
             # if pixelx & pixely hasn't been specified, use the location stored in the piece data structure
             pixelx=piece['x']
