@@ -575,9 +575,9 @@ class Display(object):
         """Copy a region from another display. If a transpararent color is provided, all pixels in the
         source panel with the corresponding color will be ignored. 
 
-        The region specified by the :class:`~ledwall.geometry.Rectangle`*rectSrc* will be copied to 
+        The region specified by the :class:'~ledwall.geometry.Rectangle'*rectSrc* will be copied to 
         position specified by *pointDst*. The parameter *pointDst* defaults to the upper left corner 
-        :class:`~ledwall.geometry.Point`(0,0).
+        :class:'~ledwall.geometry.Point'(0,0).
 
         :param Display src: The source display to copy the color values from.
 

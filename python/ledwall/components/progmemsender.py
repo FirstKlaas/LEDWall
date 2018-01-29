@@ -3,31 +3,54 @@ from color import Color
 import os
 
 class ProgMemSender(Sender):
-    def __init__(self, path='.'):
+    def __init__(self, path='.', append=False):
         Sender.__init__(self)
         self._path = path
+        self._append = append
 
     @property
     def filename(self):
-        return "{}_{:d}.h".format(self.panel.id, self.panel.frame)
+    	if self._append:
+        	return "{}.h".format(self.panel.id)
 
+  		return "{}_{:d}.h".format(self.panel.id, self.panel.frame)
+    	
     @property
     def path(self):
+    	"""The path to store the progmem declarations. (readonly)
+    	"""
         return self._path
 
     @property 
     def size(self):
+    	"""The number of bytes to be written for one definition, (readonly)
+    	"""
         return len(self.panel._data)
 
     @property
     def name(self):
+    	"""The name of the sprite. If append is TRue, then the name is a combination
+    	of the panel id and the frame number. Otherwise the name equals to the panel id.
+    	(readonly)
+    	"""
         return "{}_{:d}".format(self.panel.id, self.panel.frame)
 
     def update(self):
+    	"""Writes the paneldata to a c header file as a promemdefinition.
+    	If append is TRue, every frame is appended as a new sprite definition to 
+    	the created file. Otherwise for every frame a new file is created. The filename
+    	is a combination of panel id and framenumber.
+
+    	If gammacorrection is activated for the display, all bytes written to the file
+    	are gamma corrected. See :class:`ledwall.components.Display` for deatils about
+    	gamma correction.
+    	"""
         if not os.path.exists(self.path):
             os.makedirs(self.path)
-            
-        fd = os.open(os.path.join(self.path,self.filename), os.O_WRONLY | os.O_CREAT)
+        
+        mode = (os.O_WRONLY | os.O_APPEND | os.O_CREAT) if self._append else (os.O_WRONLY | os.O_CREAT)
+        fd = os.open(os.path.join(self.path,self.filename), mode)
+        
         try:
             width  = self.panel.columns
             height = self.panel.rows
