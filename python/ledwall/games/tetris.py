@@ -134,6 +134,7 @@ class Tetris(object):
         self._display = display
         self._currentPiece = self.getNewPiece()
         self._matrix = [[BLANK for x in range(display.columns)] for y in range(display.rows)]
+        self._falling_speed = 0.1
 
     @property
     def matrix(self):
@@ -145,8 +146,14 @@ class Tetris(object):
 
     @property
     def height(self):
-        return self._display.rows
+        return self._display.rows    
     
+    def fallDown(self):
+        if self._currentPiece is None:
+            return False
+        #TODO: Wie ist das Verhaeltnis von Frame Nummer und FrameRate zu Zeit und Geschwindigkeit?
+
+
     def checkForCollision(self, piece):
         shapeToTest = self.getShape(piece)
         for x in range(TEMPLATEWIDTH):
@@ -186,6 +193,10 @@ class Tetris(object):
                     'y': 1, # start it above the board (i.e. less than 0)
                     'color': PIECES_COLOR.get(shape)}
         return newPiece
+
+    def copyRow(self, src, dst):
+        for x in range(self.width):
+            self.matrix[x][dst] = self.matrix[x][src]
 
     def drawPiece(self,piece, pixelx=None, pixely=None):
         shapeToDraw = self.getShape(piece)
