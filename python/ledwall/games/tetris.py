@@ -154,11 +154,11 @@ class Tetris(object):
         #TODO: Wie ist das Verhaeltnis von Frame Nummer und FrameRate zu Zeit und Geschwindigkeit?
 
 
-    def checkForCollision(self, piece):
+    def checkForCollision(self, piece, dx=0, dy=0):
         shapeToTest = self.getShape(piece)
         for x in range(TEMPLATEWIDTH):
             for y in range(TEMPLATEHEIGHT):
-                if shapeToTest[y][x] != BLANK and self.matrix[x][y] != BLANK:
+                if shapeToTest[y][x] != BLANK and self.matrix[x+piece['x']+dx][y+piece['y']+dy] != BLANK:
                     return True
         return False
     
@@ -193,6 +193,19 @@ class Tetris(object):
                     'y': 1, # start it above the board (i.e. less than 0)
                     'color': PIECES_COLOR.get(shape)}
         return newPiece
+
+    def checkForCollision(self, piece, dx=0, dy=0):
+        shapeToTest = self.getShape(piece)
+        for x in range(TEMPLATEWIDTH):
+            for y in range(TEMPLATEHEIGHT):
+                if shapeToTest[y][x] != BLANK and self.matrix[x+piece['x']+dx][y+piece['y']+dy] != BLANK:
+                    return True
+        return False
+
+    def isValidPosition(self, piece, dx, dy):
+        x = piece['x'] + dx
+        y = piece['y'] + dy
+        #TODO: Not Implemented
 
     def copyRow(self, src, dst):
         for x in range(self.width):
