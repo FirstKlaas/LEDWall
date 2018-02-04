@@ -14,16 +14,20 @@ CRGB* leds = NULL;
 unsigned long time;
 
 uint8_t cmdbuffer[16];
-uint16_t numberOfLeds = 0;
+uint16_t numberOfLeds = 49;
 uint8_t width, height;
 
 void setup() {
-  //
-  Serial.begin(1000000);
+  
+  Serial.begin(500000);
   Serial.setTimeout(60000);
-  delay(100);
+  delay(3000);
   time = millis();  
   leds = NULL;
+
+  leds = (CRGB*)malloc(49 * sizeof(CRGB));
+  FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, 49);
+  FastLED.showColor(CRGB::Yellow);
 }
 
 void initPanel() {
@@ -38,6 +42,13 @@ void initPanel() {
   height = cmdbuffer[1];
   
   numberOfLeds = width * height;
+  
+  #ifdef DEBUG
+  Serial.print("Init ");
+  Serial.print(width);
+  Serial.print(";");
+  Serial.println(height);
+  #endif
   
   leds = (CRGB*)malloc(numberOfLeds * sizeof(CRGB));
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, numberOfLeds);
@@ -63,14 +74,23 @@ void fillPanel() {
 void paintPanel() {
   if (leds == NULL) return; 
   if (cmdbuffer[0] != CMD_PAINT_PANEL) return;
-  
   Serial.readBytes((uint8_t*) leds,numberOfLeds * 3);
-  FastLED.show(); 
+  #ifdef DEBUG
+  for (int i=0; i< (numberOfLeds * 3); i++) {
+      Serial.print(leds[i]);Serial.print(";");
+      if (i % 21 == 0) {
+        Serial.println("");      
+      }
+  }
+  Serial.println("yo");
+  #endif
+  FastLED.show();
+  
 }
 
 void loop() {
   Serial.readBytes(cmdbuffer,1);
-
+  
   switch(cmdbuffer[0]) {
     case CMD_INIT_PANEL: 
       initPanel(); 

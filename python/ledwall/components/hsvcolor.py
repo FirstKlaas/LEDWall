@@ -39,7 +39,7 @@ class HSVColor(object):
 
     @hue.setter
     def hue(self, value):
-        self.h = val
+        self.h = value
 
     @property
     def h(self):
@@ -51,8 +51,9 @@ class HSVColor(object):
 
     @h.setter
     def h(self, value):
-        self._h = (self._h + val) % 1.0
-
+        self._h = value
+        self._h %= 1.0
+        
     @property
     def saturation(self):
         """The normalized saturation component of the color.

@@ -5,11 +5,12 @@ import serial
 
 class SerialSender(Sender):
 
-    def __init__(self, portName='/dev/ttyACM0', baudrate=1000000):
+    def __init__(self, portName='/dev/ttyACM0', baudrate=500000):
         Sender.__init__(self)
         self._baudrate   = baudrate
         self._port       = portName
-
+        self._s          = serial.Serial(self.port,self.baudrate)  
+        
     @property
     def baudrate(self):
         return self._baudrate
@@ -20,11 +21,17 @@ class SerialSender(Sender):
 
     def init(self,panel):
         Sender.init(self,panel)
-        self._s          = serial.Serial(portName,baudrate)  
         self._sendbuffer = bytearray(3*self.panel.count+1)
-        self._s.write(bytearray([Sender.CMD_INIT_PANEL, self.panel.columns, self.panel.rows]))
+        #print "COL:{}; ROWS:{}".format(self.panel.columns,self.panel.rows)
+        data = [Sender.CMD_INIT_PANEL, self.panel.columns, self.panel.rows]
+        #print data
+        #print "Buffer has size of {} bytes. Number of leds is {} ".format(len(self._sendbuffer), self.panel.count)
+        #print "Panel dimensions are {}x{}".format(self.panel.columns,self.panel.rows)
+        self._s.write(bytearray(data))
+        #print self._s.readline();
 
     def update(self):
+        #print "Updating frame {}".format(self.panel.frame)
         if not self._s: 
             raise ValueError('Not initialized')
 
@@ -33,6 +40,7 @@ class SerialSender(Sender):
             self._sendbuffer[i+1] = Color.gammaCorrection(self.panel._data[i]) if self.panel.gammaCorrection else self.panel._data[i]
 
         if self._s:
+            #print "Sending {} bytes. Data is {}".format(len(self._sendbuffer),[x for x in self._sendbuffer])
             self._s.write(self._sendbuffer)
         else:
             print "No serial line"
