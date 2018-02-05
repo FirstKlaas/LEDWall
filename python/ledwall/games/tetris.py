@@ -171,6 +171,29 @@ class Tetris(object):
                 return False
         return True
 
+    def isColumnComplete(self, column):
+        if column < 0 or column >= self.width:
+            raise ValueError('Column value out of range')
+
+        for y in range(self.height):
+            if self.matrix[column][y] == BLANK:
+                return False
+        return True
+
+    def getCompletedColumns(self):
+        result = []
+        for x in range(self.width):
+            if self.isColumnComplete(x):
+                result += [x]
+        return result
+
+    def getCompletedRows(self):
+        result = []
+        for y in range(self.height):
+            if self.isRowComplete(y):
+                result += [y]
+        return result
+
     def deleteRow(self, row):
         for y in range(row-1,-1,-1):
             for x in range(self.width):
