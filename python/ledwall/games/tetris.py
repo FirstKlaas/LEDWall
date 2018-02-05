@@ -134,8 +134,9 @@ class Tetris(object):
     OVERFLOW_LEFT   = 0
     OVERFLOW_RIGHT  = 1
     OVERFLOW_BOTTOM = 2
-    COLLISION       = 3
-    VALID_POSITION  = 4
+    OVERFLOW_TOP    = 3
+    COLLISION       = 4
+    VALID_POSITION  = 5
 
     def __init__(self, display):
         self._display = display
@@ -206,7 +207,7 @@ class Tetris(object):
 
     def deleteColumn(self, column):
         for y in range(self.height):
-            self._matrix[x][column] = BLANK
+            self._matrix[column][y] = BLANK
 
     def deleteCompleteRows(self):
         deletedRows = 0
