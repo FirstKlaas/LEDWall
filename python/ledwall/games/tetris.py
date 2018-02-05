@@ -195,11 +195,18 @@ class Tetris(object):
         return result
 
     def deleteRow(self, row):
+        # Move rows down.
         for y in range(row-1,-1,-1):
             for x in range(self.width):
                 self._matrix[x][y+1] = self._matrix[x][y]
+
+        # Insert a new blank row at he top.
         for x in range(self.width):
             self._matrix[x][0] = BLANK
+
+    def deleteColumn(self, column):
+        for y in range(self.height):
+            self._matrix[x][column] = BLANK
 
     def deleteCompleteRows(self):
         deletedRows = 0
@@ -210,7 +217,9 @@ class Tetris(object):
         return deletedRows
 
 
-    def getShape(self, piece):
+    def getShape(self, piece=None):
+        piece = self.__ensurePiece(piece)
+
         return PIECES[piece['shape']][piece['rotation']]
 
     def update(self):
@@ -219,7 +228,9 @@ class Tetris(object):
             self.drawPiece(self._currentPiece)
         self._display.update()
 
-    def writePieceToMatrix(self, piece):
+    def writePieceToMatrix(self, piece=None):
+        piece = self.__ensurePiece(piece)
+
         shape = self.getShape(piece)
         for x in range(TEMPLATEWIDTH):
             for y in range(TEMPLATEHEIGHT):
@@ -239,28 +250,19 @@ class Tetris(object):
         self.matrix[x][y] = 'B'
 
     def rotateCW(self, piece=None):
-
-        if piece is None:
-            piece = self._currentPiece
+        piece = self.__ensurePiece(piece)
 
         shape = piece['shape']
         piece['rotation'] += 1
         piece['rotation'] %= len(PIECES[shape])
 
     def rotateCCW(self, piece=None):
-
-        if piece is None:
-            piece = self._currentPiece
-
+        piece = self.__ensurePiece(piece)
+        
         shape = piece['shape']
         piece['rotation'] += len(PIECES[shape])
         piece['rotation'] -= 1
         piece['rotation'] %= len(PIECES[shape])
-
-    def isMatrixRowEmpty(self, row=0):
-        for x in range(self.width):
-            if self.matrix[x][row] != BLANK: return False
-        return True
 
     def getNewPiece(self):
         # return a random new piece in a random rotation and color
@@ -272,7 +274,9 @@ class Tetris(object):
                     'color': (247,137,1)}
         return newPiece
 
-    def checkForCollision(self, piece, dx=0, dy=0):
+    def checkForCollision(self, piece=None, dx=0, dy=0):
+        piece = self.__ensurePiece(piece)
+
         shapeToTest = self.getShape(piece)
         for x in range(TEMPLATEWIDTH):
             for y in range(TEMPLATEHEIGHT):
@@ -283,20 +287,30 @@ class Tetris(object):
                         return Tetris.COLLISION
         return Tetris.VALID_POSITION
 
-    def isOnBoard(self, piece, dx=0, dy=0):
+    def isOnBoard(self, piece=None, dx=0, dy=0):
         """Test if the bounds of the piece are on the
         display. It is ok that the piece extends the upper
         border.
         """
+        piece = self.__ensurePiece(piece)
         x = piece['x'] + dx
         y = piece['y'] + dy
 
         return x >= 0 and x+TEMPLATEWIDTH < self.width and y + TEMPLATEHEIGHT < self.height
 
-    def moveX(self, piece, val):
+    def __ensurePiece(self,piece):
+        if piece is None:
+            piece = self._currentPiece
+        if piece is None:
+            raise ValueError("Provided pice is None and we have no 'currentPiece'")
+        return piece
+
+    def moveX(self, piece=None, val=0):
+        piece = self.__ensurePiece(piece)
         piece['x'] += val
 
-    def testOverflowX(self, piece, dx=0, dy=0):
+    def testOverflowX(self, piece=None, dx=0, dy=0):
+        piece = self.__ensurePiece(piece)
         shapeToTest = self.getShape(piece)
         px = piece['x'] + dx
         py = piece['y'] + dy
@@ -309,7 +323,8 @@ class Tetris(object):
                     return Tetris.OVERFLOW_RIGHT
         return Tetris.VALID_POSITION
 
-    def testOverflowY(self, piece, dx=0, dy=0):
+    def testOverflowY(self, piece=None, dx=0, dy=0):
+        piece = self.__ensurePiece(piece)
         shapeToTest = self.getShape(piece)
         px = piece['x'] + dx
         py = piece['y'] + dy
@@ -317,9 +332,13 @@ class Tetris(object):
             for y in range(TEMPLATEHEIGHT):
                 if py + y >= self.height and shapeToTest[y][x] != BLANK:
                     return Tetris.OVERFLOW_BOTTOM
+                if py + y < 0 and  shapeToTest[y][x] != BLANK:
+                    return Tetris.OVERFLOW_TOP
+
         return Tetris.VALID_POSITION
 
-    def isValidPosition(self, piece, dx=0, dy=0):
+    def isValidPosition(self, piece=None, dx=0, dy=0):
+        piece = self.__ensurePiece(piece)
         if self.isOnBoard(piece,dx,dy):
             return not self.checkForCollision(piece, dx, dy)
 
@@ -346,7 +365,8 @@ class Tetris(object):
         for x in range(self.width):
             self.matrix[x][dst] = self.matrix[x][src]
 
-    def drawPiece(self,piece, pixelx=None, pixely=None):
+    def drawPiece(self,piece=None, pixelx=None, pixely=None):
+        piece = self.__ensurePiece(piece)
         shapeToDraw = self.getShape(piece)
         if pixelx == None and pixely == None:
             # if pixelx & pixely hasn't been specified, use the location stored in the piece data structure

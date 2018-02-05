@@ -41,12 +41,20 @@ def newPiece():
 	if t.checkForCollision(t._currentPiece) == Tetris.VALID_POSITION:
 		t.writePieceToMatrix(t._currentPiece)
 		t.deleteCompleteRows()
+		# TODO: Create an animation for the columns an rows to be
+		# deleted.
+		for c in t.getCompletedColumns():
+			t.deleteColumn(c)
 		t._currentPiece = t.getNewPiece()
 		t.update()
 
 def moveDown():
 	p = t._currentPiece
-	if t.testOverflowY(p,dy=1) == Tetris.VALID_POSITION:
+	overflow = t.testOverflowY(p,dy=1)
+	# When moving down, an overflow at the top is acceptable.
+	# This is alwas true at the very beginning for every new piece,
+	# because they start above the display.
+	if overflow in [Tetris.VALID_POSITION,Tetris.OVERFLOW_TOP]:
 		p['y'] += 1
 		t.update()
 
