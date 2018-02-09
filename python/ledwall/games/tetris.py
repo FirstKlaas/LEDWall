@@ -122,7 +122,7 @@ PIECES_COLOR = {'S': (255,  0,  0),
                 'J': (  0,255,255),
                 'L': (255,  0,255),
                 'O': (  0,  0,255),
-                'T': (255,255,255),
+                'T': (255,100,255),
                 BLANK : (0,0,0),
                 'B': (255,255,255),
                 }
@@ -181,6 +181,19 @@ class Tetris(object):
                 return False
         return True
 
+    def dissolveColumn(self, column):
+        for y in range(self.height):
+            self._matrix[column][y] = 'B'
+
+        for val in range(255,0,-25):
+            # Set the color for the column
+            PIECES_COLOR['B'] = (val,val,val)
+            self.writeMatrixToDisplay()   
+            self._display.update()
+
+        PIECES_COLOR['B'] = (255,255,255)
+        
+
     def getCompletedColumns(self):
         result = []
         for x in range(self.width):
@@ -196,7 +209,18 @@ class Tetris(object):
         return result
 
     def deleteRow(self, row):
+        # Animate row to be deleted
+        for x in range(self.width):
+            self._matrix[x][row] = 'B'
+
+        for val in range(255,0,-25):
+            PIECES_COLOR['B'] = (val,val,val)
+            self.writeMatrixToDisplay()
+            self._display.update()
+
+        PIECES_COLOR['B'] = (255,255,255)
         # Move rows down.
+
         for y in range(row-1,-1,-1):
             for x in range(self.width):
                 self._matrix[x][y+1] = self._matrix[x][y]

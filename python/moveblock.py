@@ -8,7 +8,7 @@ import time
 s = SerialSender()
 #print "WAIT"
 time.sleep(5)
-d = Display(7,7,s)
+d = Display(7,7,s, framerate=25)
 t = Tetris(d)
 
 t.update()
@@ -38,12 +38,16 @@ def moveUp():
 		t.update()
 
 def newPiece():
+	if t.testOverflowX() != Tetris.VALID_POSITION: return
+	if t.testOverflowY() != Tetris.VALID_POSITION: return
+	
 	if t.checkForCollision(t._currentPiece) == Tetris.VALID_POSITION:
 		t.writePieceToMatrix(t._currentPiece)
 		t.deleteCompleteRows()
-		# TODO: Create an animation for the columns an rows to be
-		# deleted.
+		
 		for c in t.getCompletedColumns():
+			# Animate deletion
+			t.dissolveColumn(c)			
 			t.deleteColumn(c)
 		t._currentPiece = t.getNewPiece()
 		t.update()

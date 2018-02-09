@@ -32,7 +32,7 @@ class RGBColor(object):
     
     @property
     def intValues(self):
-        return (self.red * 255., self.green * 255., self.blue * 255.)
+        return (int(self.red * 255.), int(self.green * 255.), int(self.blue * 255.))
 
     @property
     def red(self):
@@ -40,9 +40,7 @@ class RGBColor(object):
 
     @red.setter
     def red(self,value):
-        self._r = int(value)
-        if self._r < 0 or self._r > 255:
-            raise ValueError('Only values between 0 and 255 are accepted for the red channel',value)
+        self._r = value % 1.0
 
     @property
     def green(self):
@@ -50,9 +48,7 @@ class RGBColor(object):
 
     @green.setter
     def green(self,value):
-        self._g = int(value)
-        if self._g < 0 or self._g > 255:
-            raise ValueError('Only values between 0 and 255 are accepted for the green channel',value)
+        self._g = value % 1.0
 
     @property
     def blue(self):
@@ -60,9 +56,7 @@ class RGBColor(object):
 
     @blue.setter
     def blue(self,value):
-        self._b = int(value)
-        if self._b < 0 or self._b > 255:
-            raise ValueError('Only values between 0 and 255 are accepted for the blue channel',value)
+        self._b = value % 1.0
 
     @property
     def hsv(self):
