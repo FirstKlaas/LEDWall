@@ -36,4 +36,5 @@
 settings.json
 build
 docbuild
-
+.idea
+node_modules
