@@ -9,6 +9,6 @@ hueDelta = 0.01
 
 while True:
 	display.fill(bg)
-	game.drawPiece(game.getNewPiece())
+	game.drawPiece(game.get_new_piece())
 	display.update()
 	bg._h += hueDelta 

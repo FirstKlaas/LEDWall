@@ -57,12 +57,12 @@ class Color(object):
 
             from ledwall.components import *
 
-            gamma8_table = [ Color.gammaCorrection(c) for c in range(256) ]
+            gamma8_table = [ Color.gamma_correction(c) for c in range(256) ]
 
             color  = Color(244,5,54)
-            gcolor = [ Color.gammaCorrection(c) for c in color ]
+            gcolor = [ Color.gamma_correction(c) for c in color ]
 
-            garr = Color.gammaCorrection([245,23,16,47,3,89,167,213])
+            garr = Color.gamma_correction([245,23,16,47,3,89,167,213])
 
         :param val: The value or the values to be corrected.
         :type val: (int or iterable(int))

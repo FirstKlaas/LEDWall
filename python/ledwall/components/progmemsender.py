@@ -56,7 +56,7 @@ class ProgMemSender(Sender):
             height = self.panel.rows
             os.write(fd, "const uint8_t {}[] PROGMEM = {} 0x{:02x}, 0x{:02x},\n".format(self.name, "{", width, height))
             for i in range(0,self.size,8):
-                if self.panel.gammaCorrection:
+                if self.panel.gamma_correction:
                     rowdata = Color.gammaCorrection(self.panel._data[i:i+8])
                 else:
                     rowdata = self.panel._data[i:i+8]

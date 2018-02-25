@@ -37,7 +37,7 @@ class SerialSender(Sender):
 
         self._sendbuffer[0] = Sender.CMD_PAINT_PANEL
         for i in range(len(self.panel._data)):
-            self._sendbuffer[i+1] = Color.gammaCorrection(self.panel._data[i]) if self.panel.gammaCorrection else self.panel._data[i]
+            self._sendbuffer[i+1] = Color.gammaCorrection(self.panel._data[i]) if self.panel.gamma_correction else self.panel._data[i]
 
         if self._s:
             #print "Sending {} bytes. Data is {}".format(len(self._sendbuffer),[x for x in self._sendbuffer])

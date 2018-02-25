@@ -10,6 +10,8 @@
 #define CMD_FILL_PANEL      3
 #define CMD_PAINT_PANEL     4
 
+#define NODEBUG
+
 CRGB* leds = NULL;
 unsigned long time;
 
@@ -82,7 +84,7 @@ void paintPanel() {
         Serial.println("");      
       }
   }
-  Serial.println("yo");
+  Serial.println(" => Frame complete");
   #endif
   FastLED.show();
   
@@ -90,7 +92,10 @@ void paintPanel() {
 
 void loop() {
   Serial.readBytes(cmdbuffer,1);
-  
+  #ifdef DEBUG
+  Serial.print("Command: ");
+  Serial.println(cmdbuffer[0]);
+  #endif
   switch(cmdbuffer[0]) {
     case CMD_INIT_PANEL: 
       initPanel(); 

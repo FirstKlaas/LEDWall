@@ -63,9 +63,9 @@ class BinaryCodedSexagesimalClock(Clock):
 			return
 
 		t = datetime.now();
-		d.writeBitmask(self.y,t.hour, self._hourColorHigh,self._hourColorLow)
-		d.writeBitmask(self.y+1,t.minute, self._minuteColorHigh,self._minuteColorLow)
-		d.writeBitmask(self.y+2,t.second, self._secondColorHigh,self._secondColorLow)
+		d.write_bitmask(self.y, t.hour, self._hourColorHigh, self._hourColorLow)
+		d.write_bitmask(self.y + 1, t.minute, self._minuteColorHigh, self._minuteColorLow)
+		d.write_bitmask(self.y + 2, t.second, self._secondColorHigh, self._secondColorLow)
 		d.update(update)
 
 

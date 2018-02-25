@@ -43,6 +43,12 @@ O_SHAPE_TEMPLATE = [['.....',
                      '.OO..',
                      '.....']]
 
+P_SHAPE_TEMPLATE = [['.....',
+                     '.....',
+                     '..O..',
+                     '.....',
+                     '.....']]
+
 J_SHAPE_TEMPLATE = [['.....',
                      '.O...',
                      '.OOO.',
@@ -106,6 +112,38 @@ T_SHAPE_TEMPLATE = [['.....',
                      '..O..',
                      '.....']]
 
+C_SHAPE_TEMPLATE = [['.....',
+                     '..O..',
+                     '..OO.',
+                     '.....',
+                     '.....'],
+                    ['.....',
+                     '.....',
+                     '..OO.',
+                     '..O..',
+                     '.....'],
+                    ['.....',
+                     '.....',
+                     '.OO..',
+                     '..O..',
+                     '.....'],
+                    ['.....',
+                     '..O..',
+                     '.OO..',
+                     '.....',
+                     '.....']]
+
+D_SHAPE_TEMPLATE = [['.....',
+                     '..O..',
+                     '..O..',
+                     '.....',
+                     '.....'],
+                    ['.....',
+                     '.....',
+                     '.OO..',
+                     '.....',
+                     '.....']]
+
 BLANK = '.'
 
 PIECES = {'S': S_SHAPE_TEMPLATE,
@@ -114,7 +152,11 @@ PIECES = {'S': S_SHAPE_TEMPLATE,
           'J': J_SHAPE_TEMPLATE,
           'L': L_SHAPE_TEMPLATE,
           'O': O_SHAPE_TEMPLATE,
-          'T': T_SHAPE_TEMPLATE}
+          'T': T_SHAPE_TEMPLATE,
+          'P': P_SHAPE_TEMPLATE,
+          'C': C_SHAPE_TEMPLATE,
+          'D': D_SHAPE_TEMPLATE,
+          }
 
 PIECES_COLOR = {'S': (255,  0,  0),
                 'Z': (255,255,  0),
@@ -123,11 +165,14 @@ PIECES_COLOR = {'S': (255,  0,  0),
                 'L': (255,  0,255),
                 'O': (  0,  0,255),
                 'T': (255,100,255),
+                'P': (86, 244, 66),
+                'C': (255, 249, 226),
+                'D': (152, 47, 175),
                 BLANK : (0,0,0),
                 'B': (255,255,255),
                 }
 
-PIECES_ORDER = {'S': 0,'Z': 1,'I': 2,'J': 3,'L': 4,'O': 5,'T': 6}
+#PIECES_ORDER = {'S': 0,'Z': 1,'I': 2,'J': 3,'L': 4,'O': 5,'T': 6}
 
 class Tetris(object):
 
@@ -140,9 +185,13 @@ class Tetris(object):
 
     def __init__(self, display):
         self._display = display
-        self._currentPiece = self.getNewPiece()
+        self._currentPiece = self.get_new_piece()
         self._matrix = [[BLANK for x in range(display.columns)] for y in range(display.rows)]
         self._falling_speed = 0.1
+
+    @property
+    def piece(self):
+        return self._currentPiece
 
     @property
     def matrix(self):
@@ -269,7 +318,7 @@ class Tetris(object):
         for x in range(self.width):
             for y in range(self.height):
                 shape = self.matrix[x][y]
-                self._display.setPixel(x,y, PIECES_COLOR[shape])
+                self._display.set_pixel(x, y, PIECES_COLOR[shape])
 
     def setBrickAt(self, x, y):
         self.matrix[x][y] = 'B'
@@ -289,15 +338,18 @@ class Tetris(object):
         piece['rotation'] -= 1
         piece['rotation'] %= len(PIECES[shape])
 
-    def getNewPiece(self):
+    def new_piece(self):
+        self._currentPiece = self.get_new_piece()
+
+    def get_new_piece(self):
         # return a random new piece in a random rotation and color
         shape = random.choice(list(PIECES.keys()))
-        newPiece = {'shape': shape,
-                    'rotation': random.randint(0, len(PIECES[shape]) - 1),
-                    'x': int(self.width / 2) - int(TEMPLATEWIDTH / 2),
-                    'y': -3, # start it above the board (i.e. less than 0)
-                    'color': (247,137,1)}
-        return newPiece
+        new_piece = {'shape': shape,
+                     'rotation': random.randint(0, len(PIECES[shape]) - 1),
+                     'x': int(self.width / 2) - int(TEMPLATEWIDTH / 2),
+                     'y': -3,  # start it above the board (i.e. less than 0)
+                     'color': (247, 137, 1)}
+        return new_piece
 
     def checkForCollision(self, piece=None, dx=0, dy=0):
         piece = self.__ensurePiece(piece)
@@ -405,4 +457,4 @@ class Tetris(object):
                     px = x + pixelx
                     py = y + pixely
                     if py >= 0 and py < self.height and px >= 0 and py < self.width:
-                        self._display.setPixel( px , py,piece['color'])
+                        self._display.set_pixel(px, py, piece['color'])

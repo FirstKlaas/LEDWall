@@ -95,4 +95,4 @@ class Point(object):
 		raise ValueError("Cannot add value", value)
 
 	def paint(self, display, color=(255,255,255), update=False):
-		display.setPixel(self.x,self.y, color, update)
+		display.set_pixel(self.x, self.y, color, update)

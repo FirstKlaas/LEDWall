@@ -52,11 +52,11 @@ class MqttSender(Sender):
         
     def raw_write(self, offset, data):
         size = len(data)
-        if offset >= self.panel.byteCount:
+        if offset >= self.panel.byte_count:
             raise ValueError("Offset to high")
         if offset < 0:
             raise ValueError("Offset may not be negative")
-        if (offset + size) > self.panel.byteCount:
+        if (offset + size) > self.panel.byte_count:
             raise ValueError("Data exeeds buffer size")
 
         self._publish([Sender.CMD_WRITE_RAW] + self._frame_number + self.itob(offset) + self.itob(size) + [x for x in data])

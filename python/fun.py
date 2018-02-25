@@ -17,7 +17,7 @@ def update_temperature(weather, display, row=0):
 	tempVal = int(temp['temp'])
 	tempColor = (255,165,0) if tempVal > 0 else (0,0,80)	
 	itemp = abs(tempVal)
-	display.writeBitmask(row,itemp,tempColor,(5,5,5))
+	display.write_bitmask(row, itemp, tempColor, (5, 5, 5))
 
 settings    = Settings()
 d           = init_led_wall(settings)
