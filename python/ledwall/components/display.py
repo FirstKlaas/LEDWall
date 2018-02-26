@@ -1,4 +1,5 @@
 from __future__ import division
+from __future__ import print_function
 
 import time
 import sys
@@ -6,7 +7,7 @@ import itertools
 
 from color import Color
 
-from ..util import TimeDelta, intersectRect
+from ..util import TimeDelta
 from ..geometry import *
 from asyncsender import AsyncSender
 
@@ -16,7 +17,7 @@ try:
     from PIL import Image
 except ImportError:
     Image = None
-    print "Python Image library (PIL) not availabe. Image functions will be disabled"
+    print("Python Image library (PIL) not availabe. Image functions will be disabled")
 
 BYTES_PER_PIXEL = 3
 
@@ -24,10 +25,12 @@ BYTES_PER_PIXEL = 3
 class Display(object):
     """Constructor.
 
-    Create a new instance of an led display. The Display class manages the color state of the LEDs on the physical panel. The class offers
-    a lot of methods to set and change the colors. The physical LEDs are updated via the :meth:`~ledwall.components.Display.update` method. Because there are different ways
-    to connect the arduino to your computer, the transmission of the data is managed by an instance of a :class:`~ledwall.components.Sender`. THis library offers
-    several Implementations (:class:`~ledwall.components.SerialSender`, :class:`~ledwall.components.MqttSender`).
+    Create a new instance of an led display. The Display class manages the color state of the LEDs on the physical
+    panel. The class offers a lot of methods to set and change the colors. The physical LEDs are updated via the
+    :meth:`~ledwall.components.Display.update` method. Because there are different ways to connect the arduino to your
+    computer, the transmission of the data is managed by an instance of a :class:`~ledwall.components.Sender`.
+    This library offers several Implementations (:class:`~ledwall.components.SerialSender`,
+    :class:`~ledwall.components.MqttSender`).
 
     The methods to manipulate the color state of the pixels pay respect to the wiring mode you used.
 
@@ -68,7 +71,7 @@ class Display(object):
     MODE_LTR = 0
     MODE_ZIGZAG = 1
 
-    def __init__(self, cols, rows, sender=None, mode=MODE_LTR, framerate=25, id='LEDPANEL0001', async=False): 
+    def __init__(self, cols, rows, sender=None, mode=MODE_LTR, framerate=25, panel_id='LEDPANEL0001', async=False):
         self._cols = int(cols)
         self._rows = int(rows)
         self._data = [0]*(BYTES_PER_PIXEL*self.count)
@@ -81,7 +84,7 @@ class Display(object):
         self._frame_nr = 0
         self._frameDuration = TimeDelta()
         self._gamma_correction = True
-        self._id = id
+        self._id = panel_id
         self._sender = sender
         if sender and async:
             self._sender = AsyncSender(sender)
@@ -157,7 +160,7 @@ class Display(object):
             self._set_color_at(self._adjust_index(key), item)
             return
 
-        if isinstance(key, (tuple,list)) and len(key) == 2:
+        if isinstance(key, (tuple, list)) and len(key) == 2:
             self._set_color_at(self._coords_to_index(key[0], key[1]), item)
 
         if isinstance(key, slice):
@@ -247,9 +250,9 @@ class Display(object):
     def set_pixel(self, x, y, color, update=False):
         """Setting the color for a single pixel. 
 
-        Returns True, if setting the pixel was successful, Fales else. The color is specified by a color instance. The method
-        also accepts tuples or arrays as colors. The length has to be at least 3 and must contain the value for red, green, and
-        blue.
+        Returns True, if setting the pixel was successful, Fales else. The color is specified by a color instance.
+        The method also accepts tuples or arrays as colors. The length has to be at least 3 and must contain the
+        value for red, green, and blue.
 
         The following lines have the same effect.
 
@@ -265,7 +268,8 @@ class Display(object):
         :param y: The number of rows of the display.
         :type y: int
 
-        :param color: The color for the pixel. If you want to deactivate or clear a pixel, just use black (0,0,0) as color value.
+        :param color: The color for the pixel. If you want to deactivate or clear a pixel, just use black (0,0,0)
+        as color value.
         :type color: Color, tuple, list
 
         :param update: If True, the display will be updated.
@@ -298,14 +302,13 @@ class Display(object):
         return Color.fromTuple(tuple(self._data[index:index+3]))
 
     def write_bitmask(self, row, value, color1=(266, 165.0), color0=(0, 0, 0)):
-        x = 0
         index = self._coords_to_index(6, row)
         for b in range(self.columns):
             self._set_color_at(index, color1 if value & 1 else color0)
             value >>= 1
             index -= 1
 
-    def hLine(self, row, color, update=False):
+    def horizontal_line(self, row, color, update=False):
         """Drawing a horizontal line in the specified color. 
 
         The row value must be with the range: ``0 <= row < height``
@@ -313,7 +316,8 @@ class Display(object):
         :param row: The row to be filled.
         :type row: int
 
-        :param color: The color for the row. If you want to deactivate or clear a row, just use black (0,0,0) as color value.
+        :param color: The color for the row. If you want to deactivate or clear a row, just use black (0,0,0)
+        as color value.
         :type color: Color, tuple, list
 
         :param update: If True, the display will be updated.
@@ -322,11 +326,11 @@ class Display(object):
         :rtype: None
         """
         if (row < 0) or (row >= self.rows):
-            raise ValueError('Rowindex out of bounds.', row)
+            raise ValueError('Row index out of bounds.', row)
         self[row*self.columns:((row+1)*self.columns)] = Color.convert(color)    
         self.update(update)
 
-    def vline(self, column, color, update=False):
+    def vertical_line(self, column, color, update=False):
         """Drawing a vertical line in the specified color. 
 
         The column value must be with the range: ``0 <= column < width``
@@ -334,7 +338,8 @@ class Display(object):
         :param column: The column to be filled.
         :type column: int
 
-        :param color: The color for the column. If you want to deactivate or clear a row, just use black (0,0,0) as color value.
+        :param color: The color for the column. If you want to deactivate or clear a row, just use black (0,0,0)
+        as color value.
         :type color: Color, RGBColor, HSVColor, tuple, list
         
         :param update: If True, the display will be updated.
@@ -384,10 +389,11 @@ class Display(object):
         """Shifts all pixels in the specified row to the right.
 
         The method shift pixels to the right visually, because the method takes the mode into account. This means, if
-        the mode is ``Display.MODE_ZIGZAG`` and the row number is odd, then the pixela are shifted physically to the left.
-        But because this row reads left to right, the pixels are shifted visually to the right.
+        the mode is ``Display.MODE_ZIGZAG`` and the row number is odd, then the pixels are shifted physically to the
+        left. But because this row reads left to right, the pixels are shifted visually to the right.
 
-        The pixel to the outermost right will be placed at the first column. So this method implements a rotation of the pixels.
+        The pixel to the outermost right will be placed at the first column. So this method implements a rotation of
+        the pixels.
 
         :param row: The number of the row to be shifted. The row value must be with the range: ``0 <= row < height``
         :type row: int
@@ -418,10 +424,11 @@ class Display(object):
         """Shifts all pixels to the right.
 
         The method shift pixels to the right visually, because the method takes the mode into account. This means, if
-        the mode is ``Display.MODE_ZIGZAG`` and the row number is odd, then the pixela are shifted physically to the left.
-        But because this row reads left to right, the pixels are shifted visually to the right.
+        the mode is ``Display.MODE_ZIGZAG`` and the row number is odd, then the pixela are shifted physically to the
+        left. But because this row reads left to right, the pixels are shifted visually to the right.
 
-        The pixel to the outermost right will be placed at the first column. So this method implements a rotation of the pixels.
+        The pixel to the outermost right will be placed at the first column. So this method implements a rotation of
+        the pixels.
 
         :param update: If True, the display will be updated.
         :type update: boolean
@@ -445,12 +452,21 @@ class Display(object):
         :return: Rectangle with a size equal to the size of this display.
         :rtype: Rectangle
         """
-        return Rectangle(0,0,self.columns, self.rows)
+        return Rectangle(0, 0, self.columns, self.rows)
         
     def fill_rect(self, x, y, w, h, color, update=False):
         """ Fills a rectangle in the specified color
 
-        :param color: The color for the rectangle. If you want to deactivate or clear a rectangle, just use black (0,0,0) as color value.
+        :param int x: X position of the top left corner
+
+        :param int y: Y position of the top left corner
+
+        :param int w: Width of the rectangle
+
+        :param int h: Height of the rectangle
+
+        :param color: The color for the rectangle. If you want to deactivate or clear a rectangle, just use
+        black (0,0,0) as color value.
         :type color: Color, tuple, list
         
         :param update: If True, the display will be updated.
@@ -463,18 +479,19 @@ class Display(object):
 
         if rect:
             rect = Rectangle.fromTuple(rect)
-            for px in range(rect.x,rect.right):
+            for px in range(rect.x, rect.right):
                 for py in range(rect.y, rect.bottom):
                     self.set_pixel(px, py, color)
         else:
-            print "No intersection found"
+            print("No intersection found")
 
         self.update(update)
 
     def fill(self, color, update=False):
         """Fills the LED display in the specified color.
 
-        :param color: The color for the display. If you want to deactivate or clear the panel, just use black (0,0,0) as color value.
+        :param color: The color for the display. If you want to deactivate or clear the panel, just use
+        black (0,0,0) as color value.
         :type color: Color, tuple, list
         
         :param update: If True, the display will be updated.
@@ -502,17 +519,17 @@ class Display(object):
     def update(self, update=True):
         """Updates the LED display
 
-        The internal framebuffer is send to the arduino board and the LED stripe gets updated.
+        The internal frame buffer is send to the arduino board and the LED stripe gets updated.
 
         The method takes framerate into account. If the time between this update and the last update
         is less then the milliseconds per frame, the method will sleep 'til the end of the frame and 
         update the data at the end of the frame.
 
-        Every time the LED display is updated, the framenumber will be increased by one. 
+        Every time the LED display is updated, the frame number will be increased by one.
 
         .. note::
            If you are interested to see the time consumed by transferring the date to the arduino,
-           you can read the ransmissionInfo property after updating. The following code snippet shows
+           you can read the transmissionInfo property after updating. The following code snippet shows
            the basic usage:
 
         Read out the timings for transmission:
@@ -552,11 +569,11 @@ class Display(object):
         """Loads an image into the LED buffer.
 
         The method loads an image located at *path* into the LED buffer. If a transparent
-        color is provided, all *trasparent* colors are ignored. If *update = True* the panel
+        color is provided, all *transparent* colors are ignored. If *update = True* the panel
         data will be updated immediately.
 
         :param path: The relative or absolute path to the image. The method uses the PIL library
-            for reading the file. So any filetype supported by PIL is supported by this method.
+            for reading the file. So any file type supported by PIL is supported by this method.
         :type path: str
 
         :param update: If True, the panel gets updated via the sender component. Defaults to False
@@ -577,7 +594,7 @@ class Display(object):
         self.update(update)
 
     def copy_region_from(self, src, rect_src=None, point_dst=Point(0, 0), transparent_color=None, update=False):
-        """Copy a region from another display. If a transpararent color is provided, all pixels in the
+        """Copy a region from another display. If a transparent color is provided, all pixels in the
         source panel with the corresponding color will be ignored. 
 
         The region specified by the :class:'~ledwall.geometry.Rectangle'*rectSrc* will be copied to 
@@ -586,7 +603,14 @@ class Display(object):
 
         :param Display src: The source display to copy the color values from.
 
-        :param Rectangle rect_src: The position and the size of the region to copy. If no value is provided, it defaults to the size of self and position 0,0
+        :param Rectangle rect_src: The position and the size of the region to copy. If no value is provided,
+        it defaults to the size of self and position 0,0
+
+        :param Point point_dst: Where to copy to. Defaults to (0,0)
+
+        :param Color transparent_color: Color to ignore while copying. Defaults to None
+
+        :param boolean update: Update display after this operation. Defaults to False
         """
         if not rect_src:
             rect_src = Rectangle(0, 0, self.columns, self.rows)
@@ -596,3 +620,4 @@ class Display(object):
                 color = src.get_pixel(rect_src.x + x, rect_src.y + y)
                 if color and color != transparent_color:
                     self.set_pixel(point_dst.x + x, point_dst.y + y, color)
+        self.update(update)

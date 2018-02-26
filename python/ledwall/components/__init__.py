@@ -1,4 +1,4 @@
-from display import Display, Palette
+from display import Display
 from color import Color
 from colortable import ColorTable
 from hsvcolor import HSVColor
@@ -11,7 +11,7 @@ from sender import Sender
 from progmemsender import ProgMemSender
 from listsender import ListSender
 
-__all__ = ['Color','Display','ColorTable', 'Palette', 'RGBColor', 'HSVColor', 'SerialSender', 'MqttSender', 'Sender', 'ConsoleSender', 'AsyncSender', 'ProgMemSender', 'ListSender']
+__all__ = ['Color','Display','ColorTable', 'RGBColor', 'HSVColor', 'SerialSender', 'MqttSender', 'Sender', 'ConsoleSender', 'AsyncSender', 'ProgMemSender', 'ListSender']
 
 def rgb_to_hsv(val):
 	return RGBColor.fromIntValues(val[0],val[1],val[2]).hsv
