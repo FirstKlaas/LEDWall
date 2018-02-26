@@ -47,7 +47,7 @@ class MqttSender(Sender):
 
         self.raw_show()
         
-    def _setPixel(self,offset,r,g,b):
+    def _set_pixel(self, offset, r, g, b):
         self._publish([Sender.CMD_SET_PIXEL] + self.itob(offset) + self._frame_number + [r,g,b])
         
     def raw_write(self, offset, data):
@@ -65,6 +65,11 @@ class MqttSender(Sender):
         self._publish([Sender.CMD_SHOW] + self._frame_number)  
 
     def init(self,panel):
+        """
+
+        :param panel:
+        :return:
+        """
         Sender.init(self,panel)
         data = [Sender.CMD_INIT_PANEL,self.panel.columns,self.panel.rows]+self._frame_number
         self._publish(data)
