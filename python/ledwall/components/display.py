@@ -99,6 +99,10 @@ class Display(object):
             self._sender.init(self)
 
     @property
+    def data(self):
+        return self._data
+
+    @property
     def id(self):
         """The panel id as set in the constructor. (read-only)
         """
