@@ -226,6 +226,12 @@ class Display(object):
         return True
 
     def _adjust_column(self, x, y):
+        """
+
+        :param int x: X position
+        :param int y: Y position
+        :return: The adjusted column index.
+        """
         if self._mode == Display.MODE_ZIGZAG and self.odd_row(y):
             return self.columns-x-1
 
@@ -359,6 +365,11 @@ class Display(object):
 
     @staticmethod
     def odd_row(row):
+        """
+
+        :param int row: Test, if the index of the row is even (False) or odd (True)
+        :return: True, if row is odd, False else.
+        """
         return (row & 1) == 1
 
     def shift_row_left(self, row, update=False):
