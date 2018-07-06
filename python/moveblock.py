@@ -1,23 +1,20 @@
+from __future__ import print_function
 from ledwall.components import *
 from ledwall.games.tetris import Tetris
 
-from inputs import get_gamepad
+from ledwall.components.event import *
+
 import time
 
-s = SerialSender()
-time.sleep(5)
-d = Display(7, 7, s, framerate=25)
+from ledwall.util import TimeDelta
+
+udp = UDPSender(server='192.168.178.96')
+#s = SerialSender()
+time.sleep(1)
+d = Display(7, 7, udp)
 t = Tetris(d)
 
 t.update()
-
-run = True
-
-
-def stop_game():
-    global run
-    run = False
-
 
 def move_right():
     p = t.piece
@@ -52,8 +49,6 @@ def new_piece():
         t.deleteCompleteRows()
 
         for c in t.getCompletedColumns():
-            # Animate deletion
-            t.dissolveColumn(c)
             t.deleteColumn(c)
         t.new_piece()
         t.update()
@@ -109,15 +104,49 @@ actions = {
     },
 }
 
-"""
-"""
-
 t.update()
 
-while run:
-    events = get_gamepad()
-    for event in events:
-        if event.code in actions:
-            action = actions[event.code]
-            if event.state in action:
-                action[event.state]()
+queue = EventDispatcher()
+
+# queue.add_emitter(FramerateEmitter(15))
+queue.add_emitter(GamepadEmitter())
+
+running = True
+
+
+class Framerate(object):
+    def __init__(self, framerate):
+        # type : (int) -> None
+        self._millis_per_frame = 1000.0 / framerate
+        self._timer = TimeDelta()
+        self._timer.begin()
+        self._frame = 1
+
+    def update(self, s):
+        self._timer.measure()
+        if self._timer.millis >= self._millis_per_frame:
+            s.update()
+            self._frame += 1
+            self._timer.begin()
+
+
+fr = Framerate(3)
+while running:
+    fr.update(s)
+    event = queue.next_event()
+    if event:
+        if event.type == event.SYSTEM:
+            if event.action == 'update':
+                d.update()
+
+        elif event.type == event.GAMEPAD:
+            # print(event.action)
+            if event.action == 'BTN_BASE2':
+                running = False
+            elif event.action in actions:
+                action = actions[event.action]
+                if event['state'] in action:
+                    action[event['state']]()
+                    s.update()
+
+queue.stop()

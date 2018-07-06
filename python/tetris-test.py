@@ -1,7 +1,7 @@
 from ledwall.components import *
 from ledwall.games.tetris import Tetris
 
-display = Display(7,7,MqttSender(), framerate=1, async=True)
+display = Display(7,7,UDPSender(server='192.168.178.96'))
 game = Tetris(display)
 
 bg = HSVColor(0.0,1.0,0.4)

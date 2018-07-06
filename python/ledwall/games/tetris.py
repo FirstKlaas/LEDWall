@@ -3,7 +3,6 @@ import random
 TEMPLATEWIDTH = 5
 TEMPLATEHEIGHT = 5
 
-
 S_SHAPE_TEMPLATE = [['.....',
                      '.....',
                      '..OO.',
@@ -158,30 +157,30 @@ PIECES = {'S': S_SHAPE_TEMPLATE,
           'D': D_SHAPE_TEMPLATE,
           }
 
-PIECES_COLOR = {'S': (255,  0,  0),
-                'Z': (255,255,  0),
-                'I': (  0,255,  0),
-                'J': (  0,255,255),
-                'L': (255,  0,255),
-                'O': (  0,  0,255),
-                'T': (255,100,255),
+PIECES_COLOR = {'S': (255, 0, 0),
+                'Z': (255, 255, 0),
+                'I': (0, 255, 0),
+                'J': (0, 255, 255),
+                'L': (255, 0, 255),
+                'O': (0, 0, 255),
+                'T': (255, 100, 255),
                 'P': (86, 244, 66),
                 'C': (255, 249, 226),
                 'D': (152, 47, 175),
-                BLANK : (0,0,0),
-                'B': (255,255,255),
+                BLANK: (0, 0, 0),
+                'B': (255, 255, 255),
                 }
 
-#PIECES_ORDER = {'S': 0,'Z': 1,'I': 2,'J': 3,'L': 4,'O': 5,'T': 6}
+
+# PIECES_ORDER = {'S': 0,'Z': 1,'I': 2,'J': 3,'L': 4,'O': 5,'T': 6}
 
 class Tetris(object):
-
-    OVERFLOW_LEFT   = 0
-    OVERFLOW_RIGHT  = 1
+    OVERFLOW_LEFT = 0
+    OVERFLOW_RIGHT = 1
     OVERFLOW_BOTTOM = 2
-    OVERFLOW_TOP    = 3
-    COLLISION       = 4
-    VALID_POSITION  = 5
+    OVERFLOW_TOP = 3
+    COLLISION = 4
+    VALID_POSITION = 5
 
     def __init__(self, display):
         self._display = display
@@ -203,12 +202,11 @@ class Tetris(object):
 
     @property
     def height(self):
-        return self._display.rows    
-    
+        return self._display.rows
+
     def fallDown(self):
         if self._currentPiece is None:
             return False
-        #TODO: Wie ist das Verhaeltnis von Frame Nummer und FrameRate zu Zeit und Geschwindigkeit?
 
     def clearMatrix(self):
         for x in range(self.width):
@@ -234,14 +232,13 @@ class Tetris(object):
         for y in range(self.height):
             self._matrix[column][y] = 'B'
 
-        for val in range(255,0,-25):
+        for val in range(255, 0, -25):
             # Set the color for the column
-            PIECES_COLOR['B'] = (val,val,val)
-            self.writeMatrixToDisplay()   
-            self._display.update()
+            PIECES_COLOR['B'] = (val, val, val)
+            self.writeMatrixToDisplay()
+            # self._display.update()
 
-        PIECES_COLOR['B'] = (255,255,255)
-        
+        PIECES_COLOR['B'] = [255, 255, 255]
 
     def getCompletedColumns(self):
         result = []
@@ -258,21 +255,10 @@ class Tetris(object):
         return result
 
     def deleteRow(self, row):
-        # Animate row to be deleted
-        for x in range(self.width):
-            self._matrix[x][row] = 'B'
-
-        for val in range(255,0,-25):
-            PIECES_COLOR['B'] = (val,val,val)
-            self.writeMatrixToDisplay()
-            self._display.update()
-
-        PIECES_COLOR['B'] = (255,255,255)
         # Move rows down.
-
-        for y in range(row-1,-1,-1):
+        for y in range(row - 1, -1, -1):
             for x in range(self.width):
-                self._matrix[x][y+1] = self._matrix[x][y]
+                self._matrix[x][y + 1] = self._matrix[x][y]
 
         # Insert a new blank row at he top.
         for x in range(self.width):
@@ -284,12 +270,11 @@ class Tetris(object):
 
     def deleteCompleteRows(self):
         deletedRows = 0
-        for y in range(self.height-1,-1,-1):
+        for y in range(self.height - 1, -1, -1):
             while self.isRowComplete(y):
                 deletedRows += 1
                 self.deleteRow(y)
         return deletedRows
-
 
     def getShape(self, piece=None):
         piece = self.__ensurePiece(piece)
@@ -300,7 +285,7 @@ class Tetris(object):
         self.writeMatrixToDisplay()
         if self._currentPiece:
             self.drawPiece(self._currentPiece)
-        self._display.update()
+        # self._display.update()
 
     def writePieceToMatrix(self, piece=None):
         piece = self.__ensurePiece(piece)
@@ -309,11 +294,11 @@ class Tetris(object):
         for x in range(TEMPLATEWIDTH):
             for y in range(TEMPLATEHEIGHT):
                 if shape[y][x] != BLANK:
-                    mx = x+piece['x']
-                    my = y+piece['y']
-                    if mx >= 0 and mx < self.width and my >= 0 and my < self.height:
+                    mx = x + piece['x']
+                    my = y + piece['y']
+                    if not (not (0 <= mx < self.width) or not (0 <= my < self.height)):
                         self.matrix[mx][my] = piece['shape']
-                
+
     def writeMatrixToDisplay(self):
         for x in range(self.width):
             for y in range(self.height):
@@ -332,7 +317,7 @@ class Tetris(object):
 
     def rotateCCW(self, piece=None):
         piece = self.__ensurePiece(piece)
-        
+
         shape = piece['shape']
         piece['rotation'] += len(PIECES[shape])
         piece['rotation'] -= 1
@@ -357,8 +342,8 @@ class Tetris(object):
         shapeToTest = self.getShape(piece)
         for x in range(TEMPLATEWIDTH):
             for y in range(TEMPLATEHEIGHT):
-                mx = x+piece['x']+dx
-                my = y+piece['y']+dy
+                mx = x + piece['x'] + dx
+                my = y + piece['y'] + dy
                 if mx >= 0 and mx < self.width and my >= 0 and my < self.height:
                     if shapeToTest[y][x] != BLANK and self.matrix[mx][my] != BLANK:
                         return Tetris.COLLISION
@@ -373,9 +358,9 @@ class Tetris(object):
         x = piece['x'] + dx
         y = piece['y'] + dy
 
-        return x >= 0 and x+TEMPLATEWIDTH < self.width and y + TEMPLATEHEIGHT < self.height
+        return x >= 0 and x + TEMPLATEWIDTH < self.width and y + TEMPLATEHEIGHT < self.height
 
-    def __ensurePiece(self,piece):
+    def __ensurePiece(self, piece):
         if piece is None:
             piece = self._currentPiece
         if piece is None:
@@ -393,10 +378,10 @@ class Tetris(object):
         py = piece['y'] + dy
         for x in range(TEMPLATEWIDTH):
             for y in range(TEMPLATEHEIGHT):
-                if px + x < 0 and shapeToTest[y][x] != BLANK: 
+                if px + x < 0 and shapeToTest[y][x] != BLANK:
                     return Tetris.OVERFLOW_LEFT
 
-                elif px + x >= self.width and shapeToTest[y][x] != BLANK: 
+                elif px + x >= self.width and shapeToTest[y][x] != BLANK:
                     return Tetris.OVERFLOW_RIGHT
         return Tetris.VALID_POSITION
 
@@ -409,14 +394,14 @@ class Tetris(object):
             for y in range(TEMPLATEHEIGHT):
                 if py + y >= self.height and shapeToTest[y][x] != BLANK:
                     return Tetris.OVERFLOW_BOTTOM
-                if py + y < 0 and  shapeToTest[y][x] != BLANK:
+                if py + y < 0 and shapeToTest[y][x] != BLANK:
                     return Tetris.OVERFLOW_TOP
 
         return Tetris.VALID_POSITION
 
     def isValidPosition(self, piece=None, dx=0, dy=0):
         piece = self.__ensurePiece(piece)
-        if self.isOnBoard(piece,dx,dy):
+        if self.isOnBoard(piece, dx, dy):
             return not self.checkForCollision(piece, dx, dy)
 
         shapeToTest = self.getShape(piece)
@@ -425,30 +410,30 @@ class Tetris(object):
 
         for x in range(TEMPLATEWIDTH):
             for y in range(TEMPLATEHEIGHT):
-                if px + x < 0 and shapeToTest[y][x] != BLANK: 
+                if px + x < 0 and shapeToTest[y][x] != BLANK:
                     return Tetris.OVERFLOW_LEFT
 
-                elif px + x >= self.width and shapeToTest[y][x] != BLANK: 
+                elif px + x >= self.width and shapeToTest[y][x] != BLANK:
                     return Tetris.OVERFLOW_RIGHT
 
                 if py + y >= self.height and shapeToTest[y][x] != BLANK:
                     return Tetris.OVERFLOW_BOTTOM
 
-                if shapeToTest[y][x] != BLANK and self.matrix[px+x][py+y] != BLANK:
-                    return Tetris.COLLISION    
+                if shapeToTest[y][x] != BLANK and self.matrix[px + x][py + y] != BLANK:
+                    return Tetris.COLLISION
         return Tetris.VALID_POSITION
 
     def copyRow(self, src, dst):
         for x in range(self.width):
             self.matrix[x][dst] = self.matrix[x][src]
 
-    def drawPiece(self,piece=None, pixelx=None, pixely=None):
+    def drawPiece(self, piece=None, pixelx=None, pixely=None):
         piece = self.__ensurePiece(piece)
         shapeToDraw = self.getShape(piece)
         if pixelx == None and pixely == None:
             # if pixelx & pixely hasn't been specified, use the location stored in the piece data structure
-            pixelx=piece['x']
-            pixely=piece['y']
+            pixelx = piece['x']
+            pixely = piece['y']
 
         # draw each of the boxes that make up the piece
         for x in range(TEMPLATEWIDTH):

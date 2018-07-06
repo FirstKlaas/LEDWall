@@ -1,7 +1,6 @@
 from __future__ import division
 from __future__ import print_function
 
-import time
 import sys
 import itertools
 
@@ -71,18 +70,13 @@ class Display(object):
     MODE_LTR = 0
     MODE_ZIGZAG = 1
 
-    def __init__(self, cols, rows, sender=None, mode=MODE_LTR, framerate=25, panel_id='LEDPANEL0001', async=False):
+    def __init__(self, cols, rows, sender=None, mode=MODE_LTR, panel_id='LEDPANEL0001', async=False):
         self._cols = int(cols)
         self._rows = int(rows)
         self._data = [0]*(BYTES_PER_PIXEL*self.count)
         self._mode = mode
-        self._last_update = None
-        self._framerate = 0
-        self._millis_per_frame = 0.0
-        self.framerate = framerate
         self._transmissionTime = TimeDelta()
         self._frame_nr = 0
-        self._frameDuration = TimeDelta()
         self._gamma_correction = True
         self._id = panel_id
         self._sender = sender
@@ -196,15 +190,6 @@ class Display(object):
     @property
     def frame(self):
         return self._frame_nr
-
-    @property
-    def framerate(self):
-        return self._framerate
-
-    @framerate.setter
-    def framerate(self, value):
-        self._framerate = value
-        self._millis_per_frame = 1000 / value
 
     @property
     def byte_count(self):
@@ -564,13 +549,6 @@ class Display(object):
 
         self._frame_nr += 1
         
-        if self._frameDuration.hasStarted:
-            self._frameDuration.measure()
-            millis = self._frameDuration.millis
-            if millis < self._millis_per_frame:
-                time.sleep((self._millis_per_frame-millis)/1000)
-
-        self._frameDuration.begin()
         self._transmissionTime.begin()
         if self._sender:
             self._sender.update()
