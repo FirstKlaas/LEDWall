@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import sys
 import itertools
+import time 
 
 from color import Color
 
@@ -22,16 +23,42 @@ BYTES_PER_PIXEL = 3
 
 
 class Display(object):
-    """Constructor.
-
-    Create a new instance of an led display. The Display class manages the color state of the LEDs on the physical
-    panel. The class offers a lot of methods to set and change the colors. The physical LEDs are updated via the
-    :meth:`~ledwall.components.Display.update` method. Because there are different ways to connect the arduino to your
+    """Creates a new instance of a led display. The Display class manages a virtual representation of the color state 
+    of the LEDs on the physical panel. The class offers many methods to set and change colors. The physical LEDs are updated via the
+    :meth:`~ledwall.components.Display.update` method. Because there are different ways to connect the arduino (or ESP) to your
     computer, the transmission of the data is managed by an instance of a :class:`~ledwall.components.Sender`.
     This library offers several Implementations (:class:`~ledwall.components.SerialSender`,
-    :class:`~ledwall.components.MqttSender`).
+    :class:`~ledwall.components.MqttSender`, :class:`~ledwall.components.UDPSender`).
 
-    The methods to manipulate the color state of the pixels pay respect to the wiring mode you used.
+    The methods to manipulate the color state of the pixels pay respect to the wiring mode you used. There are two ways to
+    layout and wire the LEDs on the board. 
+
+    **Modes for Wiring**
+    A word about the modes. The mode describes the way, the leds are organized on the board. Two ways of wiring are supported.
+    *ltr* and *zigzag*.
+
+    **MODE_LTR  (Left-To-Right)**
+    In the mode MODE_LTR, all rows are going from left to right. The cable for the data line (blue) goes alle the way back 
+    from the end of one row to the beginning of the next row.
+
+    .. figure:: mode_ltr.png
+       :scale: 60 %
+       :alt: mode ltr
+       :align: center
+
+       mode ltr
+
+    **MODE_ZIGZAG**
+    In the mode MODE_ZIGZAG all even rows go from left to right where as the the odd rows go from right to left. Organizing leds
+    in this way saves a lot of cable for the data line (blue).
+
+    .. figure:: mode_zigzag.png
+       :scale: 60 %
+       :alt: mode ltr
+       :align: center
+
+       mode_zigzag
+
 
     A very basic program could look like this:
 
@@ -39,18 +66,20 @@ class Display(object):
     
         from ledwall.components import *
 
-
-        s = MqttSender()
-        d = Display(16,32,s)
+        s = SerialSender()            # Creating a serial sender with the default port_name and baudrate
+        d = Display(16,32,s)          # Defining a new display component
         
-        red   = Color(255,0,0)
-        green = Color(0,255,0)    
+        red   = Color(255,0,0)        # Defining an RGB color
+        col   = HSVColor(0.7,0.8,1.0) # Defining an HSVColor    
 
         d.fill(green)
-        d.set_pixel(0,3,red)
-        d.set_pixel(14,23,red)
+        d.set_pixel(0,3,red)          # which is equivalent to d[(0,3)] = red or d[(0,3)] = (255,0,0)
+        d.set_pixel(14,23,col)
 
-        d.update()
+        col.hue += 0.13               # Changing the HUE component of the color
+        d.set_pixel(15,23,col)        # Setting the pixel in this color
+
+        d.update()                    # Updating the physical component
 
     :param cols: The number of columns of the display
     :type cols: int
@@ -68,9 +97,12 @@ class Display(object):
     """    
 
     MODE_LTR = 0
-    MODE_ZIGZAG = 1
+    """Pixels are arranged from left to the right. The data line goes from left to right for every row."""
 
-    def __init__(self, cols, rows, sender=None, mode=MODE_LTR, panel_id='LEDPANEL0001', async=False):
+    MODE_ZIGZAG = 1
+    """Pixels are arranged in a zig zag pattern. The data line goes from left to right and on the next row vica versa."""
+
+    def __init__(self, cols, rows, sender=None, framerate=10, mode=MODE_LTR, panel_id='LEDPANEL0001', async=False):
         self._cols = int(cols)
         self._rows = int(rows)
         self._data = [0]*(BYTES_PER_PIXEL*self.count)
@@ -80,6 +112,10 @@ class Display(object):
         self._gamma_correction = True
         self._id = panel_id
         self._sender = sender
+        self._framerate = framerate
+        self._millis_per_frame = 1000 / framerate
+        self._frame_computation_time = TimeDelta() 
+        
         if sender and async:
             self._sender = AsyncSender(sender)
         
@@ -93,8 +129,20 @@ class Display(object):
             self._sender.init(self)
 
     @property
+    def mode(self):
+        """Returns the mode for this display.
+        """
+        return self._mode
+
+    @property
     def data(self):
+        """Returns the raw byte array for the color data. 
+        """
         return self._data
+
+    @property
+    def fct(self):
+        return self._frame_computation_time
 
     @property
     def id(self):
@@ -177,18 +225,34 @@ class Display(object):
 
     @property
     def columns(self):
+        """
+        :return: The number of columns on this display
+        :rtype: int
+        """
         return self._cols
 
     @property
     def rows(self):
+        """
+        :return: The number of rows on this display
+        :rtype: int
+        """
         return self._rows
 
     @property
     def count(self):
+        """
+        :return: The number of pixels on this display
+        :rtype: int
+        """
         return self.columns * self.rows
 
     @property
     def frame(self):
+        """
+        :return: The current frame number
+        :rtype: int
+        """
         return self._frame_nr
 
     @property
@@ -206,7 +270,12 @@ class Display(object):
     @gamma_correction.setter
     def gamma_correction(self, value):
         self._gamma_correction = value
-            
+        
+    @property
+    def frame_rate(self):
+        """Returns the framerate."""
+        return self._framerate
+
     def _test_coords(self, x, y):
         if x < 0 or x >= self.columns:
             return False
@@ -263,8 +332,9 @@ class Display(object):
         :param y: The number of rows of the display.
         :type y: int
 
-        :param color: The color for the pixel. If you want to deactivate or clear a pixel, just use black (0,0,0)
-        as color value.
+        :param color: 
+            The color for the pixel. If you want to deactivate or clear a pixel, just use black (0,0,0)
+            as color value.
         :type color: Color, tuple, list
 
         :param update: If True, the display will be updated.
@@ -312,7 +382,7 @@ class Display(object):
         :type row: int
 
         :param color: The color for the row. If you want to deactivate or clear a row, just use black (0,0,0)
-        as color value.
+            as color value.
         :type color: Color, tuple, list
 
         :param update: If True, the display will be updated.
@@ -326,7 +396,7 @@ class Display(object):
         self.update(update)
 
     def vertical_line(self, column, color, update=False):
-        """Drawing a vertical line in the specified color. 
+        """Drawing a vertical line in the specified color. See also :meth:`~ledwall.components.Display.horizontal_line`
 
         The column value must be with the range: ``0 <= column < width``
 
@@ -334,7 +404,7 @@ class Display(object):
         :type column: int
 
         :param color: The color for the column. If you want to deactivate or clear a row, just use black (0,0,0)
-        as color value.
+            as color value.
         :type color: Color, RGBColor, HSVColor, tuple, list
         
         :param update: If True, the display will be updated.
@@ -362,6 +432,12 @@ class Display(object):
         return (row & 1) == 1
 
     def shift_row_left(self, row, update=False):
+        """Shifts row one pixel to the left. The outermost left pixel will be plced to the right.
+        So actually it rotates the pixels in the row. The method pays respect to the 
+        :attr:`~ledwall.components.Display.mode` property.
+
+        :param int row: Test, if the index of the row is even (False) or odd (True)
+        """
         start_index = row * self.columns * 3
 
         if self.odd_row(row) and self._mode == Display.MODE_ZIGZAG:
@@ -380,17 +456,42 @@ class Display(object):
         self.update(update)
 
     def shift_left(self, update=False):
+        """Shifts all pixels to the left.
+
+        The method shift pixels to the left visually, because the method takes the mode into account. This means, if
+        the mode is :attr:`~ledwall.components.Display.MODE_ZIGZAG` and the row number is odd, then the pixels are shifted physically to the
+        right. But because this row reads left to right, the pixels are shifted visually to the left.
+
+        The pixel to the outermost left will be placed at the last column. So this method implements a rotation of
+        the pixels.
+
+        :param update: If True, the display will be updated.
+        :type update: boolean
+
+        :rtype: None
+        """
         for row in range(self.rows):
             self.shift_row_left(row)
 
         self.update(update)
-            
+
+    def move(self,count=1):
+        """Moves all pixels in the buffer. 
+
+        .. warning::
+            This method does not take the ``mode`` into account. So the visual effect differs depending on the mode.
+
+        :param int count: The amount each pixel is moved.
+        """  
+        self._data[BYTES_PER_PIXEL*count:] = self._data[:-BYTES_PER_PIXEL*count]
+
     def shift_row_right(self, row, update=False):
         """Shifts all pixels in the specified row to the right.
 
         The method shift pixels to the right visually, because the method takes the mode into account. This means, if
-        the mode is ``Display.MODE_ZIGZAG`` and the row number is odd, then the pixels are shifted physically to the
-        left. But because this row reads left to right, the pixels are shifted visually to the right.
+        the mode is :attr:`~ledwall.components.Display.MODE_ZIGZAG` and the row number is odd, then the pixels are 
+        shifted physically to the left. But because this row reads left to right, the pixels are shifted visually 
+        to the right.
 
         The pixel to the outermost right will be placed at the first column. So this method implements a rotation of
         the pixels.
@@ -424,8 +525,9 @@ class Display(object):
         """Shifts all pixels to the right.
 
         The method shift pixels to the right visually, because the method takes the mode into account. This means, if
-        the mode is ``Display.MODE_ZIGZAG`` and the row number is odd, then the pixela are shifted physically to the
-        left. But because this row reads left to right, the pixels are shifted visually to the right.
+        the mode is :attr:`~ledwall.components.Display.MODE_ZIGZAG` and the row number is odd, then the pixela are 
+        shifted physically to the left. But because this row reads left to right, the pixels are shifted visually to 
+        the right.
 
         The pixel to the outermost right will be placed at the first column. So this method implements a rotation of
         the pixels.
@@ -455,23 +557,22 @@ class Display(object):
         return Rectangle(0, 0, self.columns, self.rows)
         
     def fill_rect(self, x, y, w, h, color, update=False):
-        """ Fills a rectangle in the specified color
-
+        """Fills a rectangle in the specified color
+        
         :param int x: X position of the top left corner
-
+        
         :param int y: Y position of the top left corner
-
+        
         :param int w: Width of the rectangle
-
+        
         :param int h: Height of the rectangle
-
-        :param color: The color for the rectangle. If you want to deactivate or clear a rectangle, just use
-        black (0,0,0) as color value.
+        
+        :param color: The color for the rectangle. If you want to deactivate or clear a rectangle, just use black (0,0,0) as color value.
         :type color: Color, tuple, list
         
         :param update: If True, the display will be updated.
         :type update: boolean
-
+        
         :rtype: None
         """
         rect = Rectangle(x, y, w, h)
@@ -491,7 +592,7 @@ class Display(object):
         """Fills the LED display in the specified color.
 
         :param color: The color for the display. If you want to deactivate or clear the panel, just use
-        black (0,0,0) as color value.
+            black (0,0,0) as color value.
         :type color: Color, tuple, list
         
         :param update: If True, the display will be updated.
@@ -548,12 +649,20 @@ class Display(object):
             return
 
         self._frame_nr += 1
-        
+
+        # Calculate 
+        if self._frame_computation_time.hasStarted:
+            self._frame_computation_time.measure()
+            if self._frame_computation_time.millis < self._millis_per_frame:  
+                time.sleep((self._millis_per_frame - self._frame_computation_time.millis)/1000)
+
         self._transmissionTime.begin()
         if self._sender:
             self._sender.update()
 
         self._transmissionTime.measure()
+        self._frame_computation_time.begin()
+        #print(self._transmissionTime.millis)
 
     def show_image(self, path, update=False, transparent_color=None):
         self.load_image(path, update, transparent_color)
@@ -590,14 +699,14 @@ class Display(object):
         """Copy a region from another display. If a transparent color is provided, all pixels in the
         source panel with the corresponding color will be ignored. 
 
-        The region specified by the :class:'~ledwall.geometry.Rectangle'*rectSrc* will be copied to 
+        The region specified by the :class:`~ledwall.geometry.Rectangle` *rectSrc* will be copied to 
         position specified by *pointDst*. The parameter *pointDst* defaults to the upper left corner 
-        :class:'~ledwall.geometry.Point'(0,0).
+        :class:`~ledwall.geometry.Point` (0,0).
 
         :param Display src: The source display to copy the color values from.
 
-        :param Rectangle rect_src: The position and the size of the region to copy. If no value is provided,
-        it defaults to the size of self and position 0,0
+        :param Rectangle rect_src: The position and the size of the region to copy. 
+            If no value is provided, it defaults to the size of self and position 0,0
 
         :param Point point_dst: Where to copy to. Defaults to (0,0)
 

@@ -6,7 +6,7 @@ part. The WS2812b needs for every pixel the RGB values, where every
 component is represented as byte [0;255]. From a artistic point of 
 view the HSV color space is much more intuitive. Therefore this library
 provides convenience classes to create, manipulate and convert classes
-in RGB and HSV color space.
+in RGB (:class:`~ledwall.components.RGBColor`) and HSV (:class:`~ledwall.components.HSVColor`) color space.
 
 For more information about the HSV color space, checkout the `wikipedia page <https://en.wikipedia.org/wiki/HSL_and_HSV>`_.
 
@@ -42,16 +42,4 @@ Color
 
 .. autoclass:: ledwall.components.Color
 	:members:
-	
-RGBColor
---------
-
-.. autoclass:: ledwall.components.RGBColor
-	:members:
-	
-HSVColor
---------
-
-.. autoclass:: ledwall.components.HSVColor
-	:members:
-	
+		

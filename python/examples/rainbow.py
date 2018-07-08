@@ -1,3 +1,6 @@
+import sys
+sys.path.append('..')
+
 from ledwall.components import *
 
 s = SerialSender(baudrate=500000)

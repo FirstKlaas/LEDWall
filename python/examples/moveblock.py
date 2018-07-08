@@ -1,3 +1,6 @@
+import sys
+sys.path.append('..')
+
 from __future__ import print_function
 from ledwall.components import *
 from ledwall.games.tetris import Tetris

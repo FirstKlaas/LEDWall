@@ -4,8 +4,6 @@ from sender import Sender
 from color import Color
 
 import socket
-import time
-
 
 class UDPSender(Sender):
 
@@ -43,7 +41,6 @@ class UDPSender(Sender):
                 self._sendbuffer[i + 4] = self.panel.data[i]
 
         if self._socket:
-            time.sleep(self._delay)
             self._socket.sendto(self._sendbuffer, (self._server, self._port))
         else:
             raise ValueError("No Socket Connection")

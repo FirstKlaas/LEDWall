@@ -15,12 +15,6 @@ Sender
 .. autoclass:: ledwall.components.Sender
 	:members:
 
-MqttSender
-----------
-
-.. autoclass:: ledwall.components.MqttSender
-	:members:
-
 SerialSender
 ------------
 

@@ -1,3 +1,6 @@
+from __future__ import division
+from __future__ import print_function
+
 import colorsys
 
 class HSVColor(object):
@@ -20,7 +23,7 @@ class HSVColor(object):
     def fromIntValues(h, s, v):
         return HSVColor(h / 360., s / 100. , v / 100.)
 
-    def __init__(self, h=0.0, s=0.0, v=0.0):
+    def __init__(self, h=0.0, s=1.0, v=1.0):
         """Creates a new color instance in the HSV color space. 
         The values for hue, value and saturation have to be provided 
         in normalized [0.0;1.0] form.
@@ -39,7 +42,15 @@ class HSVColor(object):
 
     @hue.setter
     def hue(self, value):
-        self.h = value
+        self._h = value % 1.
+
+    @property
+    def hue360(self):
+        return self.hue * 360.
+
+    @hue360.setter
+    def hue360(self, value):
+        self.hue = (value / 360.) % 1.
 
     @property
     def h(self):
@@ -47,12 +58,11 @@ class HSVColor(object):
         
         :rtype: float
         """
-        return self._h
+        return self.hue
 
     @h.setter
     def h(self, value):
-        self._h = value
-        self._h %= 1.0
+        self.hue = value
         
     @property
     def saturation(self):
@@ -64,20 +74,32 @@ class HSVColor(object):
 
     @saturation.setter
     def saturation(self, val):
-        self.s = val
+        self.s = val % 1.
     
+    @property
+    def saturation100(self):
+        """The saturation component of the color as a value 
+           in the intervall of [0.0;100.0].
+        
+        :rtype: float
+        """         
+        return self._s * 100.
+
+    @saturation100.setter
+    def saturation100(self, val):
+        self.s = (val/100.) % 1.
+
     @property
     def s(self):
         """Same as the property saturation. Just for the lazy people.
         
         :rtype: float
         """
-        return self._s
+        return self.saturation
 
     @s.setter
     def s(self, val):
-        self._s += val
-        self._s %= 1.0
+        self.saturation = val
 
     @property
     def value(self):
@@ -89,7 +111,20 @@ class HSVColor(object):
 
     @value.setter
     def value(self, val):
-        self.v = val
+        self._v = val % 1.0
+
+    @property
+    def value100(self):
+        """The value component of the color in the range
+           of [0.0;100.0].
+        
+        :rtype: float
+        """         
+        return self.value * 100
+
+    @value100.setter
+    def value100(self, val):
+        self.value = (val/100.) % 1.0
 
     @property
     def v(self):
@@ -97,12 +132,11 @@ class HSVColor(object):
         
         :rtype: float
         """
-        return self._v
+        return self.value
 
     @v.setter
     def v(self, val):
-        self._v += val
-        self._v %= 1.0
+        self.value = val
 
     @property
     def intValues(self):

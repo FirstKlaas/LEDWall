@@ -1,6 +1,9 @@
-from ..ledwall.components import *
+import sys
+sys.path.append('..')
 
-d = Display(7,7, framerate=20)
+from ledwall.components import *
+
+d = Display(7,7,UDPSender(server='192.168.178.96',framerate=20))
 
 color = HSVColor(0.,1.,1.)
 
