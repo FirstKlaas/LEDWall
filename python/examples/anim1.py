@@ -27,6 +27,14 @@ def coloured_rain(display, deltaHue = 0.01, runfunc=runforever, props={}):
 		display.update()
 		m = ((m+1) % display.columns) + 1
 
+def rainbow(display, deltaHue = 0.01,  runfunc=runforever, props={}):
+	color = HSVColor(0.0,1.0,1.0)
+	m = 3
+	d = {}
+	d.update(props)
+	while runfunc(display, d):
+		display.fill(color,True)
+		color.hue += deltaHue
 
 def glitter(display, count, runfunc=runforever, props={}):
 	hue = 0.0
@@ -74,3 +82,4 @@ def run_ntimes_function(display, d):
 #coloured_rain(d, runfunc=run_ntimes_function)
 #coloured_rain(d)
 glitter(d, 20)
+#rainbow(d)
