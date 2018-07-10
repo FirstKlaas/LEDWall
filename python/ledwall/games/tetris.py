@@ -157,6 +157,22 @@ PIECES = {'S': S_SHAPE_TEMPLATE,
           'D': D_SHAPE_TEMPLATE,
           }
 
+PIECES_COLOR = {'S': (47, 20, 201),
+                'Z': (47, 20, 201),
+                'I': (47, 20, 201),
+                'J': (47, 20, 201),
+                'L': (47, 20, 201),
+                'O': (47, 20, 201),
+                'T': (47, 20, 201),
+                'P': (47, 20, 201),
+                'C': (47, 20, 201),
+                'D': (47, 20, 201),
+                BLANK: (0, 0, 0),
+                'B': (255, 0, 0),
+                }
+
+
+"""
 PIECES_COLOR = {'S': (255, 0, 0),
                 'Z': (255, 255, 0),
                 'I': (0, 255, 0),
@@ -170,7 +186,7 @@ PIECES_COLOR = {'S': (255, 0, 0),
                 BLANK: (0, 0, 0),
                 'B': (255, 255, 255),
                 }
-
+"""
 
 # PIECES_ORDER = {'S': 0,'Z': 1,'I': 2,'J': 3,'L': 4,'O': 5,'T': 6}
 
@@ -333,7 +349,7 @@ class Tetris(object):
                      'rotation': random.randint(0, len(PIECES[shape]) - 1),
                      'x': int(self.width / 2) - int(TEMPLATEWIDTH / 2),
                      'y': -3,  # start it above the board (i.e. less than 0)
-                     'color': (247, 137, 1)}
+                     'color': (124, 218, 255)}
         return new_piece
 
     def checkForCollision(self, piece=None, dx=0, dy=0):
