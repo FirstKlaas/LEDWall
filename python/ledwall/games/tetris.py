@@ -351,8 +351,8 @@ class Tetris(object):
 
     def isOnBoard(self, piece=None, dx=0, dy=0):
         """Test if the bounds of the piece are on the
-        display. It is ok that the piece extends the upper
-        border.
+           display. It is ok that the piece extends the upper
+           border.
         """
         piece = self.__ensurePiece(piece)
         x = piece['x'] + dx

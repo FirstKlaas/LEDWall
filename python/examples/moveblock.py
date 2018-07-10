@@ -1,7 +1,10 @@
+from __future__ import print_function
+
 import sys
 sys.path.append('..')
 
-from __future__ import print_function
+from inputs import get_gamepad
+
 from ledwall.components import *
 from ledwall.games.tetris import Tetris
 
@@ -14,7 +17,7 @@ from ledwall.util import TimeDelta
 udp = UDPSender(server='192.168.178.96')
 #s = SerialSender()
 time.sleep(1)
-d = Display(7, 7, udp)
+d = Display(7, 7, udp, framerate=50)
 t = Tetris(d)
 
 t.update()
@@ -107,49 +110,58 @@ actions = {
     },
 }
 
+ALL_CODES = {'ABS_X','ABS_HAT0X', 'ABS_HAT0Y', 'BTN_THUMB2', 'BTN_THUMB', 'BTN_TRIGGER', 'BTN_TOP', 'BTN_BASE2', 'BTN_BASE'}
+
 t.update()
-
-queue = EventDispatcher()
-
-# queue.add_emitter(FramerateEmitter(15))
-queue.add_emitter(GamepadEmitter())
 
 running = True
 
-
-class Framerate(object):
-    def __init__(self, framerate):
-        # type : (int) -> None
-        self._millis_per_frame = 1000.0 / framerate
-        self._timer = TimeDelta()
-        self._timer.begin()
-        self._frame = 1
-
-    def update(self, s):
-        self._timer.measure()
-        if self._timer.millis >= self._millis_per_frame:
-            s.update()
-            self._frame += 1
-            self._timer.begin()
-
-
-fr = Framerate(3)
 while running:
-    fr.update(s)
-    event = queue.next_event()
-    if event:
-        if event.type == event.SYSTEM:
-            if event.action == 'update':
+    #d.update()
+    events = get_gamepad()
+    for event in events:
+        #if event.code in ALL_CODES:
+        #print("{} - {} - {}".format(event.code, event.ev_type, event.state))
+        
+        if event.code == 'ABS_X':
+            if event.state == 255:
+                move_right()
+            elif event.state == 0:
+                move_left()
+            else:
+                d.update()
+             
+        elif event.code == 'ABS_Y':
+            if event.state == 255:
+                move_down()
+            elif event.state == 0:
+                move_up()
+            else:
+                d.update()
+                
+        elif event.code == 'BTN_PINKIE':
+            if event.state == 1:
+                rotate_cw()
+            else:
+                d.update()
+                
+        elif event.code == 'BTN_TOP2':
+            if event.state == 1:
+                rotate_ccw()
+            else:
+                d.update()
+                
+        elif event.code == 'BTN_THUMB2':
+            if event.state == 1:
+                new_piece()
+            else:
                 d.update()
 
-        elif event.type == event.GAMEPAD:
-            # print(event.action)
-            if event.action == 'BTN_BASE2':
-                running = False
-            elif event.action in actions:
-                action = actions[event.action]
-                if event['state'] in action:
-                    action[event['state']]()
-                    s.update()
+        elif event.code == 'BTN_BASE4':
+            if event.state == 1:
+                new_game()
+            else:
+                d.update()
 
-queue.stop()
+        elif event.code == 'BTN_BASE2':
+            running = False
