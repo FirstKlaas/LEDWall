@@ -113,11 +113,12 @@ actions = {
 ALL_CODES = {'ABS_X','ABS_HAT0X', 'ABS_HAT0Y', 'BTN_THUMB2', 'BTN_THUMB', 'BTN_TRIGGER', 'BTN_TOP', 'BTN_BASE2', 'BTN_BASE'}
 
 t.update()
+d.update()
 
 running = True
 
 while running:
-    #d.update()
+    d.update()
     events = get_gamepad()
     for event in events:
         #if event.code in ALL_CODES:
