@@ -1,5 +1,5 @@
-from ledwall.components.event import EventDispatcher
-from ledwall.util import TimeDelta
+from ..components.event import *
+from ..util import TimeDelta
 
 
 class Application(object):
@@ -7,17 +7,20 @@ class Application(object):
     def __init__(self, display, framerate):
         # type : (Display) -> None
         self._display = display
-        self._millis_per_frame = 1000.0 / framerate
-        self._timer = TimeDelta()
-        self._timer.begin()
-        self._frame = 1
+        self._framerate = framerate
         self._running = True
         self._event_dispatcher = EventDispatcher()
+        if framerate and framerate > 0:
+            self._event_dispatcher.add_emitter(FramerateEmitter(framerate))
 
     @property
     def display(self):
         return self._display
 
+    @property
+    def frame(self):
+        return self.display.frame
+        
     def paint(self):
         pass
 
@@ -26,17 +29,15 @@ class Application(object):
 
     def start_loop(self):
         while self._running:
-            event = queue.next_event()
-            if event:
+            event = self._event_dispatcher.next_event()
+            if (event.type, event.action) == (Event.SYSTEM,'update'):
+                self.update()
+            else:
                 self.handle_event(event)
-            self.update()
 
     def stop(self):
         self._running = False
 
     def update(self):
-        self._timer.measure()
-        if self._timer.millis >= self._millis_per_frame:
-            self._display.update()
-            self._frame += 1
-            self._timer.begin()
+        self.paint()
+        self._display.update()

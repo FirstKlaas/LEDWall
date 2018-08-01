@@ -1,14 +1,14 @@
-from __future__ import print_function
-from __future__ import division
-from sender import Sender
-from color import Color
+from __future__ import (print_function, division)
+
+from .sender import Sender
+from .color import Color
 
 import socket
 
 class UDPSender(Sender):
 
     def __init__(self, server='localhost', port=3548, framerate=25):
-        Sender.__init__(self)
+        super().__init__()
         self._server = server
         self._port = port
         self._delay = 1.0 / framerate
@@ -22,7 +22,7 @@ class UDPSender(Sender):
         return self._port
 
     def init(self, panel):
-        Sender.init(self, panel)
+        super().init(panel)
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._sendbuffer = bytearray(3 * self.panel.count + 4)
         self._sendbuffer[0] = 2 # Write Raw

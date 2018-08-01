@@ -1,19 +1,25 @@
-from display import Display
-from color import Color
-from colortable import ColorTable
-from hsvcolor import HSVColor
-from rgbcolor import RGBColor
-from serialsender import SerialSender
-from mqttsender import MqttSender
-from asyncsender import AsyncSender
-from consolesender import ConsoleSender
-from sender import Sender
-from progmemsender import ProgMemSender
-from listsender import ListSender
-from udpsender import UDPSender
+from .display import Display
+from .color import Color
+from .colortable import ColorTable
+from .hsvcolor import HSVColor
+from .rgbcolor import RGBColor
+from .serialsender import SerialSender
+from .mqttsender import MqttSender
+from .asyncsender import AsyncSender
+from .consolesender import ConsoleSender
+from .sender import Sender
+from .progmemsender import ProgMemSender
+from .listsender import ListSender
+from .udpsender import UDPSender
+from .application import Application
+
+
+class LEDWallError(Exception): pass
+class TransmissionError(LEDWallError): pass
+class CoordinateError(LEDWallError): pass
 
 __all__ = ['Color', 'Display', 'ColorTable', 'RGBColor', 'HSVColor', 'SerialSender', 'MqttSender', 'Sender',
-           'ConsoleSender', 'AsyncSender', 'ProgMemSender', 'ListSender', 'UDPSender']
+           'ConsoleSender', 'AsyncSender', 'ProgMemSender', 'ListSender', 'UDPSender', 'Application']
 
 
 def rgb_to_hsv(val):

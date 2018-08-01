@@ -1,5 +1,5 @@
-from rectangle import Rectangle
-from point import Point
+from .rectangle import Rectangle
+from .point import Point
 
 class Line(object):
 

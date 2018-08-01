@@ -1,5 +1,5 @@
-from point import Point
-from ledwall.util import intersectRect
+from .point import Point
+from ..util import intersectRect
 
 class Rectangle(Point):
 	
@@ -10,7 +10,7 @@ class Rectangle(Point):
 		return Rectangle(t[0],t[1],t[2],t[3])
 			
 	def __init__(self, x, y, width, height):
-		Point.__init__(self,x,y)
+		super().__init__(x,y)
 		self._width  = width
 		self._height = height
 

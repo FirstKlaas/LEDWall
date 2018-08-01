@@ -1,3 +1,5 @@
+__all__ = ['Sender']
+
 class Sender(object):
 
     CMD_INIT_PANEL    =   1

@@ -1,5 +1,5 @@
-from timedelta import TimeDelta
-from settings import Settings
+from .timedelta import TimeDelta
+from .settings import Settings
 
 def intersectRect(r1,r2):
 

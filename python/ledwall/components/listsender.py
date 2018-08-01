@@ -1,4 +1,4 @@
-from sender import Sender
+from .sender import Sender
 
 class ListSender(Sender):
     """Manages a list of senders, so multiple panelscan be updated 
@@ -13,7 +13,7 @@ class ListSender(Sender):
     """  
 
     def __init__(self, delegates, async=False):
-        Sender.__init__(self)
+        super().__init__()
         if async:
             self._delegates = [AsyncSender(s) for s in delegates]
         else:
@@ -22,7 +22,7 @@ class ListSender(Sender):
     def init(self, panel):
         """Calls init for every provided sender.
         """
-        Sender.init(self,panel)
+        super().init(panel)
         for s in self._delegates:
             s.init(self.panel)
 

@@ -1,15 +1,14 @@
-from __future__ import division
-from __future__ import print_function
+from __future__ import (division, print_function)
 
 import sys
 import itertools
 import time 
 
-from color import Color
+from .color import Color
 
 from ..util import TimeDelta
 from ..geometry import *
-from asyncsender import AsyncSender
+from .asyncsender import AsyncSender
 
 PIL_AVAILABLE = True
 
@@ -102,7 +101,7 @@ class Display(object):
     MODE_ZIGZAG = 1
     """Pixels are arranged in a zig zag pattern. The data line goes from left to right and on the next row vica versa."""
 
-    def __init__(self, cols, rows, sender=None, framerate=10, mode=MODE_LTR, panel_id='LEDPANEL0001', async=False):
+    def __init__(self, cols, rows, sender=None, framerate=None, mode=MODE_LTR, panel_id='LEDPANEL0001', async=False):
         self._cols = int(cols)
         self._rows = int(rows)
         self._data = [0]*(BYTES_PER_PIXEL*self.count)
@@ -113,7 +112,7 @@ class Display(object):
         self._id = panel_id
         self._sender = sender
         self._framerate = framerate
-        self._millis_per_frame = 1000 / framerate
+        self._millis_per_frame = 1000 / framerate if framerate else 0
         self._frame_computation_time = TimeDelta() 
         
         if sender and async:
@@ -651,18 +650,19 @@ class Display(object):
         self._frame_nr += 1
 
         # Calculate 
-        if self._frame_computation_time.hasStarted:
+        if self.frame_rate and self._frame_computation_time.hasStarted:
             self._frame_computation_time.measure()
             if self._frame_computation_time.millis < self._millis_per_frame:  
                 time.sleep((self._millis_per_frame - self._frame_computation_time.millis)/1000)
 
         self._transmissionTime.begin()
+
         if self._sender:
             self._sender.update()
 
         self._transmissionTime.measure()
-        self._frame_computation_time.begin()
-        #print(self._transmissionTime.millis)
+        if self.frame_rate:
+            self._frame_computation_time.begin()
 
     def show_image(self, path, update=False, transparent_color=None):
         self.load_image(path, update, transparent_color)

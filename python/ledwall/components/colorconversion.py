@@ -1,5 +1,5 @@
-from hsvcolor import HSVColor
-from rgbcolor import RGBColor
+from .hsvcolor import HSVColor
+from .rgbcolor import RGBColor
 
 def rgb_to_hsv(rgb):
 	"""Converts a color from RGB to HSV colorspace.

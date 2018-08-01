@@ -1,7 +1,9 @@
 import colorsys
 
-from hsvcolor import HSVColor
-from rgbcolor import RGBColor
+from .hsvcolor import HSVColor
+from .rgbcolor import RGBColor
+
+__all__ = ['Color']
 
 gamma8_table = [  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
                   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,

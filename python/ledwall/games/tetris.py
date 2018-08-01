@@ -292,6 +292,10 @@ class Tetris(object):
                 self.deleteRow(y)
         return deletedRows
 
+    def deleteCompleteColumns(self):
+        for c in self.getCompletedColumns():
+            self.deleteColumn(c)
+             
     def getShape(self, piece=None):
         piece = self.__ensurePiece(piece)
 

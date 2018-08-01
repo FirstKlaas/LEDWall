@@ -1,7 +1,8 @@
 from __future__ import print_function
 from __future__ import print_function
-from sender import Sender
-from color import Color
+
+from .sender import Sender
+from .color import Color
 
 import serial
 
@@ -9,7 +10,7 @@ import serial
 class SerialSender(Sender):
 
     def __init__(self, port_name='/dev/ttyACM0', baudrate=500000):
-        Sender.__init__(self)
+        super().__init__()
         self._baudrate = baudrate
         self._port = port_name
         self._s = serial.Serial(self.port, self.baudrate)
@@ -23,7 +24,7 @@ class SerialSender(Sender):
         return self._port
 
     def init(self, panel):
-        Sender.init(self, panel)
+        super().init(panel)
         self._sendbuffer = bytearray(3 * self.panel.count + 1)
 
         # Send command to initialize the panel

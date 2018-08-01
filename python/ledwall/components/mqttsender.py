@@ -1,10 +1,10 @@
 from __future__ import print_function
 
-from sender import Sender
-from color import Color
+from .sender import Sender
+from .color import Color
+
 import paho.mqtt.client as mqtt
 from socket import error as SocketError
-
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
@@ -33,7 +33,7 @@ class MqttSender(Sender):
         :param str server: Name or IP of the MqttServer.
         :param int port: The port of the MqttServer
         """
-        Sender.__init__(self)
+        super().__init__()
         self._server = server
         self._port   = port
         self._client = mqtt.Client()
@@ -78,7 +78,7 @@ class MqttSender(Sender):
         :param panel:
         :return:
         """
-        Sender.init(self, panel)
+        super().init(panel)
         data = [Sender.CMD_INIT_PANEL, self.panel.columns, self.panel.rows]+self._frame_number
         self._publish(data)
 

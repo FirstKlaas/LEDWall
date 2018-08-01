@@ -1,15 +1,20 @@
 from __future__ import print_function
-import threading
 
+import threading
+import queue
 
 class Event(object):
-    GAMEPAD = 1
+    GAMEPAD  = 1
     KEYBOARD = 2
-    MOUSE = 3
-    SYSTEM = 4
-    MQTT = 5
-    ARDUINO = 6
-    USER = 999
+    MOUSE    = 3
+    SYSTEM   = 4
+    MQTT     = 5
+    ARDUINO  = 6
+    USER     = 999
+
+    PRIORITY_HIGH   = 1
+    PRIORITY_NORMAL = 10
+    PRIORITY_LOW    = 100
 
     NAMES = {
         GAMEPAD: 'GAMEPAD',
@@ -19,7 +24,7 @@ class Event(object):
         USER: 'USER',
     }
 
-    def __init__(self, event_type, action, data={}):
+    def __init__(self, event_type, action, data={}, priority=PRIORITY_NORMAL):
         """
 
         :param str action: The human readable event action
@@ -30,10 +35,15 @@ class Event(object):
         self._event_type = event_type
         self._data = data
         self._action = action
+        self._priority = priority
 
     @property
     def type(self):
         return self._event_type
+
+    @property
+    def data(self):
+        return self._data
 
     @property
     def action(self):
@@ -49,48 +59,27 @@ class Event(object):
         return self._action
 
     def __repr__(self):
-        return "Event('%s','%s',{%d})" % (Event.NAMES[self._event_type], self._action, len(self._data))
+        return "Event('{}','{}',{}, priority={})".format(Event.NAMES[self._event_type], self._action, self._data, self._priority)
 
+    def __cmp__(self,other):
+        return cmp(self._priority, other._priority)
 
-class EventQueue(object):
-
-    def __init__(self):
-        self._lock = threading.Lock()
-        self._events = []
-
-    def put(self, event, high_priority=False):
-        with self._lock:
-            if high_priority:
-                self._events.insert(0, event)
-            else:
-                self._events.append(event)
-            # self._lock.notify()
-
-    def stop(self):
-        self.put(EventDispatcher.STOP_EVENT, True)
-
-    @property
-    def empty(self):
-        with self._lock:
-            return len(self._events) == 0
-
-    def get(self):
-        with self._lock:
-            if len(self._events) == 0:
-                # self._lock.wait()
-                return None
-            return self._events.pop(0)
-
+    def __lt__(self, other):
+        return self._priority < other._priority
 
 class EventDispatcher(object):
 
     def __init__(self):
-        self._queue = EventQueue()
+        self._queue = queue.PriorityQueue()
         self._generators = []
 
     def add_emitter(self, src):
         self._generators.append(src)
         src.connect_queue(self._queue)
+
+    def __iadd__(self,other):
+        self.add_emitter(other)
+        return self
 
     def next_event(self):
         """
@@ -109,9 +98,10 @@ class EventDispatcher(object):
 class EventEmitter(threading.Thread):
 
     def __init__(self):
-        threading.Thread.__init__(self)
+        super().__init__()
         self.queue = None
         self._is_running = False
+        self.daemon= True
 
     def connect_queue(self, q):
         self.queue = q
