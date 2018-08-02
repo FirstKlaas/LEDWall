@@ -14,13 +14,14 @@ from .udpsender import UDPSender
 from .application import Application
 
 
+
+__all__ = ['Color', 'Display', 'ColorTable', 'RGBColor', 'HSVColor', 'SerialSender', 'MqttSender', 'Sender',
+           'ConsoleSender', 'AsyncSender', 'ProgMemSender', 'ListSender', 'UDPSender', 'Application', 'LEDWallError',
+           'TransmissionError','CoordinateError']
+
 class LEDWallError(Exception): pass
 class TransmissionError(LEDWallError): pass
 class CoordinateError(LEDWallError): pass
-
-__all__ = ['Color', 'Display', 'ColorTable', 'RGBColor', 'HSVColor', 'SerialSender', 'MqttSender', 'Sender',
-           'ConsoleSender', 'AsyncSender', 'ProgMemSender', 'ListSender', 'UDPSender', 'Application']
-
 
 def rgb_to_hsv(val):
     return RGBColor.fromIntValues(val[0], val[1], val[2]).hsv

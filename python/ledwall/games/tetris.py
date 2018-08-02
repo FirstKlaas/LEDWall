@@ -1,5 +1,7 @@
 import random
 
+import ledwall.components as comp
+
 TEMPLATEWIDTH = 5
 TEMPLATEHEIGHT = 5
 
@@ -220,6 +222,17 @@ class Tetris(object):
     def height(self):
         return self._display.rows
 
+    def set_block_color(self, block_id, color):
+        if block_id not in PIECES.keys(): raise ValueError('Uknown block id')
+        PIECES_COLOR[block_id] = tuple(comp.Color.convert(color))
+
+    def set_background_color(self, color):
+        PIECES_COLOR[BLANK] = tuple(comp.Color.convert(color))
+
+    @property
+    def block_ids(self):
+        return PIECES.keys()
+        
     def fallDown(self):
         if self._currentPiece is None:
             return False
@@ -295,7 +308,7 @@ class Tetris(object):
     def deleteCompleteColumns(self):
         for c in self.getCompletedColumns():
             self.deleteColumn(c)
-             
+
     def getShape(self, piece=None):
         piece = self.__ensurePiece(piece)
 

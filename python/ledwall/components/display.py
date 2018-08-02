@@ -276,11 +276,14 @@ class Display(object):
         return self._framerate
 
     def _test_coords(self, x, y):
+        return 0 <= x < self.columns and 0 <= y < self.rows
+        """ 
         if x < 0 or x >= self.columns:
             return False
         if y < 0 or y >= self.rows:
             return False
         return True
+        """
 
     def _adjust_column(self, x, y):
         """
@@ -341,8 +344,7 @@ class Display(object):
 
         :rtype: boolean
         """    
-        if not self._test_coords(x, y):
-            return False
+        if not self._test_coords(x,y): return False
 
         self._set_color_at(self._coords_to_index(x, y), color)
         self.update(update)
@@ -362,6 +364,8 @@ class Display(object):
 
         :rtype: Color
         """
+        assert self._test_coords(x,y), "Coords out of range ({},{}). Dimensions of the 0-indexed display are ({},{})".format(x,y,self.columns,self.rows)
+
         index = self._coords_to_index(x, y) * 3
         return Color.fromTuple(tuple(self._data[index:index+3]))
 
@@ -389,8 +393,7 @@ class Display(object):
 
         :rtype: None
         """
-        if (row < 0) or (row >= self.rows):
-            raise ValueError('Row index out of bounds.', row)
+        if 0 > row >= self.rows: raise ValueError('Row index out of bounds.', row)
         self[row*self.columns:((row+1)*self.columns)] = Color.convert(color)    
         self.update(update)
 
@@ -411,9 +414,8 @@ class Display(object):
 
         :rtype: None
         """
-        if (column < 0) or (column >= self.columns):
-            raise ValueError('Column index out of bounds.', column)
-        
+        assert 0 <= column < self.columns
+
         color = Color.convert(color)
 
         for i in range(self.rows):

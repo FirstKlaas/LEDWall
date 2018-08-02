@@ -23,6 +23,8 @@ t = Tetris(d)
 
 t.update()
 
+hsv = HSVColor(1.0,1.0,1.0)
+
 def move_right():
     p = t.piece
     if t.testOverflowX(p, dx=1) == Tetris.VALID_POSITION:
@@ -41,9 +43,15 @@ def move_up():
         p['y'] -= 1
         t.update()
 
+def colorize_blocks():
+    for id in t.block_ids:
+        t.set_block_color(id, hsv)
+        hsv.h += 0.15
+
 def new_piece(data):
     if data['state'] == 0: return
 
+    colorize_blocks()
     if t.testOverflowX() != Tetris.VALID_POSITION:
         return
 
@@ -56,7 +64,7 @@ def new_piece(data):
         t.deleteCompleteColumns()
         t.new_piece()
         t.update()
-
+    
 def move_down():
     p = t.piece
     overflow = t.testOverflowY(p, dy=1)
@@ -110,6 +118,8 @@ actions = {
 }
 
 running = True
+
+colorize_blocks()
 
 try:
     events = EventDispatcher()
