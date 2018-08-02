@@ -155,6 +155,9 @@ class Display(object):
             yield tuple(self._data[index*BYTES_PER_PIXEL:(index+1)*BYTES_PER_PIXEL])
             index += 1
 
+    def __len__(self):
+        return self._cols * self._rows
+
     def __getitem__(self, key):
         if isinstance(key, (tuple, list)) and len(key) == 2:
             index = self._coords_to_index(key[0], key[1]) * 3

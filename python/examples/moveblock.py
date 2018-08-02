@@ -51,7 +51,7 @@ def colorize_blocks():
 def new_piece(data):
     if data['state'] == 0: return
 
-    colorize_blocks()
+    #colorize_blocks()
     if t.testOverflowX() != Tetris.VALID_POSITION:
         return
 
@@ -119,7 +119,7 @@ actions = {
 
 running = True
 
-colorize_blocks()
+#colorize_blocks()
 
 try:
     events = EventDispatcher()
