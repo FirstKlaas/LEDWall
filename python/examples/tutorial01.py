@@ -1,26 +1,20 @@
 #!/usr/bin/env python3
 
-from __future__ import division
-from __future__ import print_function
-
 import sys
 sys.path.append('..')
 
 from ledwall.components import *
 
-s = UDPSender(server='192.168.178.96')
-d = Display(7,7,s)
-
-h1 = HSVColor(1.0,1.0,1.0)
-
-delta = 1.0 / len(d)
+#s = UDPSender(server='192.168.178.96')
+s = SerialSender(port_name='/dev/ttyACM1')
+d = Display(10,10,s,framerate=5)
 
 print("Anzahl der LEDs = {}".format(len(d)))
 
-for i in range(49):
-	h1.hue += delta
-	d[i] = h1
+d.set_pixel(2,6, (255,0,0))
+d.set_pixel(0,9, (255,0,255))
+d.set_pixel(3,7, (255,0,255))
 
-d.update(True)
+d.update()
 
 

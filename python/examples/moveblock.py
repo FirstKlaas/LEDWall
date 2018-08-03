@@ -16,9 +16,10 @@ import time
 
 from ledwall.util import TimeDelta
 
-s = UDPSender(server='192.168.178.96')
-#s = SerialSender()
-d = Display(7, 7, s)
+#s = UDPSender(server='192.168.178.96')
+s = SerialSender(port_name='/dev/ttyACM0')
+
+d = Display(10, 10, sender=s, mode=Display.MODE_ZIGZAG)
 t = Tetris(d)
 
 t.update()
@@ -119,7 +120,7 @@ actions = {
 
 running = True
 
-#colorize_blocks()
+colorize_blocks()
 
 try:
     events = EventDispatcher()

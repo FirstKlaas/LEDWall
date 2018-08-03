@@ -27,9 +27,12 @@ void setup() {
   time = millis();  
   leds = NULL;
 
-  leds = (CRGB*)malloc(49 * sizeof(CRGB));
-  FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, 49);
-  FastLED.showColor(CRGB::Yellow);
+  /*
+    
+   leds = (CRGB*)malloc(49 * sizeof(CRGB));
+   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, 49);
+   FastLED.showColor(CRGB::Yellow);
+  */
 }
 
 void initPanel() {

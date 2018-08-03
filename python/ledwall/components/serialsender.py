@@ -9,7 +9,7 @@ import serial
 
 class SerialSender(Sender):
 
-    def __init__(self, port_name='/dev/ttyACM0', baudrate=500000):
+    def __init__(self, port_name='/dev/ttyACM1', baudrate=500000):
         super().__init__()
         self._baudrate = baudrate
         self._port = port_name

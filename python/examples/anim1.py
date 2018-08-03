@@ -10,7 +10,7 @@ from random import randint
 
 from ledwall.components import *
 
-d = Display(7,7,UDPSender(server='192.168.178.96'),framerate=20)
+d = Display(10,10,SerialSender(port_name='/dev/ttyACM0'), framerate=20)
 
 
 def runforever(display, props):
@@ -83,5 +83,19 @@ def run_ntimes_function(display, d):
 
 #coloured_rain(d, runfunc=run_ntimes_function)
 #coloured_rain(d)
-glitter(d, 20)
+glitter(d, 80)
 #rainbow(d)
+
+"""
+class AnimClass(Application):
+
+        def __init__(self):
+                super().__init__(d,1)
+                
+        def paint(self):
+                glitter(self.display, 60)
+                
+
+app = AnimClass()
+app.start_loop()
+"""
