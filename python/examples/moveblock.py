@@ -52,7 +52,6 @@ def colorize_blocks():
 def new_piece(data):
     if data['state'] == 0: return
 
-    #colorize_blocks()
     if t.testOverflowX() != Tetris.VALID_POSITION:
         return
 

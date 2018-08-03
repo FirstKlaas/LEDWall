@@ -16,11 +16,4 @@ class FramerateEmitter(EventEmitter):
         self.queue.put(Event(Event.SYSTEM, 'update', {'frame': self._frame}, priority=Event.PRIORITY_HIGH))
         self._frame += 1
         time.sleep(self._seconds_per_frame )    
-        """
-        self._timer.measure()
-        if self._timer.millis >= self._millis_per_frame:
-            self.queue.put(Event(Event.SYSTEM, 'update', {'frame': self._frame}, priority=Event.PRIORITY_HIGH))
-            self._frame += 1
-            self._timer.begin()
-        """
 
