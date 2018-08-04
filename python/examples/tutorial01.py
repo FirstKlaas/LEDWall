@@ -22,7 +22,7 @@ Ab hier kannst du die Methoden der Klasse Display verwenden
 """
 
 block = Rectangle(9,5,3,3)
-form = Point(-2,3)
+form = Point(-2,0)
 
 def paint_form(dx,dy):
     form.x += dx

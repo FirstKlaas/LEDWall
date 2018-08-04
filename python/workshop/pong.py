@@ -9,7 +9,8 @@ import ledwall.components as comp
 import ledwall.components.event as event
 
 #gebe hier den Port fuer den Arduino ein (siehe Arduino IDE)
-s = comp.SerialSender(port_name='/dev/ttyACM0')
+
+s = comp.SerialSender(port_name='/dev/ttyACM1')
 
 class Pong(comp.SmileApplication):
     
@@ -44,12 +45,16 @@ class Pong(comp.SmileApplication):
         self.paddle_dy = 0
 
     def btn_down_pressed(self):
-        if self.paddle_y < 7:
-            self.paddle_y += 1
-                
+        self.paddle_dy = 1
+        
+    def update_paddle_position(self):
+        y = self.paddle_y + self.paddle_dy
+        
+        if 0 <= y < 8:
+            self.paddle_y = y
+        
     def btn_top_pressed(self):
-        if self.paddle_y > 0:
-            self.paddle_y -=1
+        self.paddle_dy = -1
 
     def btn_start_pressed(self):
         pass
@@ -76,6 +81,7 @@ class Pong(comp.SmileApplication):
             self.ball_x = 0
         
     def paint(self):
+        self.update_paddle_position()
         self.update_ballposition()
         self.draw_bg()
         self.draw_ball()

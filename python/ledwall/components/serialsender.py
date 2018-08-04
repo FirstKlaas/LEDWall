@@ -5,15 +5,18 @@ from .sender import Sender
 from .color import Color
 
 import serial
+import time
 
 
 class SerialSender(Sender):
 
-    def __init__(self, port_name='/dev/ttyACM1', baudrate=500000):
+    def __init__(self, port_name='/dev/ttyACM0', baudrate=115200):
         super().__init__()
         self._baudrate = baudrate
         self._port = port_name
         self._s = serial.Serial(self.port, self.baudrate)
+        time.sleep(0.5)
+        
 
     @property
     def baudrate(self):
@@ -28,8 +31,8 @@ class SerialSender(Sender):
         self._sendbuffer = bytearray(3 * self.panel.count + 1)
 
         # Send command to initialize the panel
-        data = [Sender.CMD_INIT_PANEL, self.panel.columns, self.panel.rows]
-        self._s.write(bytearray(data))
+        #data = [Sender.CMD_INIT_PANEL, self.panel.columns, self.panel.rows]
+        #self._s.write(bytearray(data))
 
     def update(self):
         if not self._s:

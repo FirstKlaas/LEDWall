@@ -12,30 +12,25 @@
 
 #define NODEBUG
 
-CRGB* leds = NULL;
+CRGB leds[100];
 unsigned long time;
+uint8_t numberOfLeds = 100;
 
 uint8_t cmdbuffer[16];
-uint16_t numberOfLeds = 49;
-uint8_t width, height;
 
 void setup() {
   
-  Serial.begin(500000);
+  Serial.begin(115200);
   Serial.setTimeout(60000);
   delay(3000);
   time = millis();  
-  leds = NULL;
 
-  /*
-    
-   leds = (CRGB*)malloc(49 * sizeof(CRGB));
-   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, 49);
-   FastLED.showColor(CRGB::Yellow);
-  */
+  FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, 100);
+  FastLED.showColor(CRGB::Yellow);
 }
 
 void initPanel() {
+  /**
   if (cmdbuffer[0] != CMD_INIT_PANEL) return;
   if (leds != NULL) free(leds); 
   
@@ -59,6 +54,7 @@ void initPanel() {
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, numberOfLeds);
 
   FastLED.showColor(CRGB::Green);
+  **/
 }
 
 void clearPanel() {
