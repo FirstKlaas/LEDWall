@@ -295,14 +295,6 @@ class Color(object):
             if key == 'blue' or key == 'b': return self.blue
             raise ValueError('Uknown string identifier to lookup item',key)                
             
-        else:
-            if isinstance(key,int):
-                if key < 0 or key > 2:
-                    raise ValueError('Index out ouf bounds [0,2]', key)
-
-            elif isinstance(key, slice):
-                if abs(key.start) > 2:
-                    raise ValueError('Slice start ouf bounds [-2,2]', key)
-                
-            return self.asArray()[key]
+        arr = [c for c in self]
+        return arr[key]
     

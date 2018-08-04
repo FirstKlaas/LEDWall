@@ -60,6 +60,7 @@ class SmileApplication(Application):
             (Event.GAMEPAD, 'BTN_TOP', 1)     : self.btn_y_pressed,
             (Event.GAMEPAD, 'BTN_BASE3', 1)   : self.btn_select_pressed,
             (Event.GAMEPAD, 'BTN_BASE4', 1)   : self.btn_start_pressed,
+            (Event.GAMEPAD, 'ABS_Y',   127)   : self.btn_abs_y_released,
         }
 
     def handle_event(self, event):
@@ -96,6 +97,9 @@ class SmileApplication(Application):
     def btn_down_pressed(self):
         pass
 
+    def btn_abs_y_released(self):
+        pass
+    
     def btn_left_pressed(self):
         pass
 

@@ -177,7 +177,6 @@ class Display(object):
             raise ValueError('Index out of range. Maximum is %d but was %d' % (self.count - 1, index))
 
         index *= BYTES_PER_PIXEL
-
         color = Color.convert(color)
         self._data[index] = color.red
         self._data[index+1] = color.green
@@ -213,14 +212,12 @@ class Display(object):
 
         if isinstance(key, slice):
             i = key.start or 0
-            n = 0
             stop = key.stop or self.count
             step = key.step or 1
             while i < stop:
-                if self._set_color_at(i, item[n]) == NotImplemented:
+                if self._set_color_at(i, item) == NotImplemented:
                     return
                 i += step
-                n += 1
             return
 
         return NotImplemented
@@ -397,6 +394,7 @@ class Display(object):
         :rtype: None
         """
         if 0 > row >= self.rows: raise ValueError('Row index out of bounds.', row)
+              
         self[row*self.columns:((row+1)*self.columns)] = Color.convert(color)    
         self.update(update)
 
@@ -579,8 +577,8 @@ class Display(object):
         
         :rtype: None
         """
-        rect = Rectangle(x, y, w, h)
-        rect -= self.as_rectangle()
+        rect = Rectangle(x, y, w+1, h+1)
+        rect = self.as_rectangle() - rect
 
         if rect:
             rect = Rectangle.fromTuple(rect)

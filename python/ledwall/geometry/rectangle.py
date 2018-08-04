@@ -87,4 +87,7 @@ class Rectangle(Point):
 		return intersectRect(tuple(self),tuple(other))	
 
 	def __rsub__(self, other):
-		return intersectRect(tuple(other),tuple(self))	
+		return intersectRect(tuple(other),tuple(self))
+
+	def __isub__(self, other):
+		self.x, self.y, self.width, self.height = intersectRect(tuple(self),tuple(other))

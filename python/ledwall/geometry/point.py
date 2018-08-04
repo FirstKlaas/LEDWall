@@ -82,12 +82,13 @@ class Point(object):
 		return self.__repr__()
 
 	def __isub__(self, value):
+                      
 		if isinstance(value, int):
 			self._x -= value
 			self._y -= value
 			return self
-
 		if isinstance(value, (tuple, list, Point)) and len(value == 2):
+			print(value[0])
 			self._x -= value[0]
 			self._y -= value[1]
 			return self

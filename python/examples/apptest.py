@@ -6,11 +6,11 @@ sys.path.append('..')
 import ledwall.components as comp
 import ledwall.components.event as event
 
-
-#s = comp.SerialSender(port_name='/dev/ttyACM0')
+#gebe hier den Port fuer den Arduino ein (siehe Arduino IDE)
 s = comp.SerialSender(port_name='/dev/ttyACM0')
 
 class MyApp(comp.SmileApplication):
+    
     def __init__(self,sender,framerate):
         super().__init__(sender,framerate)
         self.x = 5
@@ -18,7 +18,6 @@ class MyApp(comp.SmileApplication):
         
         self.color  = (255,0,0)
 
-        
     def btn_left_pressed(self):
         print('Nach links')
         if self.x > 0:
