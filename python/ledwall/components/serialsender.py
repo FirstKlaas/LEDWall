@@ -17,10 +17,7 @@ class SerialSender(Sender):
         self._baudrate = baudrate
         self._port = port_name
         self._lock = Lock()
-        self._s = serial.Serial(self.port, self.baudrate)
-        time.sleep(0.5)
-        
-        
+        self._s = serial.Serial(self.port, self.baudrate)        
 
     @property
     def baudrate(self):

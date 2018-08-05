@@ -126,6 +126,10 @@ class Display(object):
 
         if self._sender:
             self._sender.init(self)
+            time.sleep(0.2)
+            for i in range(10):
+                self._sender.update()
+                time.sleep(0.2)
 
     @property
     def mode(self):
@@ -652,20 +656,12 @@ class Display(object):
 
         self._frame_nr += 1
 
-        # Calculate 
-        if self.frame_rate and self._frame_computation_time.hasStarted:
-            self._frame_computation_time.measure()
-            if self._frame_computation_time.millis < self._millis_per_frame:  
-                time.sleep((self._millis_per_frame - self._frame_computation_time.millis)/1000)
-
-        self._transmissionTime.begin()
-
         if self._sender:
             self._sender.update()
 
-        self._transmissionTime.measure()
-        if self.frame_rate:
-            self._frame_computation_time.begin()
+        if self._framerate:
+            time.sleep(1/self._framerate)
+
 
     def show_image(self, path, update=False, transparent_color=None):
         self.load_image(path, update, transparent_color)
