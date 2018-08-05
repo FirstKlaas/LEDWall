@@ -40,9 +40,6 @@ class Pong(comp.SmileApplication):
         for i in range(self.paddle_height):
             self.display.set_pixel(self.paddle_x, self.paddle_y+i, self.paddle_color) 
 
-    def btn_abs_y_released(self):
-        self.paddle_dy = 0
-
     def btn_down_pressed(self):
         if self.paddle_y < 7:
             self.paddle_y += 1
