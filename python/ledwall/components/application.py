@@ -8,6 +8,8 @@ class Application(object):
     def __init__(self, display, framerate):
         # type : (Display) -> None
         self._display = display
+        self._display.fill((0,0,0))
+        self._display.update()
         self._framerate = framerate
         self._running = True
         self._event_dispatcher = EventDispatcher()
@@ -95,6 +97,9 @@ class SmileApplication(Application):
         pass
 
     def btn_down_pressed(self):
+        pass
+
+    def btn_top_pressed(self):
         pass
 
     def btn_abs_y_released(self):

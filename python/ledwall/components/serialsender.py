@@ -7,6 +7,8 @@ from .color import Color
 import serial
 import time
 
+from threading import Lock
+
 
 class SerialSender(Sender):
 
@@ -14,8 +16,10 @@ class SerialSender(Sender):
         super().__init__()
         self._baudrate = baudrate
         self._port = port_name
+        self._lock = Lock()
         self._s = serial.Serial(self.port, self.baudrate)
         time.sleep(0.5)
+        
         
 
     @property
@@ -38,14 +42,16 @@ class SerialSender(Sender):
         if not self._s:
             raise ValueError('Not initialized')
 
-        self._sendbuffer[0] = Sender.CMD_PAINT_PANEL
-        for i in range(len(self.panel.data)):
-            if self.panel.gamma_correction:
-                self._sendbuffer[i + 1] = Color.gammaCorrection(self.panel.data[i])
-            else:
-                self._sendbuffer[i + 1] = self.panel.data[i]
+        with self._lock:
 
-        if self._s:
-            self._s.write(self._sendbuffer)
-        else:
-            raise ValueError("No serial line")
+            self._sendbuffer[0] = Sender.CMD_PAINT_PANEL
+            for i in range(len(self.panel.data)):
+                if self.panel.gamma_correction:
+                    self._sendbuffer[i + 1] = Color.gammaCorrection(self.panel.data[i])
+                else:
+                    self._sendbuffer[i + 1] = self.panel.data[i]
+
+            if self._s:
+                self._s.write(self._sendbuffer)
+            else:
+                raise ValueError("No serial line")
