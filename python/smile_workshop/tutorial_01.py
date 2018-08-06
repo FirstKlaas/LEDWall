@@ -1,8 +1,6 @@
 import sys
 sys.path.append('..')
 
-import time
-
 import ledwall.components as comp
 
 
@@ -28,11 +26,17 @@ class Tutorial01(comp.SmileApplication):
         self.y = 8
         self.dx = 1
         self.color = (255,0,0)
+        self.hsv = comp.HSVColor(0.0, 1.0, 1.0)
 
 
     def linie(self):
         for i in range(1,9):
             self.display.set_pixel(i, 6, (0,0,255))
+
+    def rainbow(self):
+        for i in range(1,9):
+            self.hsv.hue += 0.1
+            self.display.set_pixel(i, 3, self.hsv)
 
     def move(self):
         self.display.set_pixel(self.x,self.y, (0,0,0))
@@ -48,6 +52,7 @@ class Tutorial01(comp.SmileApplication):
         self.display.set_pixel(0, 0, self.color)
         self.linie()
         self.move()
+        self.rainbow()
         
 
 app = Tutorial01(s,2)
