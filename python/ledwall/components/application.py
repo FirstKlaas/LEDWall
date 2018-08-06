@@ -32,15 +32,22 @@ class Application(object):
         pass
 
     def start_loop(self):
-        while self._running:
-            event = self._event_dispatcher.next_event()
-            if (event.type, event.action) == (Event.SYSTEM,'update'):
-                self.update()
-            else:
-                self.handle_event(event)
+        try:
+            while self._running:
+                event = self._event_dispatcher.next_event()
+                if (event.type, event.action) == (Event.SYSTEM,'update'):
+                    self.update()
+                else:
+                    self.handle_event(event)
+        except KeyboardInterrupt:
+            self.stop_loop()
+            print("\nGood Buy")
+            print("May the force be with you ...")
 
-    def stop(self):
+    def stop_loop(self):
         self._running = False
+        self._event_dispatcher.stop()
+
 
     def update(self):
         self.paint()

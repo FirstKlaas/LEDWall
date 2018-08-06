@@ -48,6 +48,6 @@ class Tutorial01(comp.SmileApplication):
         self.paint_form(1,1)
         
 
-app = Tutorial01(s,5)
+app = Tutorial01(s,10)
 app.start_loop()
 

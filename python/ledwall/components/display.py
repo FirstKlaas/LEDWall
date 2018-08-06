@@ -126,10 +126,6 @@ class Display(object):
 
         if self._sender:
             self._sender.init(self)
-            time.sleep(0.2)
-            for i in range(10):
-                self._sender.update()
-                time.sleep(0.2)
 
     @property
     def mode(self):
