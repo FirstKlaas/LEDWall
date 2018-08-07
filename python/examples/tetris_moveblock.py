@@ -123,7 +123,7 @@ colorize_blocks()
 
 try:
     events = EventDispatcher()
-    events.add_emitter(FramerateEmitter(25))
+    events.add_emitter(FramerateEmitter(5))
     events.add_emitter(GamepadEmitter())
 
     while True:
