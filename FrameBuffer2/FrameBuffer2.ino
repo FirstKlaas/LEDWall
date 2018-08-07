@@ -77,12 +77,14 @@ void paintPanel() {
   if (cmdbuffer[0] != CMD_PAINT_PANEL) return;
   Serial.readBytes((uint8_t*) leds,numberOfLeds * 3);
   #ifdef DEBUG
+  /**
   for (int i=0; i< (numberOfLeds * 3); i++) {
       Serial.print(leds[i]);Serial.print(";");
       if (i % 21 == 0) {
         Serial.println("");      
       }
   }
+  **/
   Serial.println(" => Frame complete");
   #endif
   FastLED.show();

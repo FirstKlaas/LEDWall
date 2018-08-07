@@ -15,7 +15,8 @@ class Application(object):
         self._event_dispatcher = EventDispatcher()
         if framerate and framerate > 0:
             self._event_dispatcher.add_emitter(FramerateEmitter(framerate))
-            self._event_dispatcher.add_emitter(GamepadEmitter())
+
+        self._event_dispatcher.add_emitter(GamepadEmitter())            
 
     @property
     def display(self):
@@ -24,6 +25,10 @@ class Application(object):
     @property
     def frame(self):
         return self.display.frame
+
+    def add_emitter(self,emitter):
+        #self._event_dispatcher.add_emitter(emitter)
+        self._event_dispatcher += emitter
         
     def paint(self):
         pass
@@ -48,10 +53,14 @@ class Application(object):
         self._running = False
         self._event_dispatcher.stop()
 
-
     def update(self):
         self.paint()
-        self._display.update()
+        try:
+            #self._event_dispatcher.suspend()            
+            self._display.update()
+        finally:
+            #self._event_dispatcher.resume()            
+            pass
 
 class SmileApplication(Application):
     def __init__(self, sender, framerate):

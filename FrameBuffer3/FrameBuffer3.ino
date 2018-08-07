@@ -11,9 +11,9 @@
 #define CMD_FILL_PANEL       3
 #define CMD_PAINT_PANEL      4
 
-#define NODEBUG
+#define DEBUG
 
-uint8_t leds[400];
+uint8_t leds[300];
 unsigned long time;
 uint8_t numberOfLeds = 100;
 
@@ -32,7 +32,8 @@ void setup() {
 void loop() {
   int16_t index = -1;
   unsigned long t1 = millis();
-  while (index < (numberOfLeds*3) && ((millis()-t1) < MAX_SERIAL_DELAY)) {
+  //&& ((millis()-t1) < MAX_SERIAL_DELAY)
+  while (index < (numberOfLeds*3) ) {
     if (Serial.available() > 0) {
       if (index < 0) {
         leds[0] = Serial.read();
@@ -40,6 +41,7 @@ void loop() {
         if (leds[0] == CMD_PAINT_PANEL) {
           index = 0;
         } else {
+          //Serial.println("Wrong command");
           FastLED.showColor(CRGB::Blue);  
         }
       } else {
@@ -49,7 +51,7 @@ void loop() {
   }
   //Serial.print("Index: ");Serial.println(index);
   if (index == (numberOfLeds*3)) {
-    //Serial.println(millis()-t1);
+    //Serial.print("Time: ");Serial.println(millis()-t1);
     FastLED.show();    
   } else {
     FastLED.showColor(CRGB::Black);
