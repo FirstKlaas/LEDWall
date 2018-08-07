@@ -4,7 +4,7 @@
 #define DATA_PIN             5
 #define BYTES_PER_PIXEL      3
 
-#define MAX_SERIAL_DELAY   500  // Maximum delay between transmitted data within one command in milliseconds
+#define MAX_SERIAL_DELAY   3000  // Maximum delay between transmitted data within one command in milliseconds
 
 #define CMD_INIT_PANEL       1
 #define CMD_CLEAR_PANEL      2
@@ -33,7 +33,7 @@ void loop() {
   int16_t index = -1;
   unsigned long t1 = millis();
   //&& ((millis()-t1) < MAX_SERIAL_DELAY)
-  while (index < (numberOfLeds*3) ) {
+  while (index < (numberOfLeds*3) && ((millis()-t1) < MAX_SERIAL_DELAY)) {
     if (Serial.available() > 0) {
       if (index < 0) {
         leds[0] = Serial.read();
