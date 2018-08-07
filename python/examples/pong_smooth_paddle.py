@@ -17,6 +17,8 @@ colors = {
     '0' : (255,255,0),
     '1' : (255,0,0),
     '2' : (0,255,255),
+    'x' : (255,0,255),
+    'o' : (0,0,0),
 }
 
 demo_block_A = [
@@ -32,7 +34,7 @@ demo_block_B = [
 number_0 = [
     "111",
     "1.1",
-    "121",
+    "1.1",
     "1.1",
     "111",
 ]
@@ -77,17 +79,24 @@ number_8 = [
     "222",
 ]
 
+ghost = [
+    ".xxx.",
+    "xoxox",
+    "xxxxx",
+    "x.x.x",
+]
+
 number_sprites = [
     number_0,
     number_1,
     number_2,
     number_3,
     number_4,
-    None,
-    None,
-    None,
+    ghost,
+    ghost,
+    ghost,
     number_8,
-    None,
+    ghost,
 ]
 
 class Pong(comp.SmileApplication):
