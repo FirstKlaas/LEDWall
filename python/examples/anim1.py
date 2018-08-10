@@ -10,7 +10,7 @@ from random import randint
 
 from ledwall.components import *
 
-d = Display(10,10,SerialSender(port_name='/dev/ttyACM0'), framerate=20)
+d = Display(10,10,SerialSender(port_name='/dev/ttyACM0'), framerate=30)
 
 
 def runforever(display, props):

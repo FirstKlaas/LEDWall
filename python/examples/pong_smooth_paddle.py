@@ -11,7 +11,7 @@ import ledwall.components.event as event
 
 # Gib hier den Port fuer den Arduino ein (siehe Arduino IDE)
 
-s = comp.SerialSender(port_name='/dev/ttyACM0', baudrate=115200)
+s = comp.SerialSender(port_name='/dev/ttyACM0')
 
 colors = {
     '0' : (255,255,0),

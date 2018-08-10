@@ -6,25 +6,23 @@
 
 #define MAX_SERIAL_DELAY   3000  // Maximum delay between transmitted data within one command in milliseconds
 
-#define CMD_INIT_PANEL       1
-#define CMD_CLEAR_PANEL      2
-#define CMD_FILL_PANEL       3
-#define CMD_PAINT_PANEL      4
+#define CMD_PAINT_PANEL    243
 
 #define DEBUG
 
-uint8_t leds[300];
+const uint8_t numberOfLeds  = 100;
+const int16_t numberOfByte = numberOfLeds * BYTES_PER_PIXEL;
+
+uint8_t leds[numberOfByte];
 unsigned long time;
-uint8_t numberOfLeds = 100;
 
 uint8_t cmdbuffer[16];
 
 void setup() {
-  
-  Serial.begin(115200);
-  //Serial.setTimeout(6000);
+  Serial.begin(500000);
   delay(500);
   FastLED.addLeds<NEOPIXEL, DATA_PIN>((CRGB*)leds, 100);
+  delay(500);
   FastLED.showColor(CRGB::Yellow);
 }
 
@@ -32,26 +30,26 @@ void setup() {
 void loop() {
   int16_t index = -1;
   unsigned long t1 = millis();
-  //&& ((millis()-t1) < MAX_SERIAL_DELAY)
-  while (index < (numberOfLeds*3) && ((millis()-t1) < MAX_SERIAL_DELAY)) {
+  //  
+  while (index < numberOfByte && ((millis()-t1) < MAX_SERIAL_DELAY)) {
     if (Serial.available() > 0) {
       if (index < 0) {
         leds[0] = Serial.read();
-        //Serial.print("New frame start. Magic number is "); Serial.println(leds[0]);
         if (leds[0] == CMD_PAINT_PANEL) {
           index = 0;
         } else {
-          //Serial.println("Wrong command");
           FastLED.showColor(CRGB::Blue);  
         }
       } else {
         leds[index++] = Serial.read();
+        if (leds[0] == CMD_PAINT_PANEL) {
+          index = 0;
+        }
       }  
     }
   }
-  //Serial.print("Index: ");Serial.println(index);
-  if (index == (numberOfLeds*3)) {
-    //Serial.print("Time: ");Serial.println(millis()-t1);
+  
+  if (index == (numberOfByte)) {
     FastLED.show();    
   } else {
     FastLED.showColor(CRGB::Black);

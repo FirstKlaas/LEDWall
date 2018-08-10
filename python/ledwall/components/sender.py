@@ -5,7 +5,7 @@ class Sender(object):
     CMD_INIT_PANEL    =   1
     CMD_CLEAR_PANEL   =   2
     CMD_FILL_PANEL    =   3
-    CMD_PAINT_PANEL   =   4
+    CMD_PAINT_PANEL   = 243
     CMD_SET_PIXEL     =   5
     CMD_WRITE_RAW     =   6
     CMD_SHOW          = 255

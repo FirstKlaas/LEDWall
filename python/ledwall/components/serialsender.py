@@ -12,12 +12,13 @@ from threading import Lock
 
 class SerialSender(Sender):
 
-    def __init__(self, port_name='/dev/ttyACM0', baudrate=115200):
+    def __init__(self, port_name='/dev/ttyACM0', baudrate=500000):
         super().__init__()
         self._baudrate = baudrate
         self._port = port_name
         self._lock = Lock()
         self._s = serial.Serial(self.port, self.baudrate)   
+        self._s.flushInput()
              
 
     @property

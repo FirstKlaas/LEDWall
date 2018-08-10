@@ -8,7 +8,10 @@ from random import randint
 
 from ledwall.components import *
 
-d = Display(7,7,UDPSender(server='192.168.178.96'),framerate=10)
+#s = UDPSender(server='192.168.178.96')
+s = SerialSender(port_name='/dev/ttyACM0')
+
+d = Display(10,10,s,framerate=10)
 
 
 while True:
@@ -16,5 +19,5 @@ while True:
 	d.fill(color)
 	for i in range(11):
 		white = Color(randint(0,255),randint(0,255),randint(0,255))
-		d.set_pixel(randint(0,6), randint(0,6), white)
+		d.set_pixel(randint(0,d.columns), randint(0,d.rows), white)
 	d.update()
