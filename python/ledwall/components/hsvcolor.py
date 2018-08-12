@@ -111,7 +111,7 @@ class HSVColor(object):
 
     @value.setter
     def value(self, val):
-        self._v = val % 1.0
+        self._v = (val % 1.0) if val > 1.0 else val
 
     @property
     def value100(self):

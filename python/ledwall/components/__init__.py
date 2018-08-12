@@ -11,13 +11,13 @@ from .sender import Sender
 from .progmemsender import ProgMemSender
 from .listsender import ListSender
 from .udpsender import UDPSender
-from .application import (Application,SmileApplication)
+from .application import (Application,SmileApplication,Animation)
 
 
 
 __all__ = ['Color', 'Display', 'ColorTable', 'RGBColor', 'HSVColor', 'SerialSender', 'MqttSender', 'Sender',
            'ConsoleSender', 'AsyncSender', 'ProgMemSender', 'ListSender', 'UDPSender', 'Application', 'LEDWallError',
-           'TransmissionError','CoordinateError', 'SmileApplication']
+           'TransmissionError','CoordinateError', 'SmileApplication', 'Animation']
 
 class LEDWallError(Exception): pass
 class TransmissionError(LEDWallError): pass

@@ -48,7 +48,11 @@ class SerialSender(Sender):
                 if self.panel.gamma_correction:
                     self._sendbuffer[i + 1] = Color.gammaCorrection(self.panel.data[i])
                 else:
-                    self._sendbuffer[i + 1] = self.panel.data[i]
+                    """
+                    Make shure, the CMD_PAINT_PANEL is not part of the color data
+                    """ 
+                    b = self.panel.data[i]
+                    self._sendbuffer[i + 1] = b if b != Sender.CMD_PAINT_PANEL else b + 1 
 
             if self._s:
                 self._s.write(self._sendbuffer)

@@ -2,6 +2,66 @@ from ..components.event import *
 from ..util import TimeDelta
 from ..components import Display
 
+class Animation():
+    def __init__(self, do_after=None):
+        self._do_after = do_after
+
+    @property
+    def app(self):
+        return self._app
+    
+    @property
+    def display(self):
+        return self.app.display
+
+    @property
+    def rows(self):
+        return self.display.rows
+
+    @property
+    def columns(self):
+        return self.display.columns
+            
+    def animate(self):
+        pass
+
+    def paint(self, display):
+        pass
+
+class Animations():
+
+    def __init__(self):
+        self._entries = []
+
+    def __iadd__(self, a):
+        self._entries.append(a)
+        return self
+
+    def __isub__(self, a):
+        self._entries.remove(a)
+        return self
+
+    def __iter__(self):
+        for a in self._entries:
+            yield a
+
+    def __len__(self):
+        return len(self._entries)
+
+    def animate(self):
+        if len(self) == 0: return
+        anims = self._entries[:]
+        dead_anims = []
+        for a in anims:
+            if not a.animate(): dead_anims.append(a)
+
+        self._entries = [ a for a in anims if a not in dead_anims]
+        for a in dead_anims:
+            if a._do_after: a._do_after()
+
+    def paint(self, display):
+        for a in self:
+            a.paint(display)
 
 class Application(object):
 
@@ -17,7 +77,12 @@ class Application(object):
             self._event_dispatcher.add_emitter(FramerateEmitter(framerate))
 
         self._event_dispatcher.add_emitter(GamepadEmitter())            
+        self._animations = Animations()
 
+    @property
+    def animations(self):
+        return self._animations
+    
     @property
     def display(self):
         return self._display
@@ -25,6 +90,10 @@ class Application(object):
     @property
     def frame(self):
         return self.display.frame
+
+    def add_animation(self, animation):
+        animation._app = self
+        self._animations += animation
 
     def add_emitter(self,emitter):
         #self._event_dispatcher.add_emitter(emitter)
@@ -55,6 +124,8 @@ class Application(object):
 
     def update(self):
         self.paint()
+        self._animations.animate()
+        self._animations.paint(self._display)    
         try:
             #self._event_dispatcher.suspend()            
             self._display.update()
@@ -83,8 +154,16 @@ class SmileApplication(Application):
 
     def handle_event(self, event):
         action = self.action_map.get((event.type,event.action,event['state']),None)
-        if action:
-            action()
+        if action: action()
+
+    def register_action(self, source, action_name, state, action):
+        self.set_action(source, action_name, state, action)
+
+    def unregister_action(self, source, action_name, state):
+        try:
+            self.action_map.pop((source, action_name, state))
+        except KeyError:
+            return None
 
     def set_action(self, source, action_name, state, action):
         old_action = self.action_map.get((source, action_name, state))

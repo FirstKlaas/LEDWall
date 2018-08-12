@@ -40,7 +40,7 @@ def rainbow(display, deltaHue = 0.01,  runfunc=runforever, props={}):
 
 def glitter(display, count, runfunc=runforever, props={}):
 	hue = 0.0
-	val_delta = 0.01
+	val_delta = 0.001
 	hue_delta = 0.003
 
 	def random_value():
