@@ -71,11 +71,43 @@ number_4 = [
     "..2",
 ]
 
+number_5 = [
+    "222",
+    "2..",
+    "222",
+    "..2",
+    "222",
+]
+
+number_6 = [
+    "222",
+    "2..",
+    "222",
+    "2.2",
+    "222",
+]
+
+number_7 = [
+    "222",
+    "..2",
+    "..2",
+    "..2",
+    "..2",
+]
+
 number_8 = [
     "222",
     "2.2",
     "222",
     "2.2",
+    "222",
+]
+
+number_9 = [
+    "222",
+    "2.2",
+    "222",
+    "..2",
     "222",
 ]
 
@@ -92,11 +124,11 @@ number_sprites = [
     number_2,
     number_3,
     number_4,
-    ghost,
-    ghost,
-    ghost,
+    number_5,
+    number_6,
+    number_7,
     number_8,
-    ghost,
+    number_9,
 ]
 
 class Pong(comp.SmileApplication):
