@@ -1,6 +1,6 @@
 from ..components.event import *
 from ..util import TimeDelta
-from ..components import Display
+from ..components import (Display, WireMode)
 
 class Animation():
     def __init__(self, do_after=None):
@@ -78,6 +78,23 @@ class Application(object):
 
         self._event_dispatcher.add_emitter(GamepadEmitter())            
         self._animations = Animations()
+        self._paint_function = self.paint
+
+    @property
+    def paint_function(self):
+        return self._paint_function
+
+    @paint_function.setter
+    def paint_function(self, f):
+        if not f:
+            self._paint_function = self.paint
+            return
+
+        if not callable(f):
+            raise ValueError("Provided value is not callable.")
+
+        self._paint_function = f
+
 
     @property
     def animations(self):
@@ -98,7 +115,7 @@ class Application(object):
     def add_emitter(self,emitter):
         #self._event_dispatcher.add_emitter(emitter)
         self._event_dispatcher += emitter
-        
+    
     def paint(self):
         pass
 
@@ -123,7 +140,7 @@ class Application(object):
         self._event_dispatcher.stop()
 
     def update(self):
-        self.paint()
+        self.paint_function()
         self._animations.animate()
         self._animations.paint(self._display)    
         try:
@@ -135,7 +152,7 @@ class Application(object):
 
 class SmileApplication(Application):
     def __init__(self, sender, framerate):
-        super().__init__(Display(10, 10, sender, mode=Display.MODE_ZIGZAG), framerate)
+        super().__init__(Display(10, 10, sender, mode=WireMode.ZIGZAG), framerate)
         self.action_map = {
             (Event.GAMEPAD, 'ABS_X', 0)       : self.btn_left_pressed,
             (Event.GAMEPAD, 'ABS_X', 255)     : self.btn_right_pressed,

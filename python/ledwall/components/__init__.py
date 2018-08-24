@@ -1,4 +1,4 @@
-from .display import Display
+from .display import (Display, WireMode)
 from .color import Color
 from .colortable import ColorTable
 from .hsvcolor import HSVColor
@@ -17,7 +17,7 @@ from .application import (Application,SmileApplication,Animation)
 
 __all__ = ['Color', 'Display', 'ColorTable', 'RGBColor', 'HSVColor', 'SerialSender', 'MqttSender', 'Sender',
            'ConsoleSender', 'AsyncSender', 'ProgMemSender', 'ListSender', 'UDPSender', 'Application', 'LEDWallError',
-           'TransmissionError','CoordinateError', 'SmileApplication', 'Animation']
+           'TransmissionError','CoordinateError', 'SmileApplication', 'Animation', 'WireMode']
 
 class LEDWallError(Exception): pass
 class TransmissionError(LEDWallError): pass

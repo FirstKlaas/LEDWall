@@ -38,6 +38,28 @@ class SerialSender(Sender):
         #self._s.write(bytearray(data))
 
     def update(self):
+        """Sends the data via the USB cable to the micro controller.
+        
+        If gamma correction is enabled for the associated display each byte of 
+        the color data is mapped to the gamma corrected value.
+
+        The command value ``Sender.CMD_PAINT_PANEL`` may not be one of the
+        data values to be transmitted, because for the arduino sketch this marks
+        the beginning of a new frame. In gamma corrected color values this is 
+        always true, because the command value is not in the gamma8 mapping table.
+
+        If gamma correction is disabled and the color data contains the command 
+        value, the data value is increased by one. For example the color value
+        ``(234, 5, 235)`` is mapped to the color ``(235, 5, 235)`` on the fly.
+        The value in the display data is not changed.
+
+        .. tip::
+            Please read the documentation for 
+            `PySerial <https://pythonhosted.org/pyserial/>`_, as not every 
+            baudrate is supported on every plattform. Also there you will find
+            the naming convention for the ports on different plattforms.
+
+        """ 
         if not self._s:
             raise ValueError('Not initialized')
 

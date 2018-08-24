@@ -4,9 +4,10 @@ from .sender import Sender
 
 class AsyncSender(Sender):
     def __init__(self, delegate):
-        """New asnchronous sender.
-        This sender takes another sender as a delegate and calls the corresponding update 
-        method in a separate thread.
+        """Asnchronous sender.
+        This sende. takes another sender as a delegate and calls the corresponding update 
+        method in a separate thread. Although it is possible, it is not advisable to 
+        wrap an async sender in an async sender,
         """
         super().__init__()
         if not isinstance(delegate,Sender):

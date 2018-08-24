@@ -3,6 +3,7 @@ from __future__ import (division, print_function)
 import sys
 import itertools
 import time 
+from enum import IntEnum
 
 from .color import Color
 
@@ -20,6 +21,39 @@ except ImportError:
 
 BYTES_PER_PIXEL = 3
 
+class WireMode(IntEnum):
+    """
+    The wire mode describes the way, the leds are organized on the board. Two ways of wiring are supported.
+    *LTR* and *ZIGZAG*. The WireMode class is an Enum. Whenever you have to specifiy a mode, you simply write
+    ``WireMode.LTR`` or ``WireMode.ZIGZAG`` 
+
+    **WireMde.LTR  (Left-To-Right)**
+
+    In the mode WireMode.LTR, all rows are going from left to right. The cable for the data line (blue) goes 
+    all the way back from the end of one row to the beginning of the next row.
+
+    .. figure:: mode_ltr.png
+       :scale: 60 %
+       :alt: mode ltr
+       :align: center
+
+       WireMode.LTR
+
+    **WireMode.ZIGZAG**
+
+    In the mode WireMode.ZIGZAG all even rows go from left to right where as the the odd rows go from right to left. Organizing leds
+    in this way saves a lot of cable for the data line (blue).
+
+    .. figure:: mode_zigzag.png
+       :scale: 60 %
+       :alt: mode ltr
+       :align: center
+
+       WireMode.ZIGZAG
+
+    """
+    LTR     = 0
+    ZIGZAG = 1
 
 class Display(object):
     """Creates a new instance of a led display. The Display class manages a virtual representation of the color state 
@@ -30,33 +64,7 @@ class Display(object):
     :class:`~ledwall.components.MqttSender`, :class:`~ledwall.components.UDPSender`).
 
     The methods to manipulate the color state of the pixels pay respect to the wiring mode you used. There are two ways to
-    layout and wire the LEDs on the board. 
-
-    **Modes for Wiring**
-    A word about the modes. The mode describes the way, the leds are organized on the board. Two ways of wiring are supported.
-    *ltr* and *zigzag*.
-
-    **MODE_LTR  (Left-To-Right)**
-    In the mode MODE_LTR, all rows are going from left to right. The cable for the data line (blue) goes alle the way back 
-    from the end of one row to the beginning of the next row.
-
-    .. figure:: mode_ltr.png
-       :scale: 60 %
-       :alt: mode ltr
-       :align: center
-
-       mode ltr
-
-    **MODE_ZIGZAG**
-    In the mode MODE_ZIGZAG all even rows go from left to right where as the the odd rows go from right to left. Organizing leds
-    in this way saves a lot of cable for the data line (blue).
-
-    .. figure:: mode_zigzag.png
-       :scale: 60 %
-       :alt: mode ltr
-       :align: center
-
-       mode_zigzag
+    layout of LEDs on the board specified by the WireMode parameter in the constructor. 
 
 
     A very basic program could look like this:
@@ -90,18 +98,11 @@ class Display(object):
     :type sender: Sender 
 
     :param mode: The mode that the LEDs ar organized. Left-to-Right or Zig-Zag. Defaults to Display.MODE_LTR.
-    :type mode: int
+    :type mode: WireMode
 
     :rtype: None
     """    
-
-    MODE_LTR = 0
-    """Pixels are arranged from left to the right. The data line goes from left to right for every row."""
-
-    MODE_ZIGZAG = 1
-    """Pixels are arranged in a zig zag pattern. The data line goes from left to right and on the next row vica versa."""
-
-    def __init__(self, cols, rows, sender=None, framerate=None, mode=MODE_LTR, panel_id='LEDPANEL0001', async=False):
+    def __init__(self, cols, rows, sender=None, framerate=None, mode=WireMode.LTR, panel_id='LEDPANEL', async=False):
         self._cols = int(cols)
         self._rows = int(rows)
         self._data = [0]*(BYTES_PER_PIXEL*self.count)
@@ -129,7 +130,7 @@ class Display(object):
 
     @property
     def mode(self):
-        """Returns the mode for this display.
+        """Returns the mode for this display. The return type is :class:`~ledwall.components.WireMode`
         """
         return self._mode
 
@@ -292,7 +293,7 @@ class Display(object):
         :param int y: Y position
         :return: The adjusted column index.
         """
-        if self._mode == Display.MODE_ZIGZAG and self.odd_row(y):
+        if self._mode == WireMode.ZIGZAG and self.odd_row(y):
             return self.columns-x-1
 
         return x
@@ -442,7 +443,7 @@ class Display(object):
         """
         start_index = row * self.columns * 3
 
-        if self.odd_row(row) and self._mode == Display.MODE_ZIGZAG:
+        if self.odd_row(row) and self._mode == WireMode.ZIGZAG:
             width = self.columns * 3
             right_pixel = self._data[start_index + width - 3:start_index + width]
             tmp = self._data[start_index:start_index + width - 3]
@@ -508,7 +509,7 @@ class Display(object):
         """
         start_index = row * self.columns * 3
 
-        if self.odd_row(row) and self._mode == Display.MODE_ZIGZAG:
+        if self.odd_row(row) and self._mode == WireMode.ZIGZAG:
             width = self.columns * 3
             left_pixel = self._data[start_index:start_index+3]
             self._data[start_index:start_index+width-3] = self._data[start_index+3:start_index+width]

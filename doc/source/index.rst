@@ -33,6 +33,7 @@ Contents
 
 .. toctree::
 
+   getting_started
    python
    arduino-mqtt
 

@@ -64,7 +64,7 @@ class SensoGame(SmileApplication):
         }
         
         self._on  = 1.0
-        self._off = 0.3
+        self._off = 0.7
 
         self.switch_off()
 
@@ -86,7 +86,6 @@ class SensoGame(SmileApplication):
         self._bullets = self.build_bullet_list()
 
         self._play_index = None
-        self._paint_function = None
         self.register_play_buttons()
         self.paint_fields()
 
@@ -103,13 +102,13 @@ class SensoGame(SmileApplication):
         self.switch_off()
         self.paint_fields()
         self.clear_play_buttons()
-        self._paint_function = None
+        self.paint_function = None
         self._sequence = []
         self._play_index = 0
 
     def paint_bullets(self, hitindex=0):
         for i in range(len(self._sequence)):
-            self.display.set_pixel(*self._bullets[i], (0,50,0) if i < hitindex else (30,30,30))       
+            self.display.set_pixel(*self._bullets[i], (0,100,0) if i < hitindex else (200,200,200))       
 
     def new_game_released(self):
         self.display.fill((0,0,0))
@@ -188,7 +187,7 @@ class SensoGame(SmileApplication):
             for f in self._fields.values():
                 f['color'].value = self._on
 
-    def paint_fields(self, *args):
+    def paint_fields(self):
         for f in self._fields.values():
             self.display.fill_rect(*f['rect'],f['color'])
 
@@ -198,19 +197,19 @@ class SensoGame(SmileApplication):
         red = HSVColor(0)
         self.switch_off()
 
-        def paint(*args):
+        def paint():
             self.display.fill(red)
             self.paint_fields()
             red.v -= 0.05
             if (red.v < 0.06):
-                self._paint_function = self.paint_fields
+                self.paint_function = self.paint_fields
 
-        self._paint_function = paint
+        self.paint_function = paint
 
     def paint_challenge(self, clb=None):
         i = iter(SequenceAnimation(self._sequence,5))
 
-        def paint(app):
+        def paint():
             self.clear_play_buttons()
             try:
                 c = next(i)
@@ -221,22 +220,11 @@ class SensoGame(SmileApplication):
          
             except StopIteration:
                 self.register_play_buttons()
-                self._paint_function = self.paint_fields
+                self.paint_function = self.paint_fields
                 if clb: clb()
 
-        self._paint_function = paint
+        self.paint_function = paint
 
-    def paint(self):
-        """
-        self.paint_fields()
-        if self._play_index == len(self._sequence):
-            print('Adding item to sequence')
-            self.add_sequence_item()
-            self._play_index = 0
-            print('new sequence {}'.format(self._sequence))
-            self.add_animation(SequenceAnimation(self._sequence))
-        """
-        if self._paint_function: self._paint_function(self)
 
 if __name__ == '__main__':
     app = SensoGame()

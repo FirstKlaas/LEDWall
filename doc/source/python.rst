@@ -1,9 +1,6 @@
 Python Library
 ==============
 
-Getting Started
----------------
-
 The python library provides modules and classes to manipulate the pixel colors
 on the LED Display. I tried to design a pythonic API, which makes it very intuitive to paint to the LED Display.
 

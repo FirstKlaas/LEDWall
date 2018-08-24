@@ -1,14 +1,14 @@
 #include <Arduino.h>
 #include <FastLED.h>
 
-#define DATA_PIN             5
-#define BYTES_PER_PIXEL      3
-
+#define DATA_PIN              5
+#define BAUDRATE         500000
 #define MAX_SERIAL_DELAY   3000  // Maximum delay between transmitted data within one command in milliseconds
 
+#define BYTES_PER_PIXEL      3
 #define CMD_PAINT_PANEL    243
 
-#define DEBUG
+#define NODEBUG
 
 const uint8_t numberOfLeds  = 100;
 const int16_t numberOfByte = numberOfLeds * BYTES_PER_PIXEL;
@@ -19,9 +19,9 @@ unsigned long time;
 uint8_t cmdbuffer[16];
 
 void setup() {
-  Serial.begin(500000);
+  Serial.begin(BAUDRATE);
   delay(500);
-  FastLED.addLeds<NEOPIXEL, DATA_PIN>((CRGB*)leds, 100);
+  FastLED.addLeds<NEOPIXEL, DATA_PIN>((CRGB*)leds, numberOfLeds);
   delay(500);
   FastLED.showColor(CRGB::Yellow);
 }
@@ -30,7 +30,6 @@ void setup() {
 void loop() {
   int16_t index = -1;
   unsigned long t1 = millis();
-  //  
   while (index < numberOfByte && ((millis()-t1) < MAX_SERIAL_DELAY)) {
     if (Serial.available() > 0) {
       if (index < 0) {

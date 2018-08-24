@@ -13,5 +13,9 @@ Also this modules offers color classes for the RGB and the HSV color space.
    hsvcolor
    rgbcolor
    colors
-   mqttsender
    sender
+   serialsender
+   mqttsender
+   udpsender
+   consolesender
+
