@@ -8,30 +8,29 @@ sys.path.append('..')
 
 from random import randint
 
-from ledwall.components import *
+import ledwall.components as comp
 
-d = Display(10,10,SerialSender(port_name='/dev/ttyACM0'), framerate=30)
-
+#d = comp.Display(10,10,comp.SerialSender(port_name='/dev/ttyACM0'), framerate=30)
+d = comp.Display(7,7,comp.UDPSender( server='LEDPanel-ONE'), framerate=30)
 
 def runforever(display, props):
 	return True
 
 def coloured_rain(display, deltaHue = 0.01, runfunc=runforever, props={}):
-	color = HSVColor(0.0,1.0,1.0)
+	color = comp.HSVColor(0.0,1.0,1.0)
 	display.fill(color,True)
 	m = 3
 	d = {}
 	d.update(props)
 	while runfunc(display, d):
 		display.move(m)
-		display[0] = Color.fromHSVColor(color)
+		display[0] = comp.Color.fromHSVColor(color)
 		color.hue += deltaHue
 		display.update()
 		m = ((m+1) % display.columns) + 1
 
 def rainbow(display, deltaHue = 0.01,  runfunc=runforever, props={}):
-	color = HSVColor(0.0,1.0,1.0)
-	m = 3
+	color = comp.HSVColor(0.0,1.0,1.0)
 	d = {}
 	d.update(props)
 	while runfunc(display, d):
@@ -50,7 +49,7 @@ def glitter(display, count, runfunc=runforever, props={}):
 		return  randint(60,100) / 100.
 
 	def random_pixel():
-		return { "x" : randint(0,display.columns-1), "y" : randint(0,display.columns-1), "color" : HSVColor(hue,random_saturation(),random_value())}	
+		return { "x" : randint(0,display.columns-1), "y" : randint(0,display.columns-1), "color" : comp.HSVColor(hue,random_saturation(),random_value())}	
 
 	glitter_pixels = [random_pixel() for x in range(count) ] 
 	
@@ -71,7 +70,7 @@ def glitter(display, count, runfunc=runforever, props={}):
 	while runfunc(display, props):
 		draw()
 		hue += hue_delta
-		update_glitter();
+		update_glitter()
 
 def run_ntimes_function(display, d):
 	if not "counter" in d:
@@ -83,7 +82,7 @@ def run_ntimes_function(display, d):
 
 #coloured_rain(d, runfunc=run_ntimes_function)
 #coloured_rain(d)
-glitter(d, 80)
+glitter(d, 20)
 #rainbow(d)
 
 """

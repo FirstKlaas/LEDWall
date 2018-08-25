@@ -8,7 +8,7 @@ from enum import IntEnum
 from .color import Color
 
 from ..util import TimeDelta
-from ..geometry import *
+from ..geometry import (Rectangle, Point)
 from .asyncsender import AsyncSender
 
 PIL_AVAILABLE = True
@@ -278,13 +278,6 @@ class Display(object):
 
     def _test_coords(self, x, y):
         return 0 <= x < self.columns and 0 <= y < self.rows
-        """ 
-        if x < 0 or x >= self.columns:
-            return False
-        if y < 0 or y >= self.rows:
-            return False
-        return True
-        """
 
     def _adjust_column(self, x, y):
         """
@@ -372,7 +365,7 @@ class Display(object):
 
     def write_bitmask(self, row, value, color1=(266, 165.0), color0=(0, 0, 0)):
         index = self._coords_to_index(6, row)
-        for b in range(self.columns):
+        for _ in range(self.columns):
             self._set_color_at(index, color1 if value & 1 else color0)
             value >>= 1
             index -= 1

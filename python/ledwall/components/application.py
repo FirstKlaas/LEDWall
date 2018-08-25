@@ -1,27 +1,11 @@
-from ..components.event import *
+from ..components.event import (FramerateEmitter, EventDispatcher, GamepadEmitter, Event)
 from ..util import TimeDelta
 from ..components import (Display, WireMode)
 
 class Animation():
     def __init__(self, do_after=None):
         self._do_after = do_after
-
-    @property
-    def app(self):
-        return self._app
-    
-    @property
-    def display(self):
-        return self.app.display
-
-    @property
-    def rows(self):
-        return self.display.rows
-
-    @property
-    def columns(self):
-        return self.display.columns
-            
+                    
     def animate(self):
         pass
 
@@ -68,6 +52,7 @@ class Application(object):
     def __init__(self, display, framerate):
         # type : (Display) -> None
         self._display = display
+        self._display.framerate = None
         self._display.fill((0,0,0))
         self._display.update()
         self._framerate = framerate
@@ -140,7 +125,7 @@ class Application(object):
         self._event_dispatcher.stop()
 
     def update(self):
-        self.paint_function()
+        self._paint_function()
         self._animations.animate()
         self._animations.paint(self._display)    
         try:

@@ -14,8 +14,8 @@ class UDPSender(Sender):
         self._delay = 1.0 / framerate
 
     @property
-    def baudrate(self):
-        return self._baudrate
+    def server(self):
+        return self._server
 
     @property
     def port(self):
