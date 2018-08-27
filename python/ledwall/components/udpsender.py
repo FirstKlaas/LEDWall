@@ -41,6 +41,9 @@ class UDPSender(Sender):
                 self._sendbuffer[i + 4] = self.panel.data[i]
 
         if self._socket:
-            self._socket.sendto(self._sendbuffer, (self._server, self._port))
+            try:
+                self._socket.sendto(self._sendbuffer, (self._server, self._port))
+            except Exception as e:
+                print("Could not send data via udp. ", e)
         else:
             raise ValueError("No Socket Connection")
