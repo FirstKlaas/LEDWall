@@ -4,7 +4,7 @@ import random
 
 def int_to_bitmask(i):
     result = 0
-    for s in range(i):
+    for _ in range(i):
         result >>= 1
         result |= 0b10000000
     return result
@@ -26,11 +26,10 @@ def convert_image_to_progmem_bitmask(name, image, x, y, width=None, height=None,
     if width is None: width = image.width
     if height is None: height = image.height
     number_of_blank_bits = width % 8
-    print number_of_blank_bits
+    print(number_of_blank_bits)
     result = "const uint8_t {}[] PROGMEM = {} 0x{:02x}, 0x{:02x},\n    ".format(name, "{", width, height)
     bit_pos = range(x,x+width,8)
 
-    data = []
     for row in range(height):
         bytes = [convert_byte(image, x, row, high_color) for x in bit_pos]
 

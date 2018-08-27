@@ -28,7 +28,7 @@ class Rectangle(Point):
 
 	@height.setter
 	def height(self, h):
-		self._height = h;
+		self._height = h
 
 	@property
 	def right(self):
@@ -73,8 +73,8 @@ class Rectangle(Point):
 			1 : self.y,
 			2 : self.width,
 			3 : self.height,
-			2 : self.right,
-			3 : self.bottom
+			4 : self.right,
+			5 : self.bottom
 		}.get(key,None)
 
 	def __iter__(self):

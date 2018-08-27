@@ -42,17 +42,13 @@ class Line(object):
 	def __repr__(self):
 		return "Line({0!r},{1!r})".format(self.p1,self.p2)
 		
-	def __format__(self):
-		return self.__repr__()
-
-	def __iadd__(pdelta):
+	def __iadd__(self, pdelta):
 		self._p1 += pdelta
 		self._p2 += pdelta
 
-	def __isub__(pdelta):
+	def __isub__(self, pdelta):
 		self._p1 -= pdelta
 		self._p2 -= pdelta
-
 
 	def paint(self, display, color=(255,255,255), update=False):
 		pass

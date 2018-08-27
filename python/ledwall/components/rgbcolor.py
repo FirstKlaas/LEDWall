@@ -67,8 +67,8 @@ class RGBColor(object):
             raise ValueError("Factor out of range.", factor)
         if isinstance(color, RGBColor):
             mefac = (1.0 - factor)
-            self._r = self._r * mefac + color._r * factor;
-            self._g = self._g * mefac + color._g * factor;
-            self._b = self._b * mefac + color._b * factor;
+            self._r = self._r * mefac + color._r * factor
+            self._g = self._g * mefac + color._g * factor
+            self._b = self._b * mefac + color._b * factor
         else:
             raise ValueError("Unsupported data type for color. Expected instance of RGBColor", color)

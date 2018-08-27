@@ -1,6 +1,3 @@
-from __future__ import division
-from __future__ import print_function
-
 import colorsys
 
 class HSVColor(object):
@@ -167,16 +164,15 @@ class HSVColor(object):
             if key == 'value' or key == 'v': return self.v
             raise ValueError('Uknown string identifier to lookup item',key)                
             
-        else:
-            if isinstance(key,int):
-                if key < 0 or key > 2:
-                    raise ValueError('Index out ouf bounds [0,2]', key)
+        elif isinstance(key,int):
+            if key < 0 or key > 2:
+                raise ValueError('Index out ouf bounds [0,2]', key)
 
-            elif isinstance(key, slice):
-                if abs(key.start) > 2:
-                    raise ValueError('Slice start ouf bounds [-2,2]', key)
+        elif isinstance(key, slice):
+            if abs(key.start) > 2:
+                raise ValueError('Slice start ouf bounds [-2,2]', key)
                 
-            return self.asArray()[key]
+        raise ValueError('Unsupported index type')
  
     @property
     def rgb(self):

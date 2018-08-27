@@ -78,9 +78,6 @@ class Point(object):
 	def __repr__(self):
 		return "Point({:d},{:d})".format(self.x,self.y)			
 
-	def __format__(self):
-		return self.__repr__()
-
 	def __isub__(self, value):
                       
 		if isinstance(value, int):

@@ -10,9 +10,9 @@ def rgb_to_hsv(rgb):
 	:type rgb: (Color, list, tuple)
 	""" 
 	if isinstance(rgb,RGBColor):
-		return HSVColor.fromTuple(rgb.hsv)
+		return HSVColor(*rgb.hsv)
 	if isinstance(rgb(list,tuple)) and len(rgb) == 3:
-		return HSVColor.fromTuple(RGBColor.fromTuple(rgb).hsv)
+		return HSVColor(RGBColor(*rgb).hsv)
 			
 
 def hsv_to_rgb(hsv):
@@ -25,6 +25,6 @@ def hsv_to_rgb(hsv):
 	:type rgb: (Color, list, tuple)
 	""" 
 	if isinstance(hsv,HSVColor):
-		return RGBColor.fromTuple(hsv.rgb)
+		return RGBColor(*hsv.rgb)
 	if isinstance(hsv(list,tuple)) and len(hsv) == 3:
-		return RGBColor.fromTuple(HSVColor.fromTuple(hsv).rgb)
+		return RGBColor(*(HSVColor(*hsv).rgb))

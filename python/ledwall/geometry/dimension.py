@@ -1,6 +1,6 @@
 class Dimension( object ):
 
-	def __init__(width, height):
+	def __init__(self, width, height):
 		self._width  = int(width)
 		self._height = int(height)
 

@@ -1,6 +1,3 @@
-from __future__ import print_function
-from __future__ import print_function
-
 from .sender import Sender
 from .color import Color
 

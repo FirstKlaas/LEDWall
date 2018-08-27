@@ -1,4 +1,5 @@
 from .sender import Sender
+from .asyncsender import AsyncSender
 
 class ListSender(Sender):
     """Manages a list of senders, so multiple panelscan be updated 

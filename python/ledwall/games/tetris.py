@@ -407,8 +407,10 @@ class Tetris(object):
     def testOverflowX(self, piece=None, dx=0, dy=0):
         piece = self.__ensurePiece(piece)
         shapeToTest = self.getShape(piece)
+        
         px = piece['x'] + dx
-        py = piece['y'] + dy
+        #py = piece['y'] + dy
+        
         for x in range(TEMPLATEWIDTH):
             for y in range(TEMPLATEHEIGHT):
                 if px + x < 0 and shapeToTest[y][x] != BLANK:
@@ -421,8 +423,10 @@ class Tetris(object):
     def testOverflowY(self, piece=None, dx=0, dy=0):
         piece = self.__ensurePiece(piece)
         shapeToTest = self.getShape(piece)
-        px = piece['x'] + dx
+        
+        #px = piece['x'] + dx
         py = piece['y'] + dy
+        
         for x in range(TEMPLATEWIDTH):
             for y in range(TEMPLATEHEIGHT):
                 if py + y >= self.height and shapeToTest[y][x] != BLANK:
