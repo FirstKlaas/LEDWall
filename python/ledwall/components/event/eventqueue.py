@@ -1,7 +1,7 @@
-from __future__ import print_function
-
 import threading
 import queue
+
+__ALL__ = ('EventEmitter')
 
 class Event(object):
     GAMEPAD  = 1
@@ -31,7 +31,6 @@ class Event(object):
         :param dict data: Dictionary with additional type specific information
         :param int event_type: The 'source' of the event.
         """
-        # type: (int, str, dict) -> None
         self._event_type = event_type
         self._data = data if data else {}
         self._action = action
@@ -49,7 +48,7 @@ class Event(object):
     def action(self):
         return self._action
 
-    def state():
+    def state(self):
         return self.data.get('state',None)
 
     def __getitem__(self, key):
@@ -65,7 +64,7 @@ class Event(object):
         return "Event('{}','{}',{}, priority={})".format(Event.NAMES[self._event_type], self._action, self._data, self._priority)
 
     def __cmp__(self,other):
-        return cmp(self._priority, other._priority)
+        return (self._priority>other._priority)-(self._priority<other._priority)
 
     def __lt__(self, other):
         return self._priority < other._priority

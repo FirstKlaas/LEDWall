@@ -3,14 +3,14 @@
 import sys
 sys.path.append('..')
 
-from ledwall.components import *
+from ledwall.components import (Animation, Display, HSVColor, SmileApplication, SerialSender)
 from ledwall.games.tetris import Tetris
 
-from ledwall.components.event import *
+from ledwall.components.event import (Event)
 
 import random
 
-class FallingColumnAnimation(Animation):
+class FallingColumnAnimation(*Animation):
 
     def __init__(self, column, color):
         super().__init__()
@@ -87,9 +87,6 @@ class TetrisGame(SmileApplication):
             TetrisGame.MOVE_DOWN: self.move_down, 
         }
         self.colorize_blocks(HSVColor(0.3))
-
-    def btn_select_pressed(self):
-        self.animations += FallingColumnAnimation(self, 0, (255,0,255))
 
     def setup_game_controls(self):
         self.register_action(Event.GAMEPAD,'ABS_X',255 , self.right)

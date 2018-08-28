@@ -186,7 +186,7 @@ class Pong(comp.SmileApplication):
         Man bekommt ein tuple mir den drei Werten fuer rot, gruen, blau
         geliefert. Dieses kann man auch bei set_pixel verwenden.
         """
-        c = self.display.get_pixel(3,3)
+        pass
 
     def draw_block(self,x,y,block,colors):
         for dy, row in enumerate(block):

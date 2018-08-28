@@ -1,7 +1,7 @@
 import sys
 sys.path.append('..')
 
-from ledwall.components import *
+from ledwall.components import (HSVColor, Display, Color, SerialSender)
 
 s = SerialSender(baudrate=500000)
 

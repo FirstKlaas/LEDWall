@@ -1,7 +1,7 @@
 import sys
 sys.path.append('..')
 
-from ledwall.components import *
+from ledwall.components import (SerialSender, HSVColor, Display)
 
 #s = UDPSender(server='192.168.178.96')
 s = SerialSender(port_name='/dev/ttyACM0')

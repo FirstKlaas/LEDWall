@@ -8,11 +8,11 @@ sys.path.append('..')
 
 from random import randint
 
-from ledwall.components import *
+import ledwall.components as comp
 
-d = Display(10,10,SerialSender(port_name='/dev/ttyACM0'), framerate=15)
+d = comp.Display(10,10,comp.SerialSender(port_name='/dev/ttyACM0'), framerate=15)
 
-class GlitterApp(Application):
+class GlitterApp(comp.Application):
 
     def __init__(self,count):
         super().__init__(d,10)
@@ -36,7 +36,7 @@ class GlitterApp(Application):
     def random_pixel(self):
         x = randint(0,self.display.columns-1)
         y = randint(0,self.display.rows-1)
-        color = HSVColor(self.hue,self.random_saturation(),self.random_value())
+        color = comp.HSVColor(self.hue,self.random_saturation(),self.random_value())
         return { "x" : x, "y" : y, "color" : color}    
     
     def update_glitter(self):

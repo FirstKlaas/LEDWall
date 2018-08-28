@@ -1,12 +1,9 @@
-from __future__ import division
-from __future__ import print_function
-
 import sys
 sys.path.append('..')
 
 from random import randint
 
-from ledwall.components import *
+from ledwall.components import (SerialSender, Display, Color)
 
 #s = UDPSender(server='192.168.178.96')
 s = SerialSender(port_name='/dev/ttyACM0')

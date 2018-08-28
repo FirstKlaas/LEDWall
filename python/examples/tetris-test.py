@@ -1,4 +1,4 @@
-from ledwall.components import *
+from ledwall.components import (Display, UDPSender, HSVColor)
 from ledwall.games.tetris import Tetris
 
 display = Display(7,7,UDPSender(server='192.168.178.96'))

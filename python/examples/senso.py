@@ -3,8 +3,8 @@
 import sys
 sys.path.append('..')
 
-from ledwall.components import *
-from ledwall.components.event import *
+from ledwall.components import (Display, SmileApplication, SerialSender,HSVColor)
+from ledwall.components.event import (Event)
 import ledwall.geometry as geo
 
 import random
@@ -18,7 +18,7 @@ class SequenceAnimation():
 
     @property
     def frames_per_color(self):
-        return self._frames
+        return self.fpc
     
     def generate_frames_sequence(self, seq, fpc):
         l = [None]*20

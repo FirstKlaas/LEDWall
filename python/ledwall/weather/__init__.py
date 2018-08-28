@@ -1,3 +1,3 @@
-from weather import Weather
+from .weather import Weather
 
 __all__ = ['Weather']

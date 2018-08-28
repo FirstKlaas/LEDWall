@@ -2,8 +2,8 @@ from datetime import datetime
 
 class Clock(object):
 	def __init__(self):
-		self._x = 0;
-		self._y = 0;
+		self._x = 0
+		self._y = 0
 		
 		self._hourColorHigh    = (128,0,128)
 		self._hourColorLow     = (5,0,5)
@@ -62,7 +62,7 @@ class BinaryCodedSexagesimalClock(Clock):
 		if not d:
 			return
 
-		t = datetime.now();
+		t = datetime.now()
 		d.write_bitmask(self.y, t.hour, self._hourColorHigh, self._hourColorLow)
 		d.write_bitmask(self.y + 1, t.minute, self._minuteColorHigh, self._minuteColorLow)
 		d.write_bitmask(self.y + 2, t.second, self._secondColorHigh, self._secondColorLow)

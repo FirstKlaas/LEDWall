@@ -4,7 +4,6 @@ sys.path.append('..')
 import time
 
 import ledwall.components as comp
-from ledwall.geometry import *
 
 """
 Orientation

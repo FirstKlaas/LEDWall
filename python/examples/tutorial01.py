@@ -4,7 +4,7 @@ sys.path.append('..')
 import time
 
 import ledwall.components as comp
-from ledwall.geometry import *
+from ledwall.geometry import (Point, Rectangle)
 
 """
 Beispiel 1

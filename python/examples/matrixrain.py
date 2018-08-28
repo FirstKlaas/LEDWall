@@ -1,4 +1,4 @@
-from ledwall.components import *
+from ledwall.components import (Display, HSVColor, RGBColor)
 
 class Drop(object):
 
@@ -15,6 +15,6 @@ class Drop(object):
 		self._color_values = [ 1. / v for v in range(1, self._drop_length+1)]
 
 	def paint(self, display):
-		col = self._basecolor
+		pass
 		
 

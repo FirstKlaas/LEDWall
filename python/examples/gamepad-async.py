@@ -13,5 +13,5 @@ dp.add_emitter(ev.FramerateEmitter(1))
 while True:
 	event = dp.next_event()
 	if event:
-		print(event);
+		print(event)
 	

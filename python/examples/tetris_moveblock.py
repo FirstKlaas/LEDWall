@@ -7,10 +7,10 @@ sys.path.append('..')
 
 from inputs import get_gamepad
 
-from ledwall.components import *
+from ledwall.components import (WireMode, Display, SerialSender, HSVColor)
 from ledwall.games.tetris import Tetris
 
-from ledwall.components.event import *
+from ledwall.components.event import (Event, EventDispatcher, FramerateEmitter, GamepadEmitter)
 
 import time
 
@@ -19,7 +19,7 @@ from ledwall.util import TimeDelta
 #s = UDPSender(server='192.168.178.96')
 s = SerialSender(port_name='/dev/ttyACM0')
 
-d = Display(10, 10, sender=s, mode=Display.MODE_ZIGZAG)
+d = Display(10, 10, sender=s, mode=WireMode.ZIGZAG)
 t = Tetris(d)
 
 t.update()

@@ -1,4 +1,4 @@
-from ledwall.components import *
+from ledwall.components import (Display)
 
 from ledwall.util import TimeDelta
 
@@ -12,4 +12,4 @@ for i in range(10000):
 	d.shift_right()
 
 td.measure()
-print td.micros	
+print(td.micros)	

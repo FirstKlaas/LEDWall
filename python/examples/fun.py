@@ -1,11 +1,12 @@
 import json
 import time
-import pyowm
+#import pyowm
 import random
 
-from ledwall.components import *
+from ledwall.components import (Display, MqttSender)
 from ledwall.weather import *
-from ledwall.util import *
+from ledwall.util import Settings
+
 from ledwall.widgets.clocks import BinaryCodedSexagesimalClock as BCD
 
 def init_led_wall(settings):
