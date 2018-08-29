@@ -38,3 +38,4 @@ build
 docbuild
 .idea
 node_modules
+.vscode
