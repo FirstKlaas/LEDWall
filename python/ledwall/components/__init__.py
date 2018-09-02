@@ -19,6 +19,8 @@ __all__ = ['Color', 'Display', 'ColorTable', 'RGBColor', 'HSVColor', 'SerialSend
            'ConsoleSender', 'AsyncSender', 'ProgMemSender', 'ListSender', 'UDPSender', 'Application', 'LEDWallError',
            'TransmissionError','CoordinateError', 'Game', 'Animation', 'WireMode', 'RegionSender']
 
+name = "ledwall"
+
 class LEDWallError(Exception): pass
 class TransmissionError(LEDWallError): pass
 class CoordinateError(LEDWallError): pass
