@@ -11,7 +11,7 @@ import ledwall.components.event as event
 #gebe hier den Port fuer den Arduino ein (siehe Arduino IDE)
 s = comp.SerialSender(port_name='/dev/ttyACM0')
 
-class Pong(comp.SmileApplication):
+class Pong(comp.Game):
     
     def __init__(self,sender,framerate):
         super().__init__(sender,framerate)

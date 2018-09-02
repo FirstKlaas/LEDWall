@@ -3,7 +3,7 @@
 import sys
 sys.path.append('..')
 
-from ledwall.components import (Display, SmileApplication, SerialSender,HSVColor)
+from ledwall.components import (Display, Game, SerialSender,HSVColor)
 from ledwall.components.event import (Event)
 import ledwall.geometry as geo
 
@@ -29,7 +29,7 @@ class SequenceAnimation():
     def __iter__(self):
         return iter(self._sequence)
         
-class SensoGame(SmileApplication):
+class SensoGame(Game):
 
     def __init__(self,framerate=15):
         s = SerialSender(port_name='/dev/ttyACM0')

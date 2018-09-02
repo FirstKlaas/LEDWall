@@ -143,7 +143,7 @@ class Application(object):
             #self._event_dispatcher.resume()            
             pass
 
-class SmileApplication(Application):
+class Game(Application):
     def __init__(self, sender, framerate, width=10, height=10, mode=WireMode.ZIGZAG):
         super().__init__(Display(width, height, sender, mode=mode), framerate)
         self.action_map = {

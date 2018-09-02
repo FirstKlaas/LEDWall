@@ -138,7 +138,7 @@ number_sprites = [
     number_9,
 ]
 
-class Pong(comp.SmileApplication):
+class Pong(comp.Game):
     
     def __init__(self,sender,framerate):
         super().__init__(sender,framerate, 17,10)
@@ -153,7 +153,7 @@ class Pong(comp.SmileApplication):
         self.ball_dy = 1
 
         #Schlaeger
-        self.paddle_x = 16
+        self.paddle_x = self.width-1
         self.paddle_y = 5
         self.paddle_height = 3
         self.paddle_color = (200,255,10)
@@ -266,9 +266,6 @@ class Pong(comp.SmileApplication):
         self.update_paddle_position()
         self.update_ballposition()
         self.draw_bg()
-        #self.draw_block(0,0,demo_block_A,colors)
-        #self.draw_block(1,4,demo_block_A,colors)
-        #self.draw_block(5,6,demo_block_B,colors)
         self.draw_number(2,1,self.number_of_tries)
         self.draw_ball()
         self.draw_paddle()

@@ -20,7 +20,7 @@ Ab hier kannst du die Methoden der Klasse Display verwenden
 
 """
 
-class Tutorial01(comp.SmileApplication):
+class Tutorial01(comp.Game):
 
     def __init__(self,sender, framerate):
         super().__init__(sender,framerate)

@@ -17,7 +17,7 @@ Damit kann das LED Panel leicht ausgerichtet werden.
 s = comp.SerialSender(port_name='/dev/ttyACM0')
 
 
-class Orientation(comp.SmileApplication):
+class Orientation(comp.Game):
 
     def __init__(self,sender, framerate):
         super().__init__(sender,framerate)
