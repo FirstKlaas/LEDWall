@@ -1,4 +1,6 @@
 #include <Arduino.h>
+#include <HardwareSerial.h>
+
 #include <FastLED.h>
 
 #define DATA_PIN              5

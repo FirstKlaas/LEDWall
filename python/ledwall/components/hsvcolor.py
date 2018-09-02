@@ -1,5 +1,5 @@
 import colorsys
-from .rgbcolor import RGBColor
+#from .rgbcolor import RGBColor
 
 class HSVColor(object):
     """Represents a color in the HSV color space.
@@ -175,10 +175,6 @@ class HSVColor(object):
                 
         raise ValueError('Unsupported index type')
  
-    @property
-    def rgb_color(self):
-        return RGBColor(*self.rgb)
-
     @property
     def rgb(self):
         """Returns a tuple with the converted and normalized rgb values

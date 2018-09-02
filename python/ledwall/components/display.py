@@ -571,13 +571,13 @@ class Display(object):
         
         :rtype: None
         """
-        rect = Rectangle(x, y, w+1, h+1)
+        rect = Rectangle(x, y, w, h)
         rect = self.as_rectangle() - rect
 
         if rect:
             rect = Rectangle.fromTuple(rect)
-            for px in range(rect.x, rect.right):
-                for py in range(rect.y, rect.bottom):
+            for px in range(rect.x, rect.right+1):
+                for py in range(rect.y, rect.bottom+1):
                     self.set_pixel(px, py, color)
         else:
             print("No intersection found")

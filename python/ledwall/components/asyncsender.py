@@ -24,8 +24,10 @@ class AsyncSender(Sender):
             try:
                 self._delegate.update()
             finally:
-                self._lock.release
-        
+                self._lock.release()
+        else:
+            print("dropped frame ", self.panel.frame)
+
     def init(self, panel):
         super().init(panel)
         self._delegate.init(panel)

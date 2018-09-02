@@ -63,15 +63,14 @@ class SerialSender(Sender):
         with self._lock:
 
             self._sendbuffer[0] = Sender.CMD_PAINT_PANEL
-            for i in range(len(self.panel.data)):
+            for i, value in enumerate(self.panel.data):
                 if self.panel.gamma_correction:
-                    self._sendbuffer[i + 1] = Color.gammaCorrection(self.panel.data[i])
+                    self._sendbuffer[i + 1] = Color.gammaCorrection(value)
                 else:
                     """
                     Make shure, the CMD_PAINT_PANEL is not part of the color data
                     """ 
-                    b = self.panel.data[i]
-                    self._sendbuffer[i + 1] = b if b != Sender.CMD_PAINT_PANEL else b + 1 
+                    self._sendbuffer[i + 1] = value if value != Sender.CMD_PAINT_PANEL else value + 1 
 
             if self._s:
                 self._s.write(self._sendbuffer)

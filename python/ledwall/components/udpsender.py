@@ -34,11 +34,11 @@ class UDPSender(Sender):
         if not self._socket:
             raise ValueError('Not initialized')
 
-        for i in range(len(self.panel.data)):
+        for i, value in enumerate(self.panel.data):
             if self.panel.gamma_correction:
-                self._sendbuffer[i + 4] = Color.gammaCorrection(self.panel.data[i])
+                self._sendbuffer[i + 4] = Color.gammaCorrection(value)
             else:
-                self._sendbuffer[i + 4] = self.panel.data[i]
+                self._sendbuffer[i + 4] = value
 
         if self._socket:
             try:

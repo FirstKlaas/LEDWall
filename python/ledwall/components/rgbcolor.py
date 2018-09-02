@@ -1,5 +1,5 @@
 import colorsys
-from .hsvcolor import HSVColor
+#from .hsvcolor import HSVColor
 
 class RGBColor(object):
 
@@ -73,8 +73,4 @@ class RGBColor(object):
             self._b = self._b * mefac + color._b * factor
         else:
             raise ValueError("Unsupported data type for color. Expected instance of RGBColor", color)
-
-    @property
-    def hsv_color(self):
-        return HSVColor(*self.hsv)
 
