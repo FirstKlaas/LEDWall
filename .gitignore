@@ -40,3 +40,4 @@ docbuild
 node_modules
 .vscode
 python/dist
+python/ledwall.egg-info
