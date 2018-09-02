@@ -11,7 +11,14 @@ import ledwall.components.event as event
 
 # Gib hier den Port fuer den Arduino ein (siehe Arduino IDE)
 
-s = comp.SerialSender(port_name='/dev/ttyACM0')
+s1 = comp.UDPSender( server='LEDPanel-ONE')
+s2 = comp.UDPSender( server='LEDPanel-TWO')
+
+r1 = comp.RegionSender(0,0,7,7,s1, mode=comp.WireMode.LTR)
+r2 = comp.RegionSender(7,0,10,10,s2,mode=comp.WireMode.ZIGZAG)
+
+#s = comp.SerialSender(port_name='/dev/ttyACM0')
+s = comp.ListSender([r1,r2], add_async=True)
 
 colors = {
     '0' : (255,255,0),
@@ -134,7 +141,7 @@ number_sprites = [
 class Pong(comp.SmileApplication):
     
     def __init__(self,sender,framerate):
-        super().__init__(sender,framerate)
+        super().__init__(sender,framerate, 17,10)
         #Hintergrundfarbe
         self.bg_color = (0,0,155)
 
@@ -146,7 +153,7 @@ class Pong(comp.SmileApplication):
         self.ball_dy = 1
 
         #Schlaeger
-        self.paddle_x = 9
+        self.paddle_x = 16
         self.paddle_y = 5
         self.paddle_height = 3
         self.paddle_color = (200,255,10)
@@ -219,7 +226,7 @@ class Pong(comp.SmileApplication):
     def update_paddle_position(self):
         y = self.paddle_y + self.paddle_dy
         
-        if 0 <= y < 8:
+        if 0 <= y < (self.height-2):
             self.paddle_y = y
         
     def btn_top_pressed(self):
@@ -241,12 +248,12 @@ class Pong(comp.SmileApplication):
             self.ball_dx *= -1
         if new_y < 0 :
             self.ball_dy *= -1
-        elif new_y > 9 :
+        elif new_y >= self.height :
             self.ball_dy *= -1           
         self.ball_x += self.ball_dx
         self.ball_y += self.ball_dy
 
-        if self.ball_x > 9:
+        if self.ball_x >= self.width:
             self.ball_x = 0
             self.ball_y = random.randrange(0,9,1)
             self.ball_dy = random.choice([-1,1])
@@ -262,7 +269,7 @@ class Pong(comp.SmileApplication):
         #self.draw_block(0,0,demo_block_A,colors)
         #self.draw_block(1,4,demo_block_A,colors)
         #self.draw_block(5,6,demo_block_B,colors)
-        self.draw_number(3,3,self.number_of_tries)
+        self.draw_number(2,1,self.number_of_tries)
         self.draw_ball()
         self.draw_paddle()
 

@@ -66,6 +66,14 @@ class Application(object):
         self._paint_function = self.paint
 
     @property
+    def width(self):
+        return self._display.columns
+
+    @property
+    def height(self):
+        return self._display.rows
+    
+    @property
     def paint_function(self):
         return self._paint_function
 
@@ -136,8 +144,8 @@ class Application(object):
             pass
 
 class SmileApplication(Application):
-    def __init__(self, sender, framerate):
-        super().__init__(Display(10, 10, sender, mode=WireMode.ZIGZAG), framerate)
+    def __init__(self, sender, framerate, width=10, height=10, mode=WireMode.ZIGZAG):
+        super().__init__(Display(width, height, sender, mode=mode), framerate)
         self.action_map = {
             (Event.GAMEPAD, 'ABS_X', 0)       : self.btn_left_pressed,
             (Event.GAMEPAD, 'ABS_X', 255)     : self.btn_right_pressed,

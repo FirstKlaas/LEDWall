@@ -13,12 +13,24 @@ class ListSender(Sender):
     :param boolean async: Calls sender asynchronously if True. Directly else.
     """  
 
-    def __init__(self, delegates, async=False):
+    def __init__(self, delegates=None, add_async=False):
         super().__init__()
-        if async:
-            self._delegates = [AsyncSender(s) for s in delegates]
+        self._add_async = add_async
+        if delegates:
+            if add_async:
+                self._delegates = [AsyncSender(s) for s in delegates]
+            else:
+                self._delegates = delegates
         else:
-            self._delegates = delegates
+            self._delegates = []
+            
+    def __iadd__(self, other):
+        if self._add_async:
+            self._delegates.append(AsyncSender(other))
+        else:
+            self._delegates.append(other)
+        return self
+
 
     def init(self, panel):
         """Calls init for every provided sender.
