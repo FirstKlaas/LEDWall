@@ -39,3 +39,4 @@ docbuild
 .idea
 node_modules
 .vscode
+python/dist
