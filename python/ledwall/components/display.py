@@ -97,8 +97,17 @@ class Display(object):
     :param sender: Instance of the sender (One of the subclasses, to be more precise)
     :type sender: Sender 
 
-    :param mode: The mode that the LEDs ar organized. Left-to-Right or Zig-Zag. Defaults to Display.MODE_LTR.
+    :param framerate: The intended number of frames per second.
+    :type framerate: int
+
+    :param mode: The mode that the LEDs are organized. Left-to-Right or Zig-Zag. Defaults to WireMode.LTR.
     :type mode: WireMode
+
+    :param panel_id: An unique id for this panel. Currently not used. 
+    :type panel_id: str
+
+    :param async: If True, the update() method of the provided sender will be called asynchronously.
+    :type async: boolean
 
     :rtype: None
     """    

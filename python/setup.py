@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ledwall",
-    version="1.0.5",
+    version="1.0.6",
     author="Klaas Nebuhr (FirstKlaas)",
     author_email="klaas@nebuhr.de",
     description="A simple but powerful library to control WS2812b LED panel.",

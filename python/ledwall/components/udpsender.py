@@ -6,12 +6,34 @@ from .color import Color
 import socket
 
 class UDPSender(Sender):
+    """An UDPSender instance sends the frame data via UDP (surprise, surprise). UDP is a 
+    connectionless communication model. It is not guaranteed that the client will receive
+    the packages in the correct order. 
 
-    def __init__(self, server='localhost', port=3548, framerate=25):
+    The UDPSender needs a server address (name or ip) and a port to send the data to. The
+    port defaults to 3548.
+
+    In theory the maximum length of a UPD package is 65,535 bytes, because of the 16bit 
+    length field. In the real world there will be additional limitations. For a LED Panel
+    with 2048 LEDs (which is not the smallest panel) we need 3*2,048 bytes plus 4 command 
+    bytes. So size shouldn't be a limitation.
+
+    The good thing about UDP is, that it is a connectionless communication. So if the server, 
+    which is the panel, is temporarily not available, nothing will happen. As soon as the server
+    is available again, it will continue to do display the frames.
+
+    Because the packages are send through the network, you will not have a stable or guaranteed
+    transmission speed. So there may be a noticable delay between sending and receiving.    
+
+    :param str server: Name or IP of the server to send the framedata to.
+
+    :param int port: Portnumber to send the data to. Defaults to 3548
+
+    """
+    def __init__(self, server='localhost', port=3548):
         super().__init__()
         self._server = server
         self._port = port
-        self._delay = 1.0 / framerate
 
     @property
     def server(self):
