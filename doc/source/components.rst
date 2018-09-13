@@ -13,9 +13,9 @@ Also this modules offers color classes for the RGB and the HSV color space.
    :hidden:
 
    display
+   colors
    hsvcolor
    rgbcolor
-   colors
    sender
    serialsender
    mqttsender
