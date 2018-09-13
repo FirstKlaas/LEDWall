@@ -2,5 +2,5 @@ UDPSender
 =========
 
 .. autoclass:: ledwall.components.UDPSender
-	:members:
+    :members:
 

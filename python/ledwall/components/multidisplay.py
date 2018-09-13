@@ -2,6 +2,47 @@ from .display import (WireMode, Display)
 from .sender import Sender
 
 class RegionSender(Sender):
+    """
+        Takes a rectangular region of a display and uses it
+        as an input to a chained sender instance.
+
+        This allows it to define a bigger display than the actual
+        physical device and map a region to the physical device.
+
+        The delegate parameter is used as the sender to hand over
+        the color data for the defined region. The dimensions of the 
+        region and the size of the physical device, the sender is 
+        transmitting the data to, must be identical. 
+
+        In combinatoin with the :class:`~ledwall.components.ListSender`,
+        it is possible to combine multiple physical devices to create a
+        connected display.
+
+        This sender is a middleware component. It extends the 
+        :class:`~ledwall.components.Sender` class and therefore can 
+        be used as a sender attribute in the 
+        :class:`~ledwall.components.Display` class.
+
+        For the delegate, this class mimics a display with the desired
+        region.
+
+        ..warning::
+            This class exposes not every display method to the delegate.
+            Just the properties and methods needed to send the data to
+            the physical display.  
+
+        :param int x: The x value of the top left corner of the region
+        :param int y: The y value of the top left corner of the region
+        :param int width: The width of the region
+        :param int height: The height of the region
+        
+        :param delegate: The sender instance to send the color data to
+        :type delegate: Sender
+
+        :param mode: The mode that the LEDs are organized. 
+            Left-to-Right or Zig-Zag. Defaults to WireMode.LTR.
+        :type mode: WireMode
+    """    
     def __init__(self, x, y, width, height, delegate,mode = WireMode.LTR):
         self.delegate = delegate
         self.width = width

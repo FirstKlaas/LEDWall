@@ -10,6 +10,7 @@ For more information, examples, installation guides and the arduino/nodemcu sket
 Also an [online documentation](http://make.nebuhr.de/ledwall/doc/) for the library is available.
 
 ## Example script
+
 The following script shows the basic usage of the library. I tried to keep things pythonic.
 
 ```python
@@ -31,4 +32,3 @@ d.setPixel(14,23,red)
 
 d.update()
 ```
-
