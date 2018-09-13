@@ -2,5 +2,5 @@ ConsoleSender
 =============
 
 .. autoclass:: ledwall.components.ConsoleSender
-	:members:
+    :members:
 

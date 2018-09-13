@@ -1,6 +1,4 @@
-
-
-LED Wall 
+LED Wall
 ========
 
 An interactive LED matrix based on WS2812b LEDs
@@ -8,8 +6,8 @@ An interactive LED matrix based on WS2812b LEDs
 
 The Idea
 ^^^^^^^^
-A LED Matrix which can be used as a display to play games 
-or to show different information (like the current weather 
+A LED Matrix which can be used as a display to play games
+or to show different information (like the current weather
 conditions)
 
 The Architecture
@@ -24,8 +22,9 @@ The main ingredients are:
 Python
 ^^^^^^
 
-For easy color manipulation as well as different hardware setups I wrote a python library. To get started, 
-read the documentation of the :class:`~ledwall.components.Display` class.
+For easy color manipulation as well as different hardware setups.
+I wrote a python library. To get started, read the documentation
+of the :class:`~ledwall.components.Display` class.
 
 
 Contents

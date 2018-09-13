@@ -2,16 +2,16 @@
 
 
 WireMode
-======== 
+========
 
 .. autoclass:: ledwall.components.WireMode
-	:members:
-	
+    :members:
+
 
 Display
-======= 
+=======
 
 .. autoclass:: ledwall.components.Display
-	:members:
-	
+    :members:
+
 

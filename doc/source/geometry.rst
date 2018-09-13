@@ -3,12 +3,15 @@
 ledwall.geometry
 ================
 
-The geometry module includes some basic shapes that can be drawn to the display. The basic shapes are :class:`~ledwall.geometry.Point`, :class:`~ledwall.geometry.Line`, :class:`~ledwall.geometry.Rectangle`.
+The geometry module includes some basic shapes that
+can be drawn to the display. The basic shapes are
+:class:`~ledwall.geometry.Point`, :class:`~ledwall.geometry.Line`,
+:class:`~ledwall.geometry.Rectangle`.
 
 Some sample code:
 
 .. code-block:: python
-    
+
     from ledwall.geometry import *
 
     p1 = Point(2,4)
@@ -19,7 +22,7 @@ Some sample code:
 
     # Line from values (x1,y1,x2,y2)
     l1 = Line.fromTuple((0,0,5,10))
-    
+
     r1 = Rectangle(2,3,10,20)
 
 
@@ -27,16 +30,16 @@ Point
 -----
 
 .. autoclass:: ledwall.geometry.Point
-	:members:
+    :members:
 
 Rectangle
 ---------
 
 .. autoclass:: ledwall.geometry.Rectangle
-	:members:	
+    :members:
 
 Line
 ----
 
 .. autoclass:: ledwall.geometry.Line
-	:members:		
+    :members:
