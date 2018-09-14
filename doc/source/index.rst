@@ -15,7 +15,7 @@ The Architecture
 
 The main ingredients are:
 
-* Raspberry PI (Version 2)
+* Raspberry PI (Version 2 or 3)
 * Arduino Uno
 * Many LW2812b LEDs
 
