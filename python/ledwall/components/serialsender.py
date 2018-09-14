@@ -8,7 +8,9 @@ from threading import Lock
 
 
 class SerialSender(Sender):
-
+    """
+    Sends the color data via the usb cable.
+    """
     def __init__(self, port_name='/dev/ttyACM0', baudrate=500000):
         super().__init__()
         self._baudrate = baudrate
