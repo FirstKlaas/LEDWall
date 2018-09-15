@@ -3,7 +3,7 @@ Getting started
 
 LEDs
 ----
-.. figure:: img/led_makefair_800_333.jpg
+.. figure:: img/led_makefair_800_133.jpg
        :alt: LED Panel
        :align: center
 
