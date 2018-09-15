@@ -15,9 +15,9 @@ The Architecture
 
 The main ingredients are:
 
-* Raspberry PI (Version 2 or 3)
-* Arduino Uno
-* Many LW2812b LEDs
+* Raspberry PI (Version 2 or 3 will do)
+* Arduino Uno (for wireless panels use a NodeMCU)
+* LW2812b LED Stripes
 
 Python
 ^^^^^^
@@ -25,7 +25,6 @@ Python
 For easy color manipulation as well as different hardware setups.
 I wrote a python library. To get started, read the documentation
 of the :class:`~ledwall.components.Display` class.
-
 
 Contents
 ^^^^^^^^
