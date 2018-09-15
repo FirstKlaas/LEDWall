@@ -33,7 +33,6 @@ Contents
 
    getting_started
    python
-   arduino-mqtt
 
 Indices and tables
 ^^^^^^^^^^^^^^^^^^

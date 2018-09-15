@@ -20,8 +20,8 @@ some useful information about timings and power consumtion.
        :alt: Controllers
        :align: center
 
-A micro controller
-------------------
+The micro controller
+--------------------
 
 If you clone the github project, you will find two arduino/nodemcu
 sketches. The correct sketch depends on the way you want to communicate
