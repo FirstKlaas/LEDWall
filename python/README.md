@@ -7,7 +7,7 @@ The library is intended to be used in conjunction with aa arduino or nodemcu tat
 
 For more information, examples, installation guides and the arduino/nodemcu sketches checkout my git [repository](https://github.com/FirstKlaas/LEDWall).
 
-Also an [online documentation](https://ledwall.readthedocs.io/en/latest/) for the library is available on readthedocs.
+Also an [online documentation](https://ledwall.readthedocs.io/en/latest/) for the library is available on `readthedocs <https://readthedocs.org>`_.
 
 ## Example script
 

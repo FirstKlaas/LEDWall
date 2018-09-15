@@ -107,7 +107,7 @@ The :class:`~ledwall.components.Display` class offers some
 functions that depend on the
 python image library `PIL <https://pypi.org/project/PIL/>`_.
 PIL is not supported on python3. You can instead install
-the pillow `library <https://pypi.org/project/Pillow/>`_ if you
+the `pillow <https://pypi.org/project/Pillow/>`_ library if you
 want to use these functions.
 
 Writing your first script
