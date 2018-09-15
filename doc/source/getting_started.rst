@@ -66,7 +66,7 @@ BAUDRATE
     The baudrate for the serial communication. The baudrate in
     the sketch and the baudrate in the constructor of the
     SerialSender have to be identical. Please read the documentation
-    of the `PySerial <https://pythonhosted.org/pyserial/>`_ module,
+    of the `pyserial <https://pypi.org/project/pyserial/>`_ module,
     as not all speeds are supported on every plattform. Some people
     reported, that you have to change boot settings on the raspberry
     before using higher speeds than 155200 b/s. On my raspberry 3 the
@@ -97,8 +97,18 @@ shell session shows the process to install the library.
     $ . bin/activate
     (tmp) $ pip install ledwall
 
+The library has the following dependencies:
 
+    * `pyserial <https://pypi.org/project/pyserial/>`_
+    * `paho-mqtt <https://pypi.org/project/paho-mqtt/>`_
+    * `inputs <https://pypi.org/project/inputs/>`_
 
+The :class:`~ledwall.components.Display` class offers some
+functions that depend on the
+python image library `PIL <https://pypi.org/project/PIL/>`_.
+PIL is not supported on python3. You can instead install
+the pillow `library <https://pypi.org/project/Pillow/>`_ if you
+want to use these functions.
 
 Writing your first script
 -------------------------
