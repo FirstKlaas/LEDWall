@@ -85,6 +85,20 @@ numberOfLeds
 Installing the python library
 -----------------------------
 
+The library is hosted on `PyPi <https://pypi.org/project/ledwall/>`_. You can
+easily install it using pip. The library only suppports python3. The following
+shell session shows the process to install the library.
+
+.. code-block:: bash
+    $ mkdir tmp
+    $ cd tmp
+    $ python3 -m venv .
+    $ . bin/activate
+    (tmp) $ pip install ledwall
+
+
+
+
 Writing your first script
 -------------------------
 
