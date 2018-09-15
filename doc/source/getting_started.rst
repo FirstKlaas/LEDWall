@@ -5,10 +5,10 @@
 Getting started
 ===============
 
-LEDs
-----
+The LEDs
+--------
 
-Ok, this is a library to manipulate leds. So, you definitly need leds.
+Ok, this is a library to manipulate leds. So, we definitly need leds.
 The arduino sketch makes use of the fastled library. I only used WS2812B led
 stripes, but any led type supported by the library should work. If
 you're using any other led, you may need to tweak the sketch to initialize
@@ -24,7 +24,8 @@ some useful information about timings and power consumtion.
 A micro controller
 ------------------
 
-The correct sketch depends on the way you want to communicate
+If you clone the github project, you will find two arduino/nodemcu
+sketches. The correct sketch depends on the way you want to communicate
 with the controller. A sketch counterparts a certain sender
 class. Currently two sketches are available. One for
 the :class:`~ledwall.components.UDPSender` class and one for the
@@ -38,48 +39,48 @@ is the ``Framebuffer3.ino`` sketch.
     #include <Arduino.h>
     #include <FastLED.h>
 
-    #define DATA_PIN              5
-    #define BAUDRATE         500000
-    #define MAX_SERIAL_DELAY   3000  // Maximum delay between transmitted
-                                     // data within one command in milliseconds
+    #define DATA_PIN              5     // The Pin your LED data line is connected to
+    #define BAUDRATE         500000     // The communication speed
+    #define MAX_SERIAL_DELAY   3000     // Maximum delay between transmitted
+                                        // data within one command in milliseconds
+    const uint8_t numberOfLeds  = 100;  // The number of leds
 
-    #define BYTES_PER_PIXEL      3
-    #define CMD_PAINT_PANEL    243
+    // ### DO NOT CHANGE ANYTHING BELOW THIS LINE UNLESS YOU KNOW WAHT YOU ARE DOING ###
+
+    #define BYTES_PER_PIXEL      3   // Don't chang this
+    #define CMD_PAINT_PANEL    243   // Don't chang this
 
     #define NODEBUG
 
-    const uint8_t numberOfLeds  = 100;
     const int16_t numberOfByte = numberOfLeds * BYTES_PER_PIXEL;
 
 Before uploading the script, some adjustments
 have to be done to match your setup.
 
-The Data Pin
-^^^^^^^^^^^^
-The pin on the micro controller, where the data
-line of your leds is connected to. The default is pin 5.
 
-The Baudrate
-^^^^^^^^^^^^
-The baudrate for the serial communication. The baudrate in
-the sketch and the baudrate in the constructor of the
-SerialSender have to be identical. Please read the documentation
-of the `PySerial <https://pythonhosted.org/pyserial/>`_ module,
-as not all speeds are supported on every plattform. Some people
-reported, that you have to change boot settings on the raspberry
-before using higher speeds than 155200 b/s. On my raspberry 3 the
-default speed of 0,5 Mb/s worked perfectly. Keep in mind, that
-also the quality and the length of the usb cable will have an impact.
+DATA_PIN
+    The pin on the micro controller, where the data
+    line of your leds is connected to. The default is pin 5.
 
-The Number of Leds
-^^^^^^^^^^^^^^^^^^
-The variable ``numberOfLeds`` holds (surprise, surprise) the number
-of LEDs on your panel.
+BAUDRATE
+    The baudrate for the serial communication. The baudrate in
+    the sketch and the baudrate in the constructor of the
+    SerialSender have to be identical. Please read the documentation
+    of the `PySerial <https://pythonhosted.org/pyserial/>`_ module,
+    as not all speeds are supported on every plattform. Some people
+    reported, that you have to change boot settings on the raspberry
+    before using higher speeds than 155200 b/s. On my raspberry 3 the
+    default speed of 0,5 Mb/s worked perfectly. Keep in mind, that
+    also the quality and the length of the usb cable will have an impact.
 
-.. warning::
-    Make shure you don't use more leds in your python
-    :class:`~ledwall.components.Display` instance. Also make
-    shure that your physical board doesn't have less leds.
+numberOfLeds
+    The variable ``numberOfLeds`` holds (surprise, surprise) the number
+    of LEDs on your panel.
+
+    .. warning::
+        Make shure you don't use more leds in your python
+        :class:`~ledwall.components.Display` instance. Also make
+        shure that your physical board doesn't have less leds.
 
 Installing the python library
 -----------------------------
