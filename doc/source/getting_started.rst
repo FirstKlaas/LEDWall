@@ -3,7 +3,7 @@ Getting started
 
 LEDs
 ----
-.. figure:: led_makefair_800_333.jpg
+.. figure:: img/led_makefair_800_333.jpg
        :alt: LED Panel
        :align: center
 
@@ -15,8 +15,6 @@ fastled correctly. For more details on fastled it is worth checking
 out the website `Fastled.io <http://fastled.io>`_. There you will also find
 some useful information about timings and power consumtion.
 
-LEDs
-----
 .. figure:: led_strip_800_333.jpg
        :alt: WS2812B stripe
        :align: center
