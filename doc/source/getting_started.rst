@@ -1,5 +1,5 @@
-.. figure:: img/led_makefair_800_133.jpg
-       :alt: LED Panel
+.. figure:: led_strip_800_333.jpg
+       :alt: WS2812B stripe
        :align: center
 
 Getting started
@@ -16,10 +16,9 @@ fastled correctly. For more details on fastled it is worth checking
 out the website `Fastled.io <http://fastled.io>`_. There you will also find
 some useful information about timings and power consumtion.
 
-.. figure:: led_strip_800_333.jpg
-       :alt: WS2812B stripe
+.. figure:: img/led_controller_800_133.jpg
+       :alt: Controllers
        :align: center
-
 
 A micro controller
 ------------------
@@ -109,6 +108,10 @@ python image library `PIL <https://pypi.org/project/PIL/>`_.
 PIL is not supported on python3. You can instead install
 the `pillow <https://pypi.org/project/Pillow/>`_ library if you
 want to use these functions.
+
+.. figure:: img/led_makefair_800_133.jpg
+       :alt: LED Panel
+       :align: center
 
 Writing your first script
 -------------------------
