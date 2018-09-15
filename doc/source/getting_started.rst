@@ -1,11 +1,12 @@
+.. figure:: img/led_makefair_800_133.jpg
+       :alt: LED Panel
+       :align: center
+
 Getting started
 ===============
 
 LEDs
 ----
-.. figure:: img/led_makefair_800_133.jpg
-       :alt: LED Panel
-       :align: center
 
 Ok, this is a library to manipulate leds. So, you definitly need leds.
 The arduino sketch makes use of the fastled library. I only used WS2812B led
