@@ -68,7 +68,7 @@ BAUDRATE
     of the `pyserial <https://pypi.org/project/pyserial/>`_ module,
     as not all speeds are supported on every plattform. Some people
     reported, that you have to change boot settings on the raspberry
-    before using higher speeds than 155200 b/s. On my raspberry 3 the
+    before using higher speeds than 155,200 b/s. On my raspberry 3 the
     default speed of 0,5 Mb/s worked perfectly. Keep in mind, that
     also the quality and the length of the usb cable will have an impact.
 
@@ -86,7 +86,9 @@ Installing the python library
 
 The library is hosted on `PyPi <https://pypi.org/project/ledwall/>`_. You can
 easily install it using pip. The library only suppports python3. The following
-shell session shows the process to install the library.
+shell session shows the process to install the library. The procedure shown
+below works on ubuntu and raspberry. I've never tested this on windows. But
+installing on windows should be pretty straight forward.
 
 .. code-block:: console
 
@@ -105,9 +107,12 @@ The library has the following dependencies:
 The :class:`~ledwall.components.Display` class offers some
 functions that depend on the
 python image library `PIL <https://pypi.org/project/PIL/>`_.
-PIL is not supported on python3. You can instead install
+PIL is not supported on python3. Therefore PIL is not listed
+in the dependencies and will not be installed automatically.
+You can instead install
 the `pillow <https://pypi.org/project/Pillow/>`_ library if you
-want to use these functions.
+want to use these functions. Maybe this will change in the
+future.
 
 .. figure:: img/led_makefair_800_133.jpg
        :alt: LED Panel
