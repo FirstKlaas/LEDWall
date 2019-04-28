@@ -9,19 +9,19 @@ import ledwall.components as comp
 
 #d = comp.Display(10,10,comp.SerialSender(port_name='/dev/ttyACM0'), framerate=15)
 
-s1 = comp.UDPSender( server='LEDPanel-ONE')
-s2 = comp.UDPSender( server='LEDPanel-TWO')
+#s1 = comp.UDPSender( server='LEDPanel-ONE')
+s2 = comp.UDPSender( server='172.16.4.243')
 
-r1 = comp.RegionSender(0,2,7,7,s1, mode=comp.WireMode.LTR)
-r2 = comp.RegionSender(7,0,10,10,s2,mode=comp.WireMode.ZIGZAG)
+#r1 = comp.RegionSender(0,2,7,7,s1, mode=comp.WireMode.LTR)
+#r2 = comp.RegionSender(7,0,10,10,s2,mode=comp.WireMode.ZIGZAG)
 
-senders = comp.ListSender([r1,r2], add_async=True)
-d = comp.Display(17,10,senders)
+#senders = comp.ListSender([r1,r2], add_async=True)
+d = comp.Display(7,7,s2)
 
 class GlitterApp(comp.Application):
 
     def __init__(self,count):
-        super().__init__(d,10)
+        super().__init__(d,25)
         self.hue = 0.0
         self.val_delta = 0.01
         self.hue_delta = 0.001
@@ -55,6 +55,6 @@ class GlitterApp(comp.Application):
                 self.glitter_pixels[i] = self.random_pixel()
                 self.hue += self.hue_delta          
 
-app = GlitterApp(60)
+app = GlitterApp(20)
 #cProfile.run('app.start_loop()','stats.txt')
 app.start_loop()

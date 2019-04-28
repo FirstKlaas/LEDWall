@@ -5,6 +5,9 @@ from .color import Color
 
 import socket
 
+from threading import Lock
+import time
+
 class UDPSender(Sender):
     """An UDPSender instance sends the frame data via UDP (surprise, surprise). UDP is a 
     connectionless communication model. It is not guaranteed that the client will receive
@@ -34,6 +37,7 @@ class UDPSender(Sender):
         super().__init__()
         self._server = server
         self._port = port
+        self._lock = Lock()
 
     @property
     def server(self):
@@ -47,7 +51,7 @@ class UDPSender(Sender):
         super().init(panel)
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._sendbuffer = bytearray(3 * self.panel.count + 4)
-        self._sendbuffer[0] = 2 # Write Raw
+        self._sendbuffer[0] = Sender.CMD_PAINT_PANEL # Write Raw
         self._sendbuffer[1] = 2 # Update
         self._sendbuffer[2] = self.panel.count
         self._sendbuffer[3] = 0 # Reserved
@@ -56,16 +60,19 @@ class UDPSender(Sender):
         if not self._socket:
             raise ValueError('Not initialized')
 
-        for i, value in enumerate(self.panel.data):
-            if self.panel.gamma_correction:
-                self._sendbuffer[i + 4] = Color.gammaCorrection(value)
-            else:
-                self._sendbuffer[i + 4] = value
+        with self._lock:
 
-        if self._socket:
-            try:
-                self._socket.sendto(self._sendbuffer, (self._server, self._port))
-            except Exception as e:
-                print("Could not send data via udp. ", e)
-        else:
-            raise ValueError("No Socket Connection")
+            for i, value in enumerate(self.panel.data):
+                if self.panel.gamma_correction:
+                    self._sendbuffer[i + 4] = Color.gammaCorrection(value)
+                else:
+                    self._sendbuffer[i + 4] = value
+
+            if self._socket:
+                try:
+                    self._socket.sendto(self._sendbuffer, (self._server, self._port))
+                    #time.sleep(0.3)
+                except Exception as e:
+                    print("Could not send data via udp. ", e)
+            else:
+                raise ValueError("No Socket Connection")

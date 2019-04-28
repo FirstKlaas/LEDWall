@@ -11,7 +11,7 @@ from random import randint
 import ledwall.components as comp
 
 #d = comp.Display(10,10,comp.SerialSender(port_name='/dev/ttyACM0'), framerate=30)
-d = comp.Display(7,7,comp.UDPSender( server='LEDPanel-ONE'), framerate=30)
+d = comp.Display(7,7,comp.UDPSender( server='172.16.4.243'), framerate=60)
 
 def runforever(display, props):
 	return True
