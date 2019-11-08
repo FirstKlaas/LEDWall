@@ -42,3 +42,6 @@ node_modules
 python/dist
 python/ledwall.egg-info
 python/examples/stats.txt
+python/venv
+python/*.txt
+

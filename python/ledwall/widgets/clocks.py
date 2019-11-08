@@ -58,14 +58,12 @@ class BinaryCodedSexagesimalClock(Clock):
 		self.y = y
 
 	def update(self, update=False):
-		d  = self.display
-		if not d:
+		display  = self.display
+		if not display:
 			return
 
-		t = datetime.now()
-		d.write_bitmask(self.y, t.hour, self._hourColorHigh, self._hourColorLow)
-		d.write_bitmask(self.y + 1, t.minute, self._minuteColorHigh, self._minuteColorLow)
-		d.write_bitmask(self.y + 2, t.second, self._secondColorHigh, self._secondColorLow)
-		d.update(update)
-
-
+		now = datetime.now()
+		display.write_bitmask(self.y, now.hour, self._hourColorHigh, self._hourColorLow)
+		display.write_bitmask(self.y + 1, now.minute, self._minuteColorHigh, self._minuteColorLow)
+		display.write_bitmask(self.y + 2, now.second, self._secondColorHigh, self._secondColorLow)
+		display.update(update)
