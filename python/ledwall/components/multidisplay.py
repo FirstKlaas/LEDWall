@@ -1,5 +1,6 @@
-from .display import (WireMode, Display)
+from .display import WireMode, Display
 from .sender import Sender
+
 
 class RegionSender(Sender):
     """
@@ -42,8 +43,9 @@ class RegionSender(Sender):
         :param mode: The mode that the LEDs are organized. 
             Left-to-Right or Zig-Zag. Defaults to WireMode.LTR.
         :type mode: WireMode
-    """    
-    def __init__(self, x, y, width, height, delegate,mode = WireMode.LTR):
+    """
+
+    def __init__(self, x, y, width, height, delegate, mode=WireMode.LTR):
         self.delegate = delegate
         self.width = width
         self.height = height
@@ -51,7 +53,7 @@ class RegionSender(Sender):
         self.y = y
         self._pixbufiter = None
         self.display = None
-        self._mode = mode 
+        self._mode = mode
 
     @property
     def data(self):
@@ -59,15 +61,15 @@ class RegionSender(Sender):
             self._pixbufiter = PixBufIter(self, self.display)
 
         return self._pixbufiter
-    
+
     @property
     def gamma_correction(self):
         return self.display._gamma_correction
 
-    @property   
+    @property
     def count(self):
         return self.width * self.height
-        
+
     @property
     def mode(self):
         return self._mode
@@ -79,7 +81,8 @@ class RegionSender(Sender):
     def update(self):
         self.delegate.update()
 
-class PixBufIter():
+
+class PixBufIter:
     def __init__(self, parent, display):
         self.display = display
         self.parent = parent
@@ -97,17 +100,17 @@ class PixBufIter():
         return self.parent.height
 
     def __getitem__(self, key):
-        x,y = key
-        
-        if self.mode == WireMode.ZIGZAG and Display.odd_row(y+self.parent.y):
-            return self.display[(self.parent.x + (self.width-x-1),  self.parent.y + y)]
+        x, y = key
+
+        if self.mode == WireMode.ZIGZAG and Display.odd_row(y + self.parent.y):
+            return self.display[(self.parent.x + (self.width - x - 1), self.parent.y + y)]
 
         return self.display[(self.parent.x + x, self.parent.y + y)]
 
     def __iter__(self):
         for dy in range(self.height):
             for dx in range(self.width):
-                color = self[(dx,dy)]
+                color = self[(dx, dy)]
                 yield color[0]
                 yield color[1]
                 yield color[2]

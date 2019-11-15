@@ -1,28 +1,30 @@
 from .color import Color
 
+
 class ColorTable(object):
 
-    AliceBlue      = Color.fromHexString('#F0F8FF')
-    Amethyst       = Color.fromHexString('#9966CC')
-    AntiqueWhite   = Color.fromHexString('#FAEBD7')
-    Aqua           = Color.fromHexString('#00FFFF')
-    Aquamarine     = Color.fromHexString('#7FFFD4')
-    Azure          = Color.fromHexString('#F0FFFF')
-    Beige          = Color.fromHexString('#F5F5DC')
-    Bisque         = Color.fromHexString('#FFE4C4')
-    Black          = Color.fromHexString('#000000')
-    BlanchedAlmond = Color.fromHexString('#FFEBCD')
-    Blue           = Color.fromHexString('#0000FF')
-    BlueViolet     = Color.fromHexString('#8A2BE2')
-    Brown          = Color.fromHexString('#A52A2A')
-    BurlyWood      = Color.fromHexString('#DEB887')
-    CadetBlue      = Color.fromHexString('#5F9EA0')
-    Chartreuse     = Color.fromHexString('#7FFF00')
-    Chocolate      = Color.fromHexString('#D2691E')
-    Coral          = Color.fromHexString('#FF7F50')
-    CornflowerBlue = Color.fromHexString('#6495ED')
-    Cornsilk       = Color.fromHexString('#7FFF00')
-    Chartreuse     = Color.fromHexString('#FFF8DC')
+    AliceBlue = Color.fromHexString("#F0F8FF")
+    Amethyst = Color.fromHexString("#9966CC")
+    AntiqueWhite = Color.fromHexString("#FAEBD7")
+    Aqua = Color.fromHexString("#00FFFF")
+    Aquamarine = Color.fromHexString("#7FFFD4")
+    Azure = Color.fromHexString("#F0FFFF")
+    Beige = Color.fromHexString("#F5F5DC")
+    Bisque = Color.fromHexString("#FFE4C4")
+    Black = Color.fromHexString("#000000")
+    BlanchedAlmond = Color.fromHexString("#FFEBCD")
+    Blue = Color.fromHexString("#0000FF")
+    BlueViolet = Color.fromHexString("#8A2BE2")
+    Brown = Color.fromHexString("#A52A2A")
+    BurlyWood = Color.fromHexString("#DEB887")
+    CadetBlue = Color.fromHexString("#5F9EA0")
+    Chartreuse = Color.fromHexString("#7FFF00")
+    Chocolate = Color.fromHexString("#D2691E")
+    Coral = Color.fromHexString("#FF7F50")
+    CornflowerBlue = Color.fromHexString("#6495ED")
+    Cornsilk = Color.fromHexString("#7FFF00")
+    Chartreuse = Color.fromHexString("#FFF8DC")
+
 
 """
   Crimson =0xDC143C, Cyan =0x00FFFF, DarkBlue =0x00008B, DarkCyan =0x008B8B,

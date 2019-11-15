@@ -1,27 +1,28 @@
 import threading
 import queue
 
-__ALL__ = ('EventEmitter')
+__ALL__ = "EventEmitter"
+
 
 class Event(object):
-    GAMEPAD  = 1
+    GAMEPAD = 1
     KEYBOARD = 2
-    MOUSE    = 3
-    SYSTEM   = 4
-    MQTT     = 5
-    ARDUINO  = 6
-    USER     = 999
+    MOUSE = 3
+    SYSTEM = 4
+    MQTT = 5
+    ARDUINO = 6
+    USER = 999
 
-    PRIORITY_HIGH   = 1
+    PRIORITY_HIGH = 1
     PRIORITY_NORMAL = 10
-    PRIORITY_LOW    = 100
+    PRIORITY_LOW = 100
 
     NAMES = {
-        GAMEPAD: 'GAMEPAD',
-        KEYBOARD: 'KEYBOARD',
-        MOUSE: 'MOUSE',
-        SYSTEM: 'SYSTEM',
-        USER: 'USER',
+        GAMEPAD: "GAMEPAD",
+        KEYBOARD: "KEYBOARD",
+        MOUSE: "MOUSE",
+        SYSTEM: "SYSTEM",
+        USER: "USER",
     }
 
     def __init__(self, event_type, action, data=None, priority=PRIORITY_NORMAL):
@@ -49,10 +50,10 @@ class Event(object):
         return self._action
 
     def state(self):
-        return self.data.get('state',None)
+        return self.data.get("state", None)
 
     def __getitem__(self, key):
-        return self._data.get(key,None)
+        return self._data.get(key, None)
 
     def __setitem__(self, key, value):
         self._data[key] = value
@@ -61,16 +62,18 @@ class Event(object):
         return self._action
 
     def __repr__(self):
-        return "Event('{}','{}',{}, priority={})".format(Event.NAMES[self._event_type], self._action, self._data, self._priority)
+        return "Event('{}','{}',{}, priority={})".format(
+            Event.NAMES[self._event_type], self._action, self._data, self._priority
+        )
 
-    def __cmp__(self,other):
-        return (self._priority>other._priority)-(self._priority<other._priority)
+    def __cmp__(self, other):
+        return (self._priority > other._priority) - (self._priority < other._priority)
 
     def __lt__(self, other):
         return self._priority < other._priority
 
-class EventDispatcher(object):
 
+class EventDispatcher(object):
     def __init__(self):
         self._queue = queue.PriorityQueue()
         self._generators = []
@@ -87,7 +90,7 @@ class EventDispatcher(object):
         for g in self._generators:
             g.resume()
 
-    def __iadd__(self,other):
+    def __iadd__(self, other):
         self.add_emitter(other)
         return self
 
@@ -106,12 +109,11 @@ class EventDispatcher(object):
 
 
 class EventEmitter(threading.Thread):
-
     def __init__(self):
         super().__init__()
         self.queue = None
         self._is_running = False
-        self.daemon= True
+        self.daemon = True
         self._pausing = False
 
     def connect_queue(self, q):
@@ -134,7 +136,8 @@ class EventEmitter(threading.Thread):
 
     def run(self):
         while self._is_running:
-            if not self._pausing: self.emit()
+            if not self._pausing:
+                self.emit()
 
     def emit(self):
         pass

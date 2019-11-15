@@ -1,6 +1,7 @@
 from .sender import Sender
 from .asyncsender import AsyncSender
 
+
 class ListSender(Sender):
     """Manages a list of senders, so multiple panelscan be updated 
     by just one display. If async is true, all senders in the delegates
@@ -11,7 +12,7 @@ class ListSender(Sender):
     :param delegates: An iterable object of sender instances.
     :type delegates: iterable(Sender)
     :param boolean async: Calls sender asynchronously if True. Directly else.
-    """  
+    """
 
     def __init__(self, delegates=None, add_async=False):
         super().__init__()
@@ -23,14 +24,13 @@ class ListSender(Sender):
                 self._delegates = delegates
         else:
             self._delegates = []
-            
+
     def __iadd__(self, other):
         if self._add_async:
             self._delegates.append(AsyncSender(other))
         else:
             self._delegates.append(other)
         return self
-
 
     def init(self, panel):
         """Calls init for every provided sender.
@@ -44,4 +44,3 @@ class ListSender(Sender):
         """
         for s in self._delegates:
             s.update()
-

@@ -1,4 +1,5 @@
-__all__ = ['Sender']
+__all__ = ["Sender"]
+
 
 class Sender(object):
     """
@@ -15,13 +16,13 @@ class Sender(object):
     :class:`~ledwall.components.UDPSender`.
     """
 
-    CMD_INIT_PANEL    =   1
-    CMD_CLEAR_PANEL   =   2
-    CMD_FILL_PANEL    =   3
-    CMD_PAINT_PANEL   = 243
-    CMD_SET_PIXEL     =   5
-    CMD_WRITE_RAW     =   6
-    CMD_SHOW          = 255
+    CMD_INIT_PANEL = 1
+    CMD_CLEAR_PANEL = 2
+    CMD_FILL_PANEL = 3
+    CMD_PAINT_PANEL = 243
+    CMD_SET_PIXEL = 5
+    CMD_WRITE_RAW = 6
+    CMD_SHOW = 255
 
     def __init__(self):
         self._panel = None
@@ -41,7 +42,7 @@ class Sender(object):
         is called, the implementation can access the display via the 
         property 'panel'. (I know, it's confusing and will be changed 
         in the future).
-        """ 
+        """
         self._panel = display
 
     def update(self):
@@ -49,6 +50,5 @@ class Sender(object):
         This method will be called every time, the sender should update
         the physical led display and should be implemented in every
         derived class.
-        """ 
+        """
         pass
-

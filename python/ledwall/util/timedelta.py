@@ -3,7 +3,6 @@ import datetime
 
 
 class TimeDelta(object):
-
     def __init__(self):
         self._max = None
         self._min = None
@@ -60,4 +59,7 @@ class TimeDelta(object):
 
     def __str__(self):
         return "(ms: %s, min: %s, max: %s)" % (
-        self._NoneOrStr(self._millis), self._NoneOrStr(self._min), self._NoneOrStr(self._max))
+            self._NoneOrStr(self._millis),
+            self._NoneOrStr(self._min),
+            self._NoneOrStr(self._max),
+        )

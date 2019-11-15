@@ -1,14 +1,16 @@
-from __future__ import (division, print_function)
+from __future__ import division, print_function
 
 import sys
 import itertools
-import time 
+import time
+from typing import Optional, List
+
 from enum import IntEnum
 
-from .color import Color
-
+from .color import Color, TColor
+from .sender import Sender
 from ..util import TimeDelta
-from ..geometry import (Rectangle, Point)
+from ..geometry import Rectangle, Point
 from .asyncsender import AsyncSender
 
 PIL_AVAILABLE = True
@@ -20,6 +22,7 @@ except ImportError:
     print("Python Image library (PIL) not availabe. Image functions will be disabled")
 
 BYTES_PER_PIXEL = 3
+
 
 class WireMode(IntEnum):
     """
@@ -52,8 +55,10 @@ class WireMode(IntEnum):
        WireMode.ZIGZAG
 
     """
-    LTR     = 0
+
+    LTR = 0
     ZIGZAG = 1
+
 
 class Display(object):
     """Creates a new instance of a led display. The Display class manages a virtual representation of the color state 
@@ -110,11 +115,21 @@ class Display(object):
     :type async: boolean
 
     :rtype: None
-    """    
-    def __init__(self, cols, rows, sender=None, framerate=None, mode=WireMode.LTR, panel_id='LEDPANEL', async=False):
+    """
+
+    def __init__(
+        self,
+        cols: int,
+        rows: int,
+        sender: Optional[Sender] = None,
+        framerate: Optional[int] = None,
+        mode: WireMode = WireMode.LTR,
+        panel_id: str = "LEDPANEL",
+        async: bool = False,
+    ):
         self._cols = int(cols)
         self._rows = int(rows)
-        self._data = [0]*(BYTES_PER_PIXEL*self.count)
+        self._data = [0] * (BYTES_PER_PIXEL * self.count)
         self._mode = mode
         self._transmissionTime = TimeDelta()
         self._frame_nr = 0
@@ -123,46 +138,53 @@ class Display(object):
         self._sender = sender
         self._framerate = framerate
         self._millis_per_frame = 1000 / framerate if framerate else 0
-        self._frame_computation_time = TimeDelta() 
-        
+        self._frame_computation_time = TimeDelta()
+
         if sender and async:
             self._sender = AsyncSender(sender)
-        
+
         if self._cols < 1:
-            raise ValueError('Argument cols must be a value greater than 1.', cols)
+            raise ValueError("Argument cols must be a value greater than 1.", cols)
 
         if self._rows < 1:
-            raise ValueError('Argument rows must be a value greater than 1.', cols)
+            raise ValueError("Argument rows must be a value greater than 1.", cols)
 
         if self._sender:
             self._sender.init(self)
 
     @property
     def mode(self):
-        """Returns the mode for this display. The return type is :class:`~ledwall.components.WireMode`
+        """
+        Returns the mode for this display. The return type is
+        :class:`~ledwall.components.WireMode`
         """
         return self._mode
 
     @property
     def data(self):
-        """Returns the raw byte array for the color data. 
+        """
+        Returns the raw byte array for the color data. 
         """
         return self._data
 
     @property
     def fct(self):
+        """
+        The frame computation time.
+        """
         return self._frame_computation_time
 
     @property
     def id(self):
-        """The panel id as set in the constructor. (read-only)
+        """
+        The panel id as set in the constructor. (read-only)
         """
         return self._id
 
     def __iter__(self):
         index = 0
         while index < self.count:
-            yield tuple(self._data[index*BYTES_PER_PIXEL:(index+1)*BYTES_PER_PIXEL])
+            yield tuple(self._data[index * BYTES_PER_PIXEL : (index + 1) * BYTES_PER_PIXEL])
             index += 1
 
     def __len__(self):
@@ -171,48 +193,63 @@ class Display(object):
     def __getitem__(self, key):
         if isinstance(key, (tuple, list)) and len(key) == 2:
             index = self._coords_to_index(key[0], key[1]) * 3
-            return tuple(self._data[index:index+3])
+            return tuple(self._data[index : index + 3])
 
         if isinstance(key, int):
-            index = key*3    
-            return tuple(self._data[index:index+3])
+            index = key * 3
+            return tuple(self._data[index : index + 3])
 
         if isinstance(key, slice):
             return [color for color in itertools.islice(self, key.start, key.stop, key.step)]
 
         return NotImplemented
 
-    def _set_color_at(self, index, color):
+    def _set_color_at(self, index: int, color: TColor):
         if index >= self.count:
-            raise ValueError('Index out of range. Maximum is %d but was %d' % (self.count - 1, index))
+            raise ValueError(
+                "Index out of range. Maximum is %d but was %d" % (self.count - 1, index)
+            )
 
         index *= BYTES_PER_PIXEL
         color = Color.convert(color)
         self._data[index] = color.red
-        self._data[index+1] = color.green
-        self._data[index+2] = color.blue                        
+        self._data[index + 1] = color.green
+        self._data[index + 2] = color.blue
         return
 
-    def set_colors(self, colors, transparent_color=None):
+    def set_colors(self, colors: List[TColor], transparent_color: Optional[TColor] = None):
+        """
+        Sets the colors of the pixels according to the
+        colors in the color list parameter.
+
+        The method ignores the wiring of the display and
+        sets the colors in the given order. The result will
+        look different on differently wired display.
+
+        Any entry in the colors list, where `colors[i] == transparent_color`
+        is `True` will be ignored and the corresponding display pixel will
+        be skipped.
+        """
+
         index = 0
         for c in colors:
             if c and c != transparent_color:
                 self._set_color_at(index, c)
             index += 1
-    
-    def get_colors(self):
+
+    def get_colors(self) -> List[TColor]:
         return self[:]
-                    
-    def __setitem__(self, key, item):
+
+    def __setitem__(self, key, item: TColor):
         if not item:
-            raise ValueError('None is not allowed for item. Item must be a color instance')
+            raise ValueError("None is not allowed for item. Item must be a color instance")
 
         if isinstance(key, int):
             if key < 0:
-                raise ValueError('Index may not below zero.', key, item)
+                raise ValueError("Index may not below zero.", key, item)
 
             if key >= self.count:
-                raise ValueError('Index must below count.', key, item)
+                raise ValueError("Index must below count.", key, item)
 
             self._set_color_at(self._adjust_index(key), item)
             return
@@ -233,7 +270,7 @@ class Display(object):
         return NotImplemented
 
     @property
-    def columns(self):
+    def columns(self) -> int:
         """
         :return: The number of columns on this display
         :rtype: int
@@ -241,7 +278,7 @@ class Display(object):
         return self._cols
 
     @property
-    def rows(self):
+    def rows(self) -> int:
         """
         :return: The number of rows on this display
         :rtype: int
@@ -249,7 +286,7 @@ class Display(object):
         return self._rows
 
     @property
-    def count(self):
+    def count(self) -> int:
         """
         :return: The number of pixels on this display
         :rtype: int
@@ -257,7 +294,7 @@ class Display(object):
         return self.columns * self.rows
 
     @property
-    def frame(self):
+    def frame(self) -> int:
         """
         :return: The current frame number
         :rtype: int
@@ -265,7 +302,11 @@ class Display(object):
         return self._frame_nr
 
     @property
-    def byte_count(self):
+    def byte_count(self) -> int:
+        """
+        The number of bytes needed for one frame.
+        This is equivalent to (width * height * 3).
+        """
         return len(self._data)
 
     @property
@@ -273,19 +314,32 @@ class Display(object):
         return self._transmissionTime.asTuple()
 
     @property
-    def gamma_correction(self):
+    def gamma_correction(self) -> bool:
+        """
+        Is gamma correction enabled or not.
+        """
         return self._gamma_correction
 
     @gamma_correction.setter
     def gamma_correction(self, value):
         self._gamma_correction = value
-        
+
     @property
     def frame_rate(self):
         """Returns the framerate."""
         return self._framerate
 
     def _test_coords(self, x, y):
+        """
+        Returns true, if x and y are valid indices for
+        a pixeln on tis display.
+
+        :param int x: X position
+        :param int y: Y position
+        :return: `True` if `0 <= x < self.columns and 0 <= y < self.rows`.
+            False else.
+        :rtype: bool
+        """
         return 0 <= x < self.columns and 0 <= y < self.rows
 
     def _adjust_column(self, x, y):
@@ -296,7 +350,7 @@ class Display(object):
         :return: The adjusted column index.
         """
         if self._mode == WireMode.ZIGZAG and self.odd_row(y):
-            return self.columns-x-1
+            return self.columns - x - 1
 
         return x
 
@@ -306,8 +360,8 @@ class Display(object):
 
     def _coords_to_index(self, x, y, adjust=True):
         if adjust:
-            return (y*self.columns) + self._adjust_column(x, y)
-        return (y*self.columns) + x
+            return (y * self.columns) + self._adjust_column(x, y)
+        return (y * self.columns) + x
 
     def _index_to_coords(self, index, adjust=True):
         x = index % self.columns
@@ -316,7 +370,7 @@ class Display(object):
             return self._adjust_column(x, y), y
         return x, y
 
-    def set_pixel(self, x, y, color, update=False):
+    def set_pixel(self, x: int, y: int, color: TColor, update: Optional[bool] = False):
         """Setting the color for a single pixel. 
 
         Returns True, if setting the pixel was successful, Fales else. The color is specified by a color instance.
@@ -346,8 +400,9 @@ class Display(object):
         :type update: boolean
 
         :rtype: boolean
-        """    
-        if not self._test_coords(x,y): return False
+        """
+        if not self._test_coords(x, y):
+            return False
 
         self._set_color_at(self._coords_to_index(x, y), color)
         self.update(update)
@@ -367,10 +422,14 @@ class Display(object):
 
         :rtype: Color
         """
-        assert self._test_coords(x,y), "Coords out of range ({},{}). Dimensions of the 0-indexed display are ({},{})".format(x,y,self.columns,self.rows)
+        assert self._test_coords(
+            x, y
+        ), "Coords out of range ({},{}). Dimensions of the 0-indexed display are ({},{})".format(
+            x, y, self.columns, self.rows
+        )
 
         index = self._coords_to_index(x, y) * 3
-        return Color.fromTuple(tuple(self._data[index:index+3]))
+        return Color.fromTuple(tuple(self._data[index : index + 3]))
 
     def write_bitmask(self, row, value, color1=(266, 165.0), color0=(0, 0, 0)):
         index = self._coords_to_index(6, row)
@@ -396,9 +455,10 @@ class Display(object):
 
         :rtype: None
         """
-        if 0 > row >= self.rows: raise ValueError('Row index out of bounds.', row)
-              
-        self[row*self.columns:((row+1)*self.columns)] = Color.convert(color)    
+        if 0 > row >= self.rows:
+            raise ValueError("Row index out of bounds.", row)
+
+        self[row * self.columns : ((row + 1) * self.columns)] = Color.convert(color)
         self.update(update)
 
     def vertical_line(self, column, color, update=False):
@@ -447,17 +507,19 @@ class Display(object):
 
         if self.odd_row(row) and self._mode == WireMode.ZIGZAG:
             width = self.columns * 3
-            right_pixel = self._data[start_index + width - 3:start_index + width]
-            tmp = self._data[start_index:start_index + width - 3]
-            self._data[start_index + 3:start_index + width] = tmp
-            self._data[start_index:start_index + 3] = right_pixel[:]
+            right_pixel = self._data[start_index + width - 3 : start_index + width]
+            tmp = self._data[start_index : start_index + width - 3]
+            self._data[start_index + 3 : start_index + width] = tmp
+            self._data[start_index : start_index + 3] = right_pixel[:]
 
         else:
             width = self.columns * 3
-            left_pixel = self._data[start_index:start_index + 3]
-            self._data[start_index:start_index + width - 3] = self._data[start_index + 3:start_index + width]
-            self._data[start_index + width - 3:start_index + width] = left_pixel[:]
-            
+            left_pixel = self._data[start_index : start_index + 3]
+            self._data[start_index : start_index + width - 3] = self._data[
+                start_index + 3 : start_index + width
+            ]
+            self._data[start_index + width - 3 : start_index + width] = left_pixel[:]
+
         self.update(update)
 
     def shift_left(self, update=False):
@@ -480,15 +542,15 @@ class Display(object):
 
         self.update(update)
 
-    def move(self,count=1):
+    def move(self, count=1):
         """Moves all pixels in the buffer. 
 
         .. warning::
             This method does not take the ``mode`` into account. So the visual effect differs depending on the mode.
 
         :param int count: The amount each pixel is moved.
-        """  
-        self._data[BYTES_PER_PIXEL*count:] = self._data[:-BYTES_PER_PIXEL*count]
+        """
+        self._data[BYTES_PER_PIXEL * count :] = self._data[: -BYTES_PER_PIXEL * count]
 
     def shift_row_right(self, row, update=False):
         """Shifts all pixels in the specified row to the right.
@@ -513,17 +575,19 @@ class Display(object):
 
         if self.odd_row(row) and self._mode == WireMode.ZIGZAG:
             width = self.columns * 3
-            left_pixel = self._data[start_index:start_index+3]
-            self._data[start_index:start_index+width-3] = self._data[start_index+3:start_index+width]
-            self._data[start_index+width-3:start_index+width] = left_pixel[:]
+            left_pixel = self._data[start_index : start_index + 3]
+            self._data[start_index : start_index + width - 3] = self._data[
+                start_index + 3 : start_index + width
+            ]
+            self._data[start_index + width - 3 : start_index + width] = left_pixel[:]
 
         else:
             width = self.columns * 3
-            right_pixel = self._data[start_index+width-3:start_index+width]
-            tmp = self._data[start_index:start_index+width-3]
-            self._data[start_index + 3:start_index+width] = tmp
-            self._data[start_index:start_index+3] = right_pixel[:]
-            
+            right_pixel = self._data[start_index + width - 3 : start_index + width]
+            tmp = self._data[start_index : start_index + width - 3]
+            self._data[start_index + 3 : start_index + width] = tmp
+            self._data[start_index : start_index + 3] = right_pixel[:]
+
         self.update(update)
 
     def shift_right(self, update=False):
@@ -560,7 +624,7 @@ class Display(object):
         :rtype: Rectangle
         """
         return Rectangle(0, 0, self.columns, self.rows)
-        
+
     def fill_rect(self, x, y, w, h, color, update=False):
         """Fills a rectangle in the specified color
         
@@ -585,8 +649,8 @@ class Display(object):
 
         if rect:
             rect = Rectangle.fromTuple(rect)
-            for px in range(rect.x, rect.right+1):
-                for py in range(rect.y, rect.bottom+1):
+            for px in range(rect.x, rect.right + 1):
+                for py in range(rect.y, rect.bottom + 1):
                     self.set_pixel(px, py, color)
         else:
             print("No intersection found")
@@ -618,8 +682,8 @@ class Display(object):
         :type update: boolean
 
         :rtype: None
-        """        
-        self._data[:] = [0] * (BYTES_PER_PIXEL*self.count)
+        """
+        self._data[:] = [0] * (BYTES_PER_PIXEL * self.count)
         self.update(update)
 
     def update(self, update=True):
@@ -659,8 +723,7 @@ class Display(object):
             self._sender.update()
 
         if self._framerate:
-            time.sleep(1/self._framerate)
-
+            time.sleep(1 / self._framerate)
 
     def show_image(self, path, update=False, transparent_color=None):
         self.load_image(path, update, transparent_color)
@@ -681,11 +744,13 @@ class Display(object):
         
         :param transparent_color: The color which defines transparency. Defaults to None.
         :type transparent_color: tuple
-        """    
-        if 'PIL' not in sys.modules:
-            raise ValueError('Module PIL not available. Consider to install PIL to use this function.')
+        """
+        if "PIL" not in sys.modules:
+            raise ValueError(
+                "Module PIL not available. Consider to install PIL to use this function."
+            )
         img = Image.open(path)
-        rgbimg = img.convert('RGB')
+        rgbimg = img.convert("RGB")
         for y in range(self.rows):
             for x in range(self.columns):
                 color = rgbimg.getpixel((x, y))
@@ -693,7 +758,9 @@ class Display(object):
                     self.set_pixel(x, y, color)
         self.update(update)
 
-    def copy_region_from(self, src, rect_src=None, point_dst=Point(0, 0), transparent_color=None, update=False):
+    def copy_region_from(
+        self, src, rect_src=None, point_dst=Point(0, 0), transparent_color=None, update=False
+    ):
         """Copy a region from another display. If a transparent color is provided, all pixels in the
         source panel with the corresponding color will be ignored. 
 

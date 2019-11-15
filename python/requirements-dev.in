@@ -37,3 +37,6 @@ doc8
 #rope
 #autopep8
 #asynctest
+paho-mqtt
+inputs
+pyowm

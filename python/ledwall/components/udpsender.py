@@ -1,4 +1,4 @@
-from __future__ import (print_function, division)
+from __future__ import print_function, division
 
 from .sender import Sender
 from .color import Color
@@ -7,6 +7,7 @@ import socket
 
 from threading import Lock
 import time
+
 
 class UDPSender(Sender):
     """An UDPSender instance sends the frame data via UDP (surprise, surprise). UDP is a 
@@ -33,7 +34,8 @@ class UDPSender(Sender):
     :param int port: Portnumber to send the data to. Defaults to 3548
 
     """
-    def __init__(self, server='localhost', port=3548):
+
+    def __init__(self, server="localhost", port=3548):
         super().__init__()
         self._server = server
         self._port = port
@@ -51,14 +53,14 @@ class UDPSender(Sender):
         super().init(panel)
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._sendbuffer = bytearray(3 * self.panel.count + 4)
-        self._sendbuffer[0] = Sender.CMD_PAINT_PANEL # Write Raw
-        self._sendbuffer[1] = 2 # Update
+        self._sendbuffer[0] = Sender.CMD_PAINT_PANEL  # Write Raw
+        self._sendbuffer[1] = 2  # Update
         self._sendbuffer[2] = self.panel.count
-        self._sendbuffer[3] = 0 # Reserved
+        self._sendbuffer[3] = 0  # Reserved
 
     def update(self):
         if not self._socket:
-            raise ValueError('Not initialized')
+            raise ValueError("Not initialized")
 
         with self._lock:
 
@@ -71,7 +73,7 @@ class UDPSender(Sender):
             if self._socket:
                 try:
                     self._socket.sendto(self._sendbuffer, (self._server, self._port))
-                    #time.sleep(0.3)
+                    # time.sleep(0.3)
                 except Exception as e:
                     print("Could not send data via udp. ", e)
             else:

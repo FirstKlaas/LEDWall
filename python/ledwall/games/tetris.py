@@ -5,173 +5,87 @@ import ledwall.components as comp
 TEMPLATEWIDTH = 5
 TEMPLATEHEIGHT = 5
 
-S_SHAPE_TEMPLATE = [['.....',
-                     '.....',
-                     '..OO.',
-                     '.OO..',
-                     '.....'],
-                    ['.....',
-                     '..O..',
-                     '..OO.',
-                     '...O.',
-                     '.....']]
+S_SHAPE_TEMPLATE = [
+    [".....", ".....", "..OO.", ".OO..", "....."],
+    [".....", "..O..", "..OO.", "...O.", "....."],
+]
 
-Z_SHAPE_TEMPLATE = [['.....',
-                     '.....',
-                     '.OO..',
-                     '..OO.',
-                     '.....'],
-                    ['.....',
-                     '..O..',
-                     '.OO..',
-                     '.O...',
-                     '.....']]
+Z_SHAPE_TEMPLATE = [
+    [".....", ".....", ".OO..", "..OO.", "....."],
+    [".....", "..O..", ".OO..", ".O...", "....."],
+]
 
-I_SHAPE_TEMPLATE = [['..O..',
-                     '..O..',
-                     '..O..',
-                     '..O..',
-                     '.....'],
-                    ['.....',
-                     '.....',
-                     'OOOO.',
-                     '.....',
-                     '.....']]
+I_SHAPE_TEMPLATE = [
+    ["..O..", "..O..", "..O..", "..O..", "....."],
+    [".....", ".....", "OOOO.", ".....", "....."],
+]
 
-O_SHAPE_TEMPLATE = [['.....',
-                     '.....',
-                     '.OO..',
-                     '.OO..',
-                     '.....']]
+O_SHAPE_TEMPLATE = [[".....", ".....", ".OO..", ".OO..", "....."]]
 
-P_SHAPE_TEMPLATE = [['.....',
-                     '.....',
-                     '..O..',
-                     '.....',
-                     '.....']]
+P_SHAPE_TEMPLATE = [[".....", ".....", "..O..", ".....", "....."]]
 
-J_SHAPE_TEMPLATE = [['.....',
-                     '.O...',
-                     '.OOO.',
-                     '.....',
-                     '.....'],
-                    ['.....',
-                     '..OO.',
-                     '..O..',
-                     '..O..',
-                     '.....'],
-                    ['.....',
-                     '.....',
-                     '.OOO.',
-                     '...O.',
-                     '.....'],
-                    ['.....',
-                     '..O..',
-                     '..O..',
-                     '.OO..',
-                     '.....']]
+J_SHAPE_TEMPLATE = [
+    [".....", ".O...", ".OOO.", ".....", "....."],
+    [".....", "..OO.", "..O..", "..O..", "....."],
+    [".....", ".....", ".OOO.", "...O.", "....."],
+    [".....", "..O..", "..O..", ".OO..", "....."],
+]
 
-L_SHAPE_TEMPLATE = [['.....',
-                     '...O.',
-                     '.OOO.',
-                     '.....',
-                     '.....'],
-                    ['.....',
-                     '..O..',
-                     '..O..',
-                     '..OO.',
-                     '.....'],
-                    ['.....',
-                     '.....',
-                     '.OOO.',
-                     '.O...',
-                     '.....'],
-                    ['.....',
-                     '.OO..',
-                     '..O..',
-                     '..O..',
-                     '.....']]
+L_SHAPE_TEMPLATE = [
+    [".....", "...O.", ".OOO.", ".....", "....."],
+    [".....", "..O..", "..O..", "..OO.", "....."],
+    [".....", ".....", ".OOO.", ".O...", "....."],
+    [".....", ".OO..", "..O..", "..O..", "....."],
+]
 
-T_SHAPE_TEMPLATE = [['.....',
-                     '..O..',
-                     '.OOO.',
-                     '.....',
-                     '.....'],
-                    ['.....',
-                     '..O..',
-                     '..OO.',
-                     '..O..',
-                     '.....'],
-                    ['.....',
-                     '.....',
-                     '.OOO.',
-                     '..O..',
-                     '.....'],
-                    ['.....',
-                     '..O..',
-                     '.OO..',
-                     '..O..',
-                     '.....']]
+T_SHAPE_TEMPLATE = [
+    [".....", "..O..", ".OOO.", ".....", "....."],
+    [".....", "..O..", "..OO.", "..O..", "....."],
+    [".....", ".....", ".OOO.", "..O..", "....."],
+    [".....", "..O..", ".OO..", "..O..", "....."],
+]
 
-C_SHAPE_TEMPLATE = [['.....',
-                     '..O..',
-                     '..OO.',
-                     '.....',
-                     '.....'],
-                    ['.....',
-                     '.....',
-                     '..OO.',
-                     '..O..',
-                     '.....'],
-                    ['.....',
-                     '.....',
-                     '.OO..',
-                     '..O..',
-                     '.....'],
-                    ['.....',
-                     '..O..',
-                     '.OO..',
-                     '.....',
-                     '.....']]
+C_SHAPE_TEMPLATE = [
+    [".....", "..O..", "..OO.", ".....", "....."],
+    [".....", ".....", "..OO.", "..O..", "....."],
+    [".....", ".....", ".OO..", "..O..", "....."],
+    [".....", "..O..", ".OO..", ".....", "....."],
+]
 
-D_SHAPE_TEMPLATE = [['.....',
-                     '..O..',
-                     '..O..',
-                     '.....',
-                     '.....'],
-                    ['.....',
-                     '.....',
-                     '.OO..',
-                     '.....',
-                     '.....']]
+D_SHAPE_TEMPLATE = [
+    [".....", "..O..", "..O..", ".....", "....."],
+    [".....", ".....", ".OO..", ".....", "....."],
+]
 
-BLANK = '.'
+BLANK = "."
 
-PIECES = {'S': S_SHAPE_TEMPLATE,
-          'Z': Z_SHAPE_TEMPLATE,
-          'I': I_SHAPE_TEMPLATE,
-          'J': J_SHAPE_TEMPLATE,
-          'L': L_SHAPE_TEMPLATE,
-          'O': O_SHAPE_TEMPLATE,
-          'T': T_SHAPE_TEMPLATE,
-          'P': P_SHAPE_TEMPLATE,
-          'C': C_SHAPE_TEMPLATE,
-          'D': D_SHAPE_TEMPLATE,
-          }
+PIECES = {
+    "S": S_SHAPE_TEMPLATE,
+    "Z": Z_SHAPE_TEMPLATE,
+    "I": I_SHAPE_TEMPLATE,
+    "J": J_SHAPE_TEMPLATE,
+    "L": L_SHAPE_TEMPLATE,
+    "O": O_SHAPE_TEMPLATE,
+    "T": T_SHAPE_TEMPLATE,
+    "P": P_SHAPE_TEMPLATE,
+    "C": C_SHAPE_TEMPLATE,
+    "D": D_SHAPE_TEMPLATE,
+}
 
-PIECES_COLOR = {'S': (47, 20, 201),
-                'Z': (47, 20, 201),
-                'I': (47, 20, 201),
-                'J': (47, 20, 201),
-                'L': (47, 20, 201),
-                'O': (47, 20, 201),
-                'T': (47, 20, 201),
-                'P': (47, 20, 201),
-                'C': (47, 20, 201),
-                'D': (47, 20, 201),
-                BLANK: (0, 0, 0),
-                'B': (255, 0, 0),
-                }
+PIECES_COLOR = {
+    "S": (47, 20, 201),
+    "Z": (47, 20, 201),
+    "I": (47, 20, 201),
+    "J": (47, 20, 201),
+    "L": (47, 20, 201),
+    "O": (47, 20, 201),
+    "T": (47, 20, 201),
+    "P": (47, 20, 201),
+    "C": (47, 20, 201),
+    "D": (47, 20, 201),
+    BLANK: (0, 0, 0),
+    "B": (255, 0, 0),
+}
 
 
 """
@@ -191,6 +105,7 @@ PIECES_COLOR = {'S': (255, 0, 0),
 """
 
 # PIECES_ORDER = {'S': 0,'Z': 1,'I': 2,'J': 3,'L': 4,'O': 5,'T': 6}
+
 
 class Tetris(object):
     OVERFLOW_LEFT = 0
@@ -223,7 +138,8 @@ class Tetris(object):
         return self._display.rows
 
     def set_block_color(self, block_id, color):
-        if block_id not in PIECES.keys(): raise ValueError('Uknown block id')
+        if block_id not in PIECES.keys():
+            raise ValueError("Uknown block id")
         PIECES_COLOR[block_id] = tuple(comp.Color.convert(color))
 
     def set_background_color(self, color):
@@ -232,7 +148,7 @@ class Tetris(object):
     @property
     def block_ids(self):
         return PIECES.keys()
-        
+
     def fallDown(self):
         if self._currentPiece is None:
             return False
@@ -250,7 +166,7 @@ class Tetris(object):
 
     def isColumnComplete(self, column):
         if column < 0 or column >= self.width:
-            raise ValueError('Column value out of range')
+            raise ValueError("Column value out of range")
 
         for y in range(self.height):
             if self.matrix[column][y] == BLANK:
@@ -259,15 +175,15 @@ class Tetris(object):
 
     def dissolveColumn(self, column):
         for y in range(self.height):
-            self._matrix[column][y] = 'B'
+            self._matrix[column][y] = "B"
 
         for val in range(255, 0, -25):
             # Set the color for the column
-            PIECES_COLOR['B'] = (val, val, val)
+            PIECES_COLOR["B"] = (val, val, val)
             self.writeMatrixToDisplay()
             # self._display.update()
 
-        PIECES_COLOR['B'] = [255, 255, 255]
+        PIECES_COLOR["B"] = [255, 255, 255]
 
     def getCompletedColumns(self):
         result = []
@@ -312,7 +228,7 @@ class Tetris(object):
     def getShape(self, piece=None):
         piece = self.__ensurePiece(piece)
 
-        return PIECES[piece['shape']][piece['rotation']]
+        return PIECES[piece["shape"]][piece["rotation"]]
 
     def update(self):
         self.writeMatrixToDisplay()
@@ -327,10 +243,10 @@ class Tetris(object):
         for x in range(TEMPLATEWIDTH):
             for y in range(TEMPLATEHEIGHT):
                 if shape[y][x] != BLANK:
-                    mx = x + piece['x']
-                    my = y + piece['y']
+                    mx = x + piece["x"]
+                    my = y + piece["y"]
                     if not (not (0 <= mx < self.width) or not (0 <= my < self.height)):
-                        self.matrix[mx][my] = piece['shape']
+                        self.matrix[mx][my] = piece["shape"]
 
     def writeMatrixToDisplay(self):
         for x in range(self.width):
@@ -339,22 +255,22 @@ class Tetris(object):
                 self._display.set_pixel(x, y, PIECES_COLOR[shape])
 
     def setBrickAt(self, x, y):
-        self.matrix[x][y] = 'B'
+        self.matrix[x][y] = "B"
 
     def rotateCW(self, piece=None):
         piece = self.__ensurePiece(piece)
 
-        shape = piece['shape']
-        piece['rotation'] += 1
-        piece['rotation'] %= len(PIECES[shape])
+        shape = piece["shape"]
+        piece["rotation"] += 1
+        piece["rotation"] %= len(PIECES[shape])
 
     def rotateCCW(self, piece=None):
         piece = self.__ensurePiece(piece)
 
-        shape = piece['shape']
-        piece['rotation'] += len(PIECES[shape])
-        piece['rotation'] -= 1
-        piece['rotation'] %= len(PIECES[shape])
+        shape = piece["shape"]
+        piece["rotation"] += len(PIECES[shape])
+        piece["rotation"] -= 1
+        piece["rotation"] %= len(PIECES[shape])
 
     def new_piece(self):
         self._currentPiece = self.get_new_piece()
@@ -362,11 +278,13 @@ class Tetris(object):
     def get_new_piece(self):
         # return a random new piece in a random rotation and color
         shape = random.choice(list(PIECES.keys()))
-        new_piece = {'shape': shape,
-                     'rotation': random.randint(0, len(PIECES[shape]) - 1),
-                     'x': int(self.width / 2) - int(TEMPLATEWIDTH / 2),
-                     'y': -3,  # start it above the board (i.e. less than 0)
-                     'color': (124, 218, 255)}
+        new_piece = {
+            "shape": shape,
+            "rotation": random.randint(0, len(PIECES[shape]) - 1),
+            "x": int(self.width / 2) - int(TEMPLATEWIDTH / 2),
+            "y": -3,  # start it above the board (i.e. less than 0)
+            "color": (124, 218, 255),
+        }
         return new_piece
 
     def checkForCollision(self, piece=None, dx=0, dy=0):
@@ -375,8 +293,8 @@ class Tetris(object):
         shapeToTest = self.getShape(piece)
         for x in range(TEMPLATEWIDTH):
             for y in range(TEMPLATEHEIGHT):
-                mx = x + piece['x'] + dx
-                my = y + piece['y'] + dy
+                mx = x + piece["x"] + dx
+                my = y + piece["y"] + dy
                 if mx >= 0 and mx < self.width and my >= 0 and my < self.height:
                     if shapeToTest[y][x] != BLANK and self.matrix[mx][my] != BLANK:
                         return Tetris.COLLISION
@@ -388,8 +306,8 @@ class Tetris(object):
            border.
         """
         piece = self.__ensurePiece(piece)
-        x = piece['x'] + dx
-        y = piece['y'] + dy
+        x = piece["x"] + dx
+        y = piece["y"] + dy
 
         return x >= 0 and x + TEMPLATEWIDTH < self.width and y + TEMPLATEHEIGHT < self.height
 
@@ -402,15 +320,15 @@ class Tetris(object):
 
     def moveX(self, piece=None, val=0):
         piece = self.__ensurePiece(piece)
-        piece['x'] += val
+        piece["x"] += val
 
     def testOverflowX(self, piece=None, dx=0, dy=0):
         piece = self.__ensurePiece(piece)
         shapeToTest = self.getShape(piece)
-        
-        px = piece['x'] + dx
-        #py = piece['y'] + dy
-        
+
+        px = piece["x"] + dx
+        # py = piece['y'] + dy
+
         for x in range(TEMPLATEWIDTH):
             for y in range(TEMPLATEHEIGHT):
                 if px + x < 0 and shapeToTest[y][x] != BLANK:
@@ -423,10 +341,10 @@ class Tetris(object):
     def testOverflowY(self, piece=None, dx=0, dy=0):
         piece = self.__ensurePiece(piece)
         shapeToTest = self.getShape(piece)
-        
-        #px = piece['x'] + dx
-        py = piece['y'] + dy
-        
+
+        # px = piece['x'] + dx
+        py = piece["y"] + dy
+
         for x in range(TEMPLATEWIDTH):
             for y in range(TEMPLATEHEIGHT):
                 if py + y >= self.height and shapeToTest[y][x] != BLANK:
@@ -442,8 +360,8 @@ class Tetris(object):
             return not self.checkForCollision(piece, dx, dy)
 
         shapeToTest = self.getShape(piece)
-        px = piece['x'] + dx
-        py = piece['y'] + dy
+        px = piece["x"] + dx
+        py = piece["y"] + dy
 
         for x in range(TEMPLATEWIDTH):
             for y in range(TEMPLATEHEIGHT):
@@ -469,8 +387,8 @@ class Tetris(object):
         shapeToDraw = self.getShape(piece)
         if pixelx == None and pixely == None:
             # if pixelx & pixely hasn't been specified, use the location stored in the piece data structure
-            pixelx = piece['x']
-            pixely = piece['y']
+            pixelx = piece["x"]
+            pixely = piece["y"]
 
         # draw each of the boxes that make up the piece
         for x in range(TEMPLATEWIDTH):
@@ -479,4 +397,4 @@ class Tetris(object):
                     px = x + pixelx
                     py = y + pixely
                     if py >= 0 and py < self.height and px >= 0 and py < self.width:
-                        self._display.set_pixel(px, py, piece['color'])
+                        self._display.set_pixel(px, py, piece["color"])

@@ -1,7 +1,7 @@
 checkfiles = ledwall/
 
 help:
-	@echo  "DigiCubes platform development makefile"
+	@echo  "LEDWall library"
 	@echo
 	@echo  "usage: make <target>"
 	@echo  "Targets:"
@@ -13,14 +13,6 @@ up:
 	@pip install -q pip-tools
 	CUSTOM_COMPILE_COMMAND="make up" pip-compile -o requirements.txt requirements.in -U
 	CUSTOM_COMPILE_COMMAND="make up" pip-compile -o requirements-dev.txt requirements-dev.in -U
-
-web: export FLASK_ENV=development
-web: export FLASK_APP=digicubes.web
-web:
-	flask run
-
-api:
-	python rundigicubes.py
 
 deps:
 	@pip install -q pip-tools
@@ -39,16 +31,16 @@ docs:
 
 ci:	check
 	pylint --errors-only $(checkfiles)
-	nose2 -v digicubes
+	nose2 -v ledwall
 
 nose: deps
-	nose2 -v digicubes
+	nose2 -v ledwall
 
 check: deps
-	black -l 100 --check digicubes/
+	black -l 100 --check $(checkfiles)
 
 style:
-	black -l 100 digicubes/ 
+	black -l 100 $(checkfiles) 
 
 badges: deps
 	python lintbadge.py

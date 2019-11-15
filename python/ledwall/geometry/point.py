@@ -1,96 +1,122 @@
+"""
+Point Geometry
+
+Copyright 2019
+
+klaas.nebuhr@digicubes.de
+"""
+from ledwall.components import Display
+from ledwall.components.color import TColor
+
+
 class Point(object):
-	def __init__(self, x, y):
-		self._x = x
-		self._y = y
+    """
+	Point class.
 
-	@property
-	def x(self):
-		return self._x
+	A pont has a x and a y component.
+	"""
 
-	@x.setter
-	def x(self, value):
-		self._x = value
+    def __init__(self, x, y):
+        self._x = x
+        self._y = y
 
-	@property
-	def y(self):
-		return self._y
+    @property
+    def x(self):
+        """The x component."""
+        return self._x
 
-	@y.setter
-	def y(self, value):
-		self._y = value
+    @x.setter
+    def x(self, value):
+        self._x = value
 
-	@property
-	def position(self):
-		return (self.x, self.y)	
+    @property
+    def y(self):
+        """The y component"""
+        return self._y
 
-	def __len__(self):
-		return 2
+    @y.setter
+    def y(self, value):
+        self._y = value
 
-	def __getitem__(self, key):
-		return {
-			0 : self.x,
-			1 : self.y,
-		}.get(key,None)
+    @property
+    def position(self):
+        """
+		Returns the current position as a tuple
+		(x, y).
+		"""
+        return (self.x, self.y)
 
-	def __iter__(self):
-		yield self.x
-		yield self.y
+    def __len__(self):
+        return 2
 
+    def __getitem__(self, key):
+        return {0: self.x, 1: self.y,}.get(key, None)
 
-	def __add__(self, value):
-		result = Point(self.x, self.y)
-		result += value
-		return result 
+    def __iter__(self):
+        yield self.x
+        yield self.y
 
-	def __radd__(self, value):
-		result = Point(self.x, self.y)
-		result += value
-		return result 
+    def __add__(self, value):
+        result = Point(self.x, self.y)
+        result += value
+        return result
 
-	def __iadd__(self, value):
-		if isinstance(value, int):
-			self._x += value
-			self._y += value
-			return self
+    def __radd__(self, value):
+        result = Point(self.x, self.y)
+        result += value
+        return result
 
-		if isinstance(value, (tuple, list, Point)) and len(value) == 2:
-			self._x += value[0]
-			self._y += value[1]
-			return self
+    def __iadd__(self, value):
+        if isinstance(value, int):
+            self._x += value
+            self._y += value
+            return self
 
-		return NotImplemented
-	
-	def __eq__(self, value):
-		if isinstance(value, int):
-			return self.x == value and self.y == value
+        if isinstance(value, (tuple, list, Point)) and len(value) == 2:
+            self._x += value[0]
+            self._y += value[1]
+            return self
 
-		if isinstance(value, (tuple, list, Point)) and len(value) == 2:
-			return self.x == value[0] and self.y == value[1]
+        return NotImplemented
 
-		return False
+    def __eq__(self, value):
+        if isinstance(value, int):
+            return self.x == value and self.y == value
 
-	def __ne__(self,value):
-		return not (self == value)
+        if isinstance(value, (tuple, list, Point)) and len(value) == 2:
+            return self.x == value[0] and self.y == value[1]
 
-	def __str__(self):
-		return "({:d},{:d})".format(self.x,self.y)	
+        return False
 
-	def __repr__(self):
-		return "Point({:d},{:d})".format(self.x,self.y)			
+    def __ne__(self, value):
+        return not (self == value)
 
-	def __isub__(self, value):
-                      
-		if isinstance(value, int):
-			self._x -= value
-			self._y -= value
-			return self
-		if isinstance(value, (tuple, list, Point)) and len(value == 2):
-			print(value[0])
-			self._x -= value[0]
-			self._y -= value[1]
-			return self
+    def __str__(self):
+        return "({:d},{:d})".format(self.x, self.y)
 
-		raise ValueError("Cannot add value", value)
+    def __repr__(self):
+        return "Point({:d},{:d})".format(self.x, self.y)
 
-	def paint(self, display, color=(255,255,255), update=False):
-		display.set_pixel(self.x, self.y, color, update)
+    def __isub__(self, value):
+
+        if isinstance(value, int):
+            self._x -= value
+            self._y -= value
+            return self
+        if isinstance(value, (tuple, list, Point)) and len(value == 2):
+            print(value[0])
+            self._x -= value[0]
+            self._y -= value[1]
+            return self
+
+        raise ValueError("Cannot add value", value)
+
+    def paint(self, display: Display, color: TColor = None, update: bool = False):
+        """
+		Writes the point to the given display.
+		"""
+        if color is None:
+            color = (255, 255, 255)
+
+        # TODO: Check boundaries
+        display.set_pixel(self.x, self.y, color, update)

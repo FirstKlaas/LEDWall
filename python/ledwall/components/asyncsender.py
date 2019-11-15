@@ -2,6 +2,7 @@ from threading import Thread, Lock
 
 from .sender import Sender
 
+
 class AsyncSender(Sender):
     def __init__(self, delegate):
         """Asnchronous sender.
@@ -10,8 +11,8 @@ class AsyncSender(Sender):
         wrap an async sender in an async sender,
         """
         super().__init__()
-        if not isinstance(delegate,Sender):
-            raise ValueError('The delegate must implement the Sender interface.')
+        if not isinstance(delegate, Sender):
+            raise ValueError("The delegate must implement the Sender interface.")
         self._delegate = delegate
         self._lock = Lock()
 
@@ -31,5 +32,3 @@ class AsyncSender(Sender):
     def init(self, panel):
         super().init(panel)
         self._delegate.init(panel)
-
-

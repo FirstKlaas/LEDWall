@@ -1,19 +1,20 @@
-from ..components.event import (FramerateEmitter, EventDispatcher, GamepadEmitter, Event)
+from ..components.event import FramerateEmitter, EventDispatcher, GamepadEmitter, Event
 from ..util import TimeDelta
-from ..components import (Display, WireMode)
+from ..components import Display, WireMode
 
-class Animation():
+
+class Animation:
     def __init__(self, do_after=None):
         self._do_after = do_after
-                    
+
     def animate(self):
         pass
 
     def paint(self, display):
         pass
 
-class Animations():
 
+class Animations:
     def __init__(self):
         self._entries = []
 
@@ -33,27 +34,30 @@ class Animations():
         return len(self._entries)
 
     def animate(self):
-        if len(self) == 0: return
+        if len(self) == 0:
+            return
         anims = self._entries[:]
         dead_anims = []
         for a in anims:
-            if not a.animate(): dead_anims.append(a)
+            if not a.animate():
+                dead_anims.append(a)
 
-        self._entries = [ a for a in anims if a not in dead_anims]
+        self._entries = [a for a in anims if a not in dead_anims]
         for a in dead_anims:
-            if a._do_after: a._do_after()
+            if a._do_after:
+                a._do_after()
 
     def paint(self, display):
         for a in self:
             a.paint(display)
 
-class Application(object):
 
+class Application(object):
     def __init__(self, display, framerate):
         # type : (Display) -> None
         self._display = display
         self._display.framerate = None
-        self._display.fill((0,0,0))
+        self._display.fill((0, 0, 0))
         self._display.update()
         self._framerate = framerate
         self._running = True
@@ -61,7 +65,7 @@ class Application(object):
         if framerate and framerate > 0:
             self._event_dispatcher.add_emitter(FramerateEmitter(framerate))
 
-        self._event_dispatcher.add_emitter(GamepadEmitter())            
+        self._event_dispatcher.add_emitter(GamepadEmitter())
         self._animations = Animations()
         self._paint_function = self.paint
 
@@ -72,7 +76,7 @@ class Application(object):
     @property
     def height(self):
         return self._display.rows
-    
+
     @property
     def paint_function(self):
         return self._paint_function
@@ -88,11 +92,10 @@ class Application(object):
 
         self._paint_function = f
 
-
     @property
     def animations(self):
         return self._animations
-    
+
     @property
     def display(self):
         return self._display
@@ -105,10 +108,10 @@ class Application(object):
         animation._app = self
         self._animations += animation
 
-    def add_emitter(self,emitter):
-        #self._event_dispatcher.add_emitter(emitter)
+    def add_emitter(self, emitter):
+        # self._event_dispatcher.add_emitter(emitter)
         self._event_dispatcher += emitter
-    
+
     def paint(self):
         pass
 
@@ -119,7 +122,7 @@ class Application(object):
         try:
             while self._running:
                 event = self._event_dispatcher.next_event()
-                if (event.type, event.action) == (Event.SYSTEM,'update'):
+                if (event.type, event.action) == (Event.SYSTEM, "update"):
                     self.update()
                 else:
                     self.handle_event(event)
@@ -135,36 +138,38 @@ class Application(object):
     def update(self):
         self._paint_function()
         self._animations.animate()
-        self._animations.paint(self._display)    
+        self._animations.paint(self._display)
         try:
-            #self._event_dispatcher.suspend()            
+            # self._event_dispatcher.suspend()
             self._display.update()
         finally:
-            #self._event_dispatcher.resume()            
+            # self._event_dispatcher.resume()
             pass
+
 
 class Game(Application):
     def __init__(self, sender, framerate, width=10, height=10, mode=WireMode.ZIGZAG):
         super().__init__(Display(width, height, sender, mode=mode), framerate)
         self.action_map = {
-            (Event.GAMEPAD, 'ABS_X', 0)       : self.btn_left_pressed,
-            (Event.GAMEPAD, 'ABS_X', 255)     : self.btn_right_pressed,
-            (Event.GAMEPAD, 'ABS_Y', 0)       : self.btn_top_pressed,
-            (Event.GAMEPAD, 'ABS_Y', 255)     : self.btn_down_pressed,
-            (Event.GAMEPAD, 'BTN_THUMB', 1)   : self.btn_a_pressed,
-            (Event.GAMEPAD, 'BTN_THUMB2', 1)  : self.btn_b_pressed,
-            (Event.GAMEPAD, 'BTN_PINKIE', 1)  : self.btn_r_pressed,
-            (Event.GAMEPAD, 'BTN_TOP2', 1)    : self.btn_l_pressed,
-            (Event.GAMEPAD, 'BTN_TRIGGER', 1) : self.btn_x_pressed,
-            (Event.GAMEPAD, 'BTN_TOP', 1)     : self.btn_y_pressed,
-            (Event.GAMEPAD, 'BTN_BASE3', 1)   : self.btn_select_pressed,
-            (Event.GAMEPAD, 'BTN_BASE4', 1)   : self.btn_start_pressed,
-            (Event.GAMEPAD, 'ABS_Y',   127)   : self.btn_abs_y_released,
+            (Event.GAMEPAD, "ABS_X", 0): self.btn_left_pressed,
+            (Event.GAMEPAD, "ABS_X", 255): self.btn_right_pressed,
+            (Event.GAMEPAD, "ABS_Y", 0): self.btn_top_pressed,
+            (Event.GAMEPAD, "ABS_Y", 255): self.btn_down_pressed,
+            (Event.GAMEPAD, "BTN_THUMB", 1): self.btn_a_pressed,
+            (Event.GAMEPAD, "BTN_THUMB2", 1): self.btn_b_pressed,
+            (Event.GAMEPAD, "BTN_PINKIE", 1): self.btn_r_pressed,
+            (Event.GAMEPAD, "BTN_TOP2", 1): self.btn_l_pressed,
+            (Event.GAMEPAD, "BTN_TRIGGER", 1): self.btn_x_pressed,
+            (Event.GAMEPAD, "BTN_TOP", 1): self.btn_y_pressed,
+            (Event.GAMEPAD, "BTN_BASE3", 1): self.btn_select_pressed,
+            (Event.GAMEPAD, "BTN_BASE4", 1): self.btn_start_pressed,
+            (Event.GAMEPAD, "ABS_Y", 127): self.btn_abs_y_released,
         }
 
     def handle_event(self, event):
-        action = self.action_map.get((event.type,event.action,event['state']),None)
-        if action: action()
+        action = self.action_map.get((event.type, event.action, event["state"]), None)
+        if action:
+            action()
 
     def register_action(self, source, action_name, state, action):
         self.set_action(source, action_name, state, action)
@@ -179,10 +184,10 @@ class Game(Application):
         old_action = self.action_map.get((source, action_name, state))
         self.action_map[(source, action_name, state)] = action
         return old_action
-        
+
     def btn_a_pressed(self):
         pass
-    
+
     def btn_b_pressed(self):
         pass
 
@@ -209,7 +214,7 @@ class Game(Application):
 
     def btn_abs_y_released(self):
         pass
-    
+
     def btn_left_pressed(self):
         pass
 
@@ -221,4 +226,3 @@ class Game(Application):
 
     def btn_start_pressed(self):
         pass
-    

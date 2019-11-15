@@ -1,5 +1,6 @@
 from .sender import Sender
 
+
 class ConsoleSender(Sender):
     def __init__(self):
         super().__init__()
@@ -9,4 +10,3 @@ class ConsoleSender(Sender):
 
     def update(self):
         print("Panel {} in frame nr.{:d}".format(self.panel.id, self.panel.frame))
-

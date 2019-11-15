@@ -11,14 +11,14 @@ class SerialSender(Sender):
     """
     Sends the color data via the usb cable.
     """
-    def __init__(self, port_name='/dev/ttyACM0', baudrate=500000):
+
+    def __init__(self, port_name="/dev/ttyACM0", baudrate=500000):
         super().__init__()
         self._baudrate = baudrate
         self._port = port_name
         self._lock = Lock()
-        self._s = serial.Serial(self.port, self.baudrate)   
+        self._s = serial.Serial(self.port, self.baudrate)
         self._s.flushInput()
-             
 
     @property
     def baudrate(self):
@@ -33,8 +33,8 @@ class SerialSender(Sender):
         self._sendbuffer = bytearray(3 * self.panel.count + 1)
 
         # Send command to initialize the panel
-        #data = [Sender.CMD_INIT_PANEL, self.panel.columns, self.panel.rows]
-        #self._s.write(bytearray(data))
+        # data = [Sender.CMD_INIT_PANEL, self.panel.columns, self.panel.rows]
+        # self._s.write(bytearray(data))
 
     def update(self):
         """Sends the data via the USB cable to the micro controller.
@@ -58,9 +58,9 @@ class SerialSender(Sender):
             baudrate is supported on every plattform. Also there you will find
             the naming convention for the ports on different plattforms.
 
-        """ 
+        """
         if not self._s:
-            raise ValueError('Not initialized')
+            raise ValueError("Not initialized")
 
         with self._lock:
 
@@ -71,8 +71,10 @@ class SerialSender(Sender):
                 else:
                     """
                     Make shure, the CMD_PAINT_PANEL is not part of the color data
-                    """ 
-                    self._sendbuffer[i + 1] = value if value != Sender.CMD_PAINT_PANEL else value + 1 
+                    """
+                    self._sendbuffer[i + 1] = (
+                        value if value != Sender.CMD_PAINT_PANEL else value + 1
+                    )
 
             if self._s:
                 self._s.write(self._sendbuffer)
