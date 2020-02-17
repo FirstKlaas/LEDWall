@@ -5,7 +5,6 @@ Copyright 2019
 
 klaas.nebuhr@digicubes.de
 """
-from ledwall.components import Display
 from ledwall.components.color import TColor
 
 
@@ -111,7 +110,7 @@ class Point(object):
 
         raise ValueError("Cannot add value", value)
 
-    def paint(self, display: Display, color: TColor = None, update: bool = False):
+    def paint(self, display, color: TColor = None, update: bool = False):
         """
 		Writes the point to the given display.
 		"""

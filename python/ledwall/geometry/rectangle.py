@@ -8,7 +8,7 @@ from typing import Tuple
 from .point import Point
 from ..util import intersectRect
 
-TRect = Tuple(int, int, int, int)
+TRect = Tuple[int, int, int, int]
 
 
 class Rectangle(Point):
@@ -69,7 +69,7 @@ class Rectangle(Point):
         return Point(self.x, self.bottom)
 
     @property
-    def points(self) -> Tuple(Point, Point, Point, Point):
+    def points(self) -> Tuple[Point, Point, Point, Point]:
         return (self.p1, self.p2, self.p3, self.p4)
 
     def __str__(self):
