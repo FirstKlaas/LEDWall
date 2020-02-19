@@ -1,12 +1,11 @@
 #include <Arduino.h>
 
 #define FASTLED_ALLOW_INTERRUPTS 0
-#include <FastLED.h>
-
 #include "buffer.hpp"
 
+static const int pixelFormat = NEO_GRB + NEO_KHZ800;
+
 #define DATA_PIN              4
-#define BAUDRATE         115400
 #define MAX_SERIAL_DELAY   3000  // Maximum delay between transmitted data within one command in milliseconds
 
 const uint8_t numberOfLeds  = 49;
@@ -16,9 +15,10 @@ FrameBuffer panel(numberOfLeds);
 void setup() {
   Serial.begin(BAUDRATE);
   delay(500);
-  FastLED.addLeds<NEOPIXEL, DATA_PIN>((CRGB*) panel.ptr(), numberOfLeds);
+  //FastLED.addLeds<NEOPIXEL, DATA_PIN>((CRGB*) panel.ptr(), numberOfLeds);
+
   delay(500);
-  FastLED.showColor(CRGB::Blue);
+  //FastLED.showColor(CRGB::Blue);
 }
 
 void loop() {
@@ -27,7 +27,7 @@ void loop() {
       panel += Serial.read();
       
       if (panel.frameCompleted()) {
-        FastLED.show();
+        //FastLED.show();
       }
     };
   }

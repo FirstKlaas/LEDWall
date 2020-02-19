@@ -3,7 +3,10 @@ from ..geometry.rectangle import Rectangle
 import random
 
 
-def int_to_bitmask(i):
+def int_to_bitmask(i:int) -> str:
+    """
+    Converts and int value to and bitmask string
+    """
     result = 0
     for _ in range(i):
         result >>= 1

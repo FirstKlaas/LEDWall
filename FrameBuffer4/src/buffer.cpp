@@ -1,7 +1,7 @@
 #include "buffer.hpp"
 
-FrameBuffer::FrameBuffer(uint16_t numberOfLeds) {
-  buffer = std::unique_ptr<uint8_t[]>(new uint8_t[numberOfLeds*3]{});
+FrameBuffer::FrameBuffer(uint16_t numberOfLeds): index(0)  
+{
   size = numberOfLeds;
 };
 
@@ -12,10 +12,11 @@ FrameBuffer& FrameBuffer::operator+=(const uint8_t data) {
       break;
     default:
       if (frameCompleted()) {
-        
+        pixels->show();    
       } else {
-        buffer[index] = data;
+        pixels->getPixels[index] = data;
         index++;
       };
   };
+  return *this;
 };

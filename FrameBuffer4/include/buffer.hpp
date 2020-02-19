@@ -3,15 +3,9 @@
 
 #include <memory>
 #include <Arduino.h>
+#include <Adafruit_NeoPixel.h>
 
 class FrameBuffer {
-  typedef enum {
-    NEW_FRAME=1,
-    END_OF_FRAME=2,
-    RESET_FRAME=3,
-    ERROR_STATUS=9,
-    WRITE=10
-  } Status;
 
   typedef enum {
     CMD_PAINT_PANEL=243
@@ -20,7 +14,9 @@ class FrameBuffer {
 private:
   std::unique_ptr<uint8_t[]> buffer;
   uint8_t  size;
-  uint16_t index{0}; 
+  uint16_t index; 
+  Adafruit_NeoPixel *pixels;
+
   
 public:
   FrameBuffer() =delete;
@@ -28,10 +24,6 @@ public:
 
   boolean frameCompleted() {
     return (index >= (size*3));
-  };
-
-  uint8_t* ptr() {
-    return buffer.get();
   };
 
   uint16_t getIndex() { return index; };
