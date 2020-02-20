@@ -3,12 +3,16 @@
 static const int pixelFormat = NEO_GRB + NEO_KHZ800;
 
 void FrameBuffer::fillRGB(uint8_t red, uint8_t green, uint8_t blue) {
-  pixels->fill(Adafruit_NeoPixel::Color(red, green, blue), 0, size());
+  if (initialized()) {
+    pixels->fill(Adafruit_NeoPixel::Color(red, green, blue), 0, size());
+  };
 }
 
 
 void FrameBuffer::fillHSV(uint16_t hue, uint8_t sat, uint8_t val) {
-  pixels->fill(Adafruit_NeoPixel::ColorHSV(hue, sat, val), 0, size());
+  if (initialized()) {
+    pixels->fill(Adafruit_NeoPixel::ColorHSV(hue, sat, val), 0, size());
+  };
 }
 
 /******************************************
@@ -44,6 +48,8 @@ void FrameBuffer::handleData(uint8_t data) {
 
   switch(m_current_command) {
 
+    // If no command is set, ignore 
+    // the incoming data.
     case(Command::NOP):
       break;
 
@@ -59,6 +65,7 @@ void FrameBuffer::handleData(uint8_t data) {
     
     case(Command::CMD_PAINT_PANEL):
       if (frameCompleted()) return; // Out of Range !
+      if (!initialized()) return;
       
       pixels->getPixels()[m_index] = data;
       m_index++;

@@ -5,12 +5,16 @@
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
 
+#define END_OF_COMMAND 245
+
 typedef enum {
   NOP=0, 
   CMD_INIT_PANEL=234,
   CMD_PAINT_PANEL=243,
   CMD_FILL_RGB=246,
-  CMD_FILL_HSV=248
+  CMD_FILL_HSV=248,
+  CMD_SET_TABLE_COLOR=251,
+  CMD_SET_PIXEL=253
 } Command;
 
 class FrameBuffer {
@@ -31,6 +35,7 @@ public:
   void init(uint8_t pin, uint8_t width, uint8_t height);
   void fillRGB(uint8_t red=0, uint8_t green=0, uint8_t blue=0);
   void fillHSV(uint16_t hue, uint8_t sat=255, uint8_t val=255);
+  bool initialized() { return size() > 0; }
 
   boolean frameCompleted() {
     return (m_index >= (size()*3));
