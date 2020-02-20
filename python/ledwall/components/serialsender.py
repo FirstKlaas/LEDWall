@@ -1,3 +1,5 @@
+from enum import IntEnum
+
 from .sender import Sender
 from .color import Color
 
@@ -6,6 +8,9 @@ import time
 
 from threading import Lock
 
+
+class Cmd(IntEnum):
+    INIT = 234
 
 class SerialSender(Sender):
     """
@@ -32,9 +37,14 @@ class SerialSender(Sender):
         super().init(panel)
         self._sendbuffer = bytearray(3 * self.panel.count + 1)
 
+        initBuffer = bytearray(4)
+        initBuffer[0] = Cmd.INIT
+        initBuffer[1] = 4 
+        initBuffer[2] = 7
+        initBuffer[3] = 7
+        
         # Send command to initialize the panel
-        # data = [Sender.CMD_INIT_PANEL, self.panel.columns, self.panel.rows]
-        # self._s.write(bytearray(data))
+        self._s.write(initBuffer)
 
     def update(self):
         """Sends the data via the USB cable to the micro controller.

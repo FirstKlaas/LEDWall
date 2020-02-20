@@ -38,6 +38,7 @@ public:
 
   uint16_t size() const;
   uint16_t getIndex() { return m_index; };
+  void show() { pixels->show(); };
 
   FrameBuffer& operator+=(const uint8_t data);  
 };

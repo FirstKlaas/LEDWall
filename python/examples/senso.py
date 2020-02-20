@@ -32,7 +32,7 @@ class SequenceAnimation():
 class SensoGame(Game):
 
     def __init__(self,framerate=15):
-        s = SerialSender(port_name='/dev/ttyACM0')
+        s = SerialSender(port_name='/dev/ttyUSB0')
         
         super().__init__(s,framerate)
         self._red    = {

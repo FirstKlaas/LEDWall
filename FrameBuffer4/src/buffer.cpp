@@ -2,24 +2,19 @@
 
 static const int pixelFormat = NEO_GRB + NEO_KHZ800;
 
-<<<<<<< HEAD
 void FrameBuffer::fillRGB(uint8_t red, uint8_t green, uint8_t blue) {
   pixels->fill(Adafruit_NeoPixel::Color(red, green, blue), 0, size());
 }
 
+
 void FrameBuffer::fillHSV(uint16_t hue, uint8_t sat, uint8_t val) {
   pixels->fill(Adafruit_NeoPixel::ColorHSV(hue, sat, val), 0, size());
 }
-=======
 
 /******************************************
- * Constructor
+ * Returns the size of the panel. The size
+ * is equal to the number of connected LEDs
  ******************************************/  
-FrameBuffer::FrameBuffer(): 
-  index(0), m_width(0), m_height(0), currentCommand(FrameBuffer::Command::NOP) 
-{};
->>>>>>> 84407c20813bf4ea9e7e1ea8c819e076bf09b1f0
-
 uint16_t FrameBuffer::size() const {
   return m_width * m_height;
 }
@@ -36,8 +31,7 @@ void FrameBuffer::init(uint8_t pin, uint8_t width, uint8_t height) {
   m_height = height; 
   pixels = new Adafruit_NeoPixel(size(), pin, pixelFormat);
   pixels->begin();
-}
-  
+}  
 
 /******************************************
  * Handles an incoming byte, which is not
