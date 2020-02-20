@@ -12,13 +12,10 @@ FrameBuffer panel;
 
 void setup() {
   Serial.begin(BAUDRATE);
+  while (!Serial) {};
   delay(500);
-  //FastLED.addLeds<NEOPIXEL, DATA_PIN>((CRGB*) panel.ptr(), numberOfLeds);
-
-  delay(500);
-  panel.init(DATA_PIN, 7, 7);
-  
-  //FastLED.showColor(CRGB::Blue);
+  panel.init(DATA_PIN, 7, 7); 
+  panel.fillRGB(0,255,255); 
 }
 
 void loop() {
