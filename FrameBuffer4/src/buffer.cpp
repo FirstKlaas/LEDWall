@@ -2,6 +2,7 @@
 
 static const int pixelFormat = NEO_GRB + NEO_KHZ800;
 
+<<<<<<< HEAD
 void FrameBuffer::fillRGB(uint8_t red, uint8_t green, uint8_t blue) {
   pixels->fill(Adafruit_NeoPixel::Color(red, green, blue), 0, size());
 }
@@ -9,11 +10,27 @@ void FrameBuffer::fillRGB(uint8_t red, uint8_t green, uint8_t blue) {
 void FrameBuffer::fillHSV(uint16_t hue, uint8_t sat, uint8_t val) {
   pixels->fill(Adafruit_NeoPixel::ColorHSV(hue, sat, val), 0, size());
 }
+=======
+
+/******************************************
+ * Constructor
+ ******************************************/  
+FrameBuffer::FrameBuffer(): 
+  index(0), m_width(0), m_height(0), currentCommand(FrameBuffer::Command::NOP) 
+{};
+>>>>>>> 84407c20813bf4ea9e7e1ea8c819e076bf09b1f0
 
 uint16_t FrameBuffer::size() const {
   return m_width * m_height;
 }
 
+/******************************************
+ * Initialises the framebuffer and sets
+ * the correct size. The LED strip is 
+ * initialised. This method has to be
+ * called, before any operation on the 
+ * LED strip can be performed.
+ ******************************************/  
 void FrameBuffer::init(uint8_t pin, uint8_t width, uint8_t height) {
   m_width = width;
   m_height = height; 
@@ -21,6 +38,14 @@ void FrameBuffer::init(uint8_t pin, uint8_t width, uint8_t height) {
   pixels->begin();
 }
   
+
+/******************************************
+ * Handles an incoming byte, which is not
+ * one of command bytes.
+ * 
+ * What to to with the byte depends on
+ * the current command. 
+ ******************************************/  
 void FrameBuffer::handleData(uint8_t data) {
 
   switch(m_current_command) {
@@ -72,6 +97,17 @@ void FrameBuffer::handleData(uint8_t data) {
   };
 }
 
+
+/******************************************
+ * Defines the unary add operator, to add 
+ * a byte to the buffer. 
+ * This method first check, if the added
+ * byte is a command byte. If so, the
+ * current command is set and the index
+ * is set to zeor. If the byte is not a
+ * command byte, the byte is handed over
+ * to the handleData method.
+ ******************************************/  
 FrameBuffer& FrameBuffer::operator+=(const uint8_t data) {
   switch(data) {
     case Command::CMD_PAINT_PANEL:
