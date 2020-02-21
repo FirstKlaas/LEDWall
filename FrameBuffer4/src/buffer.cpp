@@ -8,11 +8,25 @@ void FrameBuffer::fillRGB(uint8_t red, uint8_t green, uint8_t blue) {
   };
 }
 
-
 void FrameBuffer::fillHSV(uint16_t hue, uint8_t sat, uint8_t val) {
   if (initialized()) {
     pixels->fill(Adafruit_NeoPixel::ColorHSV(hue, sat, val), 0, size());
   };
+}
+
+void FrameBuffer::setTableColor(uint8_t index, uint8_t red, uint8_t green, uint8_t blue) 
+{
+  // We only have 16 colors (index 0 to 15).
+  // So any value higher than 15 is out of range.
+  if (index > 15) return;
+
+  // Make sure, the memory for the color 
+  // table is allocated
+  if (!color_table) {
+    color_table = new ColorTable16();
+  }
+  // color_table[index] = CRGB(red, green , blue)
+  color_table->setIndexColor(index, CRGB(red, green , blue));
 }
 
 /******************************************
@@ -61,6 +75,15 @@ void FrameBuffer::handleData(uint8_t data) {
         memset(cmd_buffer,0,3);
         m_current_command = Command::NOP;
       };    
+      break;
+
+    case(Command::CMD_SET_TABLE_COLOR):
+      cmd_buffer[m_index++] = data;
+      if (m_index == 4) {
+        setTableColor(cmd_buffer[0],cmd_buffer[1],cmd_buffer[2],cmd_buffer[3]);
+        memset(cmd_buffer,0,4);
+        m_current_command = Command::NOP;
+      };
       break;
     
     case(Command::CMD_PAINT_PANEL):
