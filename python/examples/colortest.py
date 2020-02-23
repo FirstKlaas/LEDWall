@@ -1,6 +1,6 @@
 import ledwall.components as comp
 
-cornflowerblue = comp.ColorTable.CornflowerBlue
+cornflowerblue = comp.NamedColors.CornflowerBlue
 
 print("CornflowerBlue %r" % cornflowerblue)
 

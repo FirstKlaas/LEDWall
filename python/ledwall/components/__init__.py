@@ -1,6 +1,6 @@
 from .display import Display, WireMode
 from .color import Color
-from .colortable import ColorTable
+from .colortable import NamedColors, ColorTable
 from .hsvcolor import HSVColor
 from .rgbcolor import RGBColor
 from .serialsender import SerialSender
@@ -18,8 +18,9 @@ from .multidisplay import RegionSender
 
 __all__ = [
     "Color",
-    "Display",
     "ColorTable",
+    "Display",
+    "NamedColors",
     "RGBColor",
     "HSVColor",
     "SerialSender",

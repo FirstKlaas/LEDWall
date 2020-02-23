@@ -1,7 +1,32 @@
 from .color import Color
 
 
-class ColorTable(object):
+class ColorTable:
+
+    def __init__(self, size=16):
+        self._size = size
+        self._colors = bytearray(size*3)
+
+    def __getitem__(self, index):
+        i = index*3
+        return Color.fromTuple(tuple(self._colors[i:i+3]))
+
+    def __setitem__(self, index:int, value: Color):
+        i = index*3
+        self._colors[i:i+3] = tuple(value)
+
+    def __iter__(self):
+        for i in range(len(self)):
+            yield Color.fromTuple(tuple(self._colors[i:i+3]))
+
+    def __len__(self):
+        return self._size
+
+    def byte_array(self):
+        return self._colors
+
+
+class NamedColors(object):
 
     AliceBlue = Color.fromHexString("#F0F8FF")
     Amethyst = Color.fromHexString("#9966CC")
