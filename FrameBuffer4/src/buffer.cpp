@@ -77,7 +77,7 @@ void FrameBuffer::handleData(uint8_t data) {
       };    
       break;
 
-    case(Command::CMD_SET_TABLE_COLOR):
+    case(Command::CMD_ISET_COLOR):
       cmd_buffer[m_index++] = data;
       if (m_index == 4) {
         setTableColor(cmd_buffer[0],cmd_buffer[1],cmd_buffer[2],cmd_buffer[3]);
@@ -117,7 +117,14 @@ void FrameBuffer::handleData(uint8_t data) {
         m_current_command = Command::NOP;
       };    
       break;
-      
+
+    case(Command::CMD_SET_PIXEL):
+      cmd_buffer[m_index++] = data;
+      if (m_index == 5) {
+        pixels->setPixelColor(cmd_buffer[0] << 8 | cmd_buffer[1], Adafruit_NeoPixel::Color(cmd_buffer[2], cmd_buffer[3], cmd_buffer[4]));
+        memset(cmd_buffer,0,5);
+        m_current_command = Command::NOP;
+      }
   };
 }
 
