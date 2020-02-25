@@ -6,23 +6,25 @@
 #include <Adafruit_NeoPixel.h>
 
 #define END_OF_COMMAND 245
-#define EOC 245
+#define EOC            245
 
 typedef enum {
-  NOP=0,
-  INIT_PANEL=1,
-  FILL_RGB=2,
-  FILL_HSV=3,
-  SET_TABLE_COLOR=4,
-  SET_PIXEL_RGB=5,
-  SET_PIXEL_HSV=6
+  NONE                      =   0,
+  INIT_PANEL                =   1,
+  FILL_RGB                  =   2,
+  FILL_HSV                  =   3,
+  SET_TABLE_COLOR           =   4,
+  SET_PIXEL_RGB             =   5,
+  SET_PIXEL_HSV             =   6,
+  RESET_COLOUR_TABLE_CURSOR =   7
+
 } Operation;
 
 typedef enum {
-  NOP=254, 
-  CMD_STREAM_PANEL=243,
-  CMD_STREAM_COLOR_TABLE=253,
-  CMD_BUFFERED_COMMAND=251
+  NOP                       = 254, 
+  CMD_STREAM_PANEL          = 243,
+  CMD_STREAM_COLOR_TABLE    = 253,
+  CMD_BUFFERED_COMMAND      = 251
 } Command;
 
 struct CRGB {

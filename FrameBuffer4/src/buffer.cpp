@@ -66,10 +66,27 @@ void FrameBuffer::handleOperation(Operation op, uint8_t data[], uint8_t buffer_s
         setTableColor(data[0] << 8 | data[1], data[2], data[3], data[4]);
         break;
         
+    case Operation::SET_PIXEL_RGB:
+        if (initialized()) {
+            pixels->setPixelColor(data[0] << 8 | data[1], Adafruit_NeoPixel::Color(data[2], data[3], data[4]));
+        };
+        break;
+
+    case Operation::SET_PIXEL_HSV:
+        if (initialized()) {
+            pixels->setPixelColor(data[0] << 8 | data[1], Adafruit_NeoPixel::ColorHSV(data[2] << 8 | data[3], data[4], data[5]));
+        };
+        break;
+
+    case Operation::RESET_COLOUR_TABLE_CURSOR:
+        getColorTable().resetIterator();
+        break;
+
     default:
         break;
     }
 }
+
 /******************************************
  * Handles an incoming byte, which is not
  * one of command bytes.
