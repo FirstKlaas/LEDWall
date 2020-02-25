@@ -6,15 +6,23 @@
 #include <Adafruit_NeoPixel.h>
 
 #define END_OF_COMMAND 245
+#define EOC 245
 
 typedef enum {
-  NOP=0, 
-  CMD_INIT_PANEL=234,
-  CMD_PAINT_PANEL=243,
-  CMD_FILL_RGB=246,
-  CMD_FILL_HSV=248,
-  CMD_SET_TABLE_COLOR=251,
-  CMD_SET_PIXEL=253
+  NOP=0,
+  INIT_PANEL=1,
+  FILL_RGB=2,
+  FILL_HSV=3,
+  SET_TABLE_COLOR=4,
+  SET_PIXEL_RGB=5,
+  SET_PIXEL_HSV=6
+} Operation;
+
+typedef enum {
+  NOP=254, 
+  CMD_STREAM_PANEL=243,
+  CMD_STREAM_COLOR_TABLE=253,
+  CMD_BUFFERED_COMMAND=251
 } Command;
 
 struct CRGB {
@@ -89,7 +97,12 @@ public:
   ColorTable16() : m_iterator(0) {};
 
   inline void setIndexColor(uint8_t index, CRGB color) {
+    if (index > 15) return;
     colors[index] = color;
+  }
+
+  bool table_complete() {
+    return (m_iterator >= sizeof(color_raw));  
   }
 
   inline const CRGB& getIndexColor(uint8_t index) const {
@@ -111,7 +124,7 @@ public:
   }
 
   inline ColorTable16& operator+=(uint8_t data) {
-    if (m_iterator < sizeof(color_raw)) { 
+    if (!table_complete()) { 
       color_raw[m_iterator++] = data;
     };
     return *this;
@@ -127,9 +140,24 @@ private:
   uint8_t cmd_buffer[8];
   Adafruit_NeoPixel *pixels;
   Command m_current_command;
+  Operation m_current_operation;
   ColorTable16 *color_table;
 
   void handleData(uint8_t data);
+
+  ColorTable16& getColorTable() {
+    if(!color_table) {
+      color_table = new ColorTable16();
+    };
+    return *color_table;
+  };
+
+  void handleOperation(Operation op, uint8_t data[], uint8_t buffer_size);
+
+  void idleCommand() {
+    m_index = 0;
+    m_current_command = Command::NOP;
+  };
 
 public:
   FrameBuffer()
@@ -140,7 +168,7 @@ public:
   void fillRGB(uint8_t red=0, uint8_t green=0, uint8_t blue=0);
   void fillHSV(uint16_t hue, uint8_t sat=255, uint8_t val=255);
   bool initialized() { return size() > 0; }
-  void setTableColor(uint8_t index, uint8_t red, uint8_t green, uint8_t blue);
+  void setTableColor(uint16_t index, uint8_t red, uint8_t green, uint8_t blue);
 
   boolean frameCompleted() {
     return (m_index >= (size()*3));
@@ -152,6 +180,5 @@ public:
 
   FrameBuffer& operator+=(const uint8_t data);  
 };
-
 
 #endif

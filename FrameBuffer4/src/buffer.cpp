@@ -2,39 +2,34 @@
 
 static const int pixelFormat = NEO_GRB + NEO_KHZ800;
 
-void FrameBuffer::fillRGB(uint8_t red, uint8_t green, uint8_t blue) {
-  if (initialized()) {
-    pixels->fill(Adafruit_NeoPixel::Color(red, green, blue), 0, size());
-  };
-}
-
-void FrameBuffer::fillHSV(uint16_t hue, uint8_t sat, uint8_t val) {
-  if (initialized()) {
-    pixels->fill(Adafruit_NeoPixel::ColorHSV(hue, sat, val), 0, size());
-  };
-}
-
-void FrameBuffer::setTableColor(uint8_t index, uint8_t red, uint8_t green, uint8_t blue) 
+void FrameBuffer::fillRGB(uint8_t red, uint8_t green, uint8_t blue)
 {
-  // We only have 16 colors (index 0 to 15).
-  // So any value higher than 15 is out of range.
-  if (index > 15) return;
+    if (initialized())
+    {
+        pixels->fill(Adafruit_NeoPixel::Color(red, green, blue), 0, size());
+    };
+}
 
-  // Make sure, the memory for the color 
-  // table is allocated
-  if (!color_table) {
-    color_table = new ColorTable16();
-  }
-  // color_table[index] = CRGB(red, green , blue)
-  color_table->setIndexColor(index, CRGB(red, green , blue));
+void FrameBuffer::fillHSV(uint16_t hue, uint8_t sat, uint8_t val)
+{
+    if (initialized())
+    {
+        pixels->fill(Adafruit_NeoPixel::ColorHSV(hue, sat, val), 0, size());
+    };
+}
+
+void FrameBuffer::setTableColor(uint16_t index, uint8_t red, uint8_t green, uint8_t blue)
+{
+    getColorTable().setIndexColor(index, CRGB(red, green, blue));
 }
 
 /******************************************
  * Returns the size of the panel. The size
  * is equal to the number of connected LEDs
- ******************************************/  
-uint16_t FrameBuffer::size() const {
-  return m_width * m_height;
+ ******************************************/
+uint16_t FrameBuffer::size() const
+{
+    return m_width * m_height;
 }
 
 /******************************************
@@ -43,30 +38,122 @@ uint16_t FrameBuffer::size() const {
  * initialised. This method has to be
  * called, before any operation on the 
  * LED strip can be performed.
- ******************************************/  
-void FrameBuffer::init(uint8_t pin, uint8_t width, uint8_t height) {
-  m_width = width;
-  m_height = height; 
-  pixels = new Adafruit_NeoPixel(size(), pin, pixelFormat);
-  pixels->begin();
-}  
+ ******************************************/
+void FrameBuffer::init(uint8_t pin, uint8_t width, uint8_t height)
+{
+    m_width = width;
+    m_height = height;
+    pixels = new Adafruit_NeoPixel(size(), pin, pixelFormat);
+    pixels->begin();
+}
 
+void FrameBuffer::handleOperation(Operation op, uint8_t data[], uint8_t buffer_size) {
+    switch (op)
+    {
+    case Operation::INIT_PANEL:        
+        init(data[0], data[1], data[2]);
+        break;
+
+    case Operation::FILL_HSV:
+        fillHSV(data[0] << 8 | data[1], data[2], data[3]);
+        break;
+
+    case Operation::FILL_RGB:
+        fillRGB(data[0], data[1], data[2]);
+        break;
+
+    case Operation::SET_TABLE_COLOR:
+        setTableColor(data[0] << 8 | data[1], data[2], data[3], data[4]);
+        break;
+        
+    default:
+        break;
+    }
+}
 /******************************************
  * Handles an incoming byte, which is not
  * one of command bytes.
  * 
  * What to to with the byte depends on
  * the current command. 
- ******************************************/  
-void FrameBuffer::handleData(uint8_t data) {
+ ******************************************/
+void FrameBuffer::handleData(uint8_t data)
+{
 
-  switch(m_current_command) {
+    switch (m_current_command)
+    {
 
-    // If no command is set, ignore 
+    // If no command is set, ignore
     // the incoming data.
-    case(Command::NOP):
-      break;
+    case (Command::NOP):
+        break;
 
+    case (Command::CMD_BUFFERED_COMMAND):
+        if (data == END_OF_COMMAND)
+        {
+            idleCommand();
+            // Now handle the command
+            handleOperation(static_cast<Operation>(cmd_buffer[0]), cmd_buffer+1, sizeof(cmd_buffer)-1);
+        }
+        else if (m_index >= sizeof(cmd_buffer))
+        {
+            // Command Buffer is full, but we did not receive
+            // a end of command data.
+            // This is an error situation, we cannot solve.
+            // For the moment we will reset the index and set
+            // the command to nop
+            idleCommand();
+        }
+        else
+        {
+            // Still space left in the command buffer,
+            // so let's add the data to the buffer
+            cmd_buffer[m_index++] = data;
+        };
+
+    case (Command::CMD_STREAM_COLOR_TABLE):
+        {
+            ColorTable16 ct = getColorTable();
+
+            // If space is left, add the data
+            if (!ct.table_complete()) ct += data;
+
+            // Now check, if still space is left. 
+            // If not, reset the iterator and 
+            // set mode to NOP
+            if (ct.table_complete())
+            {
+                ct.resetIterator();
+                m_current_command = Command::NOP;
+                return; // Out of Range !
+            };
+        };
+        break;
+
+    case (Command::CMD_STREAM_PANEL):
+        if (frameCompleted())
+        {
+            idleCommand();
+            return; // Out of Range !
+        };
+
+        if (!initialized())
+        {
+            idleCommand();
+            return; // Out of Range !
+        };
+
+        pixels->getPixels()[m_index] = data;
+        m_index++;
+        // If this was the last byte of the frame,
+        // update the leds.
+        if (frameCompleted())
+        {
+            pixels->show();
+            idleCommand();
+        }
+        break;
+        /**
     case(Command::CMD_INIT_PANEL):
       cmd_buffer[m_index++] = data;
       if (m_index == 3) {
@@ -117,10 +204,9 @@ void FrameBuffer::handleData(uint8_t data) {
         m_current_command = Command::NOP;
       };    
       break;
-      
-  };
+    **/
+    };
 }
-
 
 /******************************************
  * Defines the unary add operator, to add 
@@ -131,32 +217,24 @@ void FrameBuffer::handleData(uint8_t data) {
  * is set to zeor. If the byte is not a
  * command byte, the byte is handed over
  * to the handleData method.
- ******************************************/  
-FrameBuffer& FrameBuffer::operator+=(const uint8_t data) {
-  switch(data) {
-    case Command::CMD_PAINT_PANEL:
-      m_index = 0;
-      m_current_command = Command::CMD_PAINT_PANEL;
-      break;
+ ******************************************/
+FrameBuffer &FrameBuffer::operator+=(const uint8_t data)
+{
+    switch (data)
+    {
+    case Command::CMD_STREAM_PANEL:
+        m_index = 0;
+        m_current_command = Command::CMD_STREAM_PANEL;
+        break;
 
-    case Command::CMD_INIT_PANEL:
-      m_index = 0;
-      m_current_command = Command::CMD_INIT_PANEL;
-      break;
-
-    case Command::CMD_FILL_RGB:
-      m_index = 0;
-      m_current_command = Command::CMD_FILL_RGB;
-      break;
-
-    case Command::CMD_FILL_HSV:
-      m_index = 0;
-      m_current_command = Command::CMD_FILL_HSV;
-      break;
+    case Command::CMD_BUFFERED_COMMAND:
+        m_index = 0;
+        m_current_command = Command::CMD_BUFFERED_COMMAND;
+        break;
 
     default:
-      handleData(data);
-      break;
-  };
-  return *this;
+        handleData(data);
+        break;
+    };
+    return *this;
 };
