@@ -244,6 +244,11 @@ FrameBuffer &FrameBuffer::operator+=(const uint8_t data)
         m_current_command = Command::CMD_STREAM_PANEL;
         break;
 
+    case Command::CMD_STREAM_COLOR_TABLE:
+        getColorTable().resetIterator();
+        m_current_command = Command::CMD_STREAM_COLOR_TABLE;
+        break;
+
     case Command::CMD_BUFFERED_COMMAND:
         m_index = 0;
         m_current_command = Command::CMD_BUFFERED_COMMAND;
