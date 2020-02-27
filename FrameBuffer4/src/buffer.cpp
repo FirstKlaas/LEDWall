@@ -78,10 +78,6 @@ void FrameBuffer::handleOperation(Operation op, uint8_t data[], uint8_t buffer_s
         };
         break;
 
-    case Operation::RESET_COLOUR_TABLE_CURSOR:
-        getColorTable().resetIterator();
-        break;
-
     default:
         break;
     }
