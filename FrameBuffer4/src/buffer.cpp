@@ -130,6 +130,31 @@ void FrameBuffer::handleData(uint8_t data)
         };
         break;
 
+    case (Command::CMD_STREAM_PANEL16):
+        if (frameCompleted() || !initialized())
+        {
+            idleCommand();
+            return;
+        }
+        // Set the color based on an indexed color
+        // The highest four bits define the index
+        // for the first color and the lower four
+        // bits define the index for the second
+        // color.
+        pixels->getPixels()[m_index] = getColorTable().getIndexColor((data >> 4) & 0xF);
+        m_index++;
+        pixels->getPixels()[m_index] = getColorTable().getIndexColor(data & 0xF);
+        m_index++;
+        
+        // If this was the last byte of the frame,
+        // update the leds.
+        if (frameCompleted())
+        {
+            pixels->show();
+            idleCommand();
+        }
+        break;
+
     case (Command::CMD_STREAM_PANEL):
         if (frameCompleted())
         {

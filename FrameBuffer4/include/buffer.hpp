@@ -9,7 +9,7 @@
 #define EOC 245
 
 typedef enum {
-  NOP=0,
+  NONE=0,
   INIT_PANEL=1,
   FILL_RGB=2,
   FILL_HSV=3,
@@ -19,10 +19,11 @@ typedef enum {
 } Operation;
 
 typedef enum {
-  NOP=254, 
-  CMD_STREAM_PANEL=243,
-  CMD_STREAM_COLOR_TABLE=253,
-  CMD_BUFFERED_COMMAND=251
+  NOP = 254, 
+  CMD_STREAM_PANEL = 243,
+  CMD_STREAM_PANEL16 = 244,
+  CMD_STREAM_COLOR_TABLE = 253,
+  CMD_BUFFERED_COMMAND = 251
 } Command;
 
 struct CRGB {
@@ -72,6 +73,8 @@ struct CRGB {
   : r((colorcode >> 16) & 0xFF), g((colorcode >> 8) & 0xFF), b((colorcode >> 0) & 0xFF)
   {
   }
+
+  inline operator uint32_t() const { return (red << 16 | green << 8 | blue); };
 
   /// allow assignment from R, G, and B
 	inline CRGB& setRGB (uint8_t nr, uint8_t ng, uint8_t nb) __attribute__((always_inline))
