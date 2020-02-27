@@ -6,7 +6,7 @@
 #include <Adafruit_NeoPixel.h>
 
 #define END_OF_COMMAND 245
-#define EOC 245
+#define EOC            245
 
 typedef enum {
   NONE=0,
